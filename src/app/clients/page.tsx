@@ -1,0 +1,247 @@
+'use client'
+import { useEffect, useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
+import { formatCurrency, formatDate, formatStatus, getIslandLabel, getIslandFlag, getRiskColor, getRiskLabel, RISK_BG } from '@/lib/utils'
+import { Island, ClientSegment, Currency, ISLAND_LABELS } from '@/types'
+
+const SEGMENT_LABELS: Record<ClientSegment, string> = {
+  high_value_homeowner: 'HV Homeowner',
+  commercial_owner: 'Commercial Owner',
+  real_estate_developer: 'RE Developer',
+  boutique_resort: 'Boutique Resort',
+  construction_company: 'Construction Co.',
+  hnw_yacht_owner: 'HNW Yacht Owner',
+}
+
+const EMPTY = {
+  first_name: '', last_name: '', company_name: '', email: '', phone: '',
+  segment: 'high_value_homeowner' as ClientSegment, island: 'barbados' as Island,
+  address: '', preferred_currency: 'USD' as Currency, notes: '', is_vip: false,
+}
+
+export default function ClientsPage() {
+  const supabase = createClient()
+  const [clients, setClients] = useState<any[]>([])
+  const [brokers, setBrokers] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
+  const [filterSegment, setFilterSegment] = useState('')
+  const [filterIsland, setFilterIsland] = useState('')
+  const [showForm, setShowForm] = useState(false)
+  const [form, setForm] = useState(EMPTY)
+  const [saving, setSaving] = useState(false)
+  const [selected, setSelected] = useState<any>(null)
+
+  async function load() {
+    const [clientRes, brokerRes] = await Promise.all([
+      supabase.from('clients').select(`*, brokers(name, company), policies(id, status, annual_premium)`).order('created_at', { ascending: false }),
+      supabase.from('brokers').select('id, name, company'),
+    ])
+    setClients(clientRes.data || [])
+    setBrokers(brokerRes.data || [])
+    setLoading(false)
+  }
+  useEffect(() => { load() }, [])
+
+  const filtered = clients.filter(c => {
+    const matchSearch = !search || `${c.first_name} ${c.last_name} ${c.company_name || ''} ${c.email}`.toLowerCase().includes(search.toLowerCase())
+    return matchSearch && (!filterSegment || c.segment === filterSegment) && (!filterIsland || c.island === filterIsland)
+  })
+
+  async function handleSave(e: React.FormEvent) {
+    e.preventDefault()
+    setSaving(true)
+    const { error } = await supabase.from('clients').insert({ ...form, risk_score: 50, total_insured_value: 0, total_insured_value_currency: 'USD' })
+    if (!error) { setShowForm(false); setForm(EMPTY); load() }
+    setSaving(false)
+  }
+
+  return (
+    <div className="page-enter" style={{ padding: '2rem', minHeight: '100vh', background: '#0a0f1e' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
+        <div>
+          <div className="section-eyebrow" style={{ marginBottom: '0.4rem' }}>Relationships</div>
+          <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.8rem', fontWeight: 700, color: '#fff', margin: 0 }}>Clients</h1>
+        </div>
+        <button className="btn-gold" onClick={() => setShowForm(true)}>+ New Client</button>
+      </div>
+
+      {/* Stats */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', marginBottom: '1.5rem', background: 'rgba(201,147,58,0.08)' }}>
+        {[
+          { label: 'Total Clients', value: filtered.length },
+          { label: 'VIP', value: filtered.filter(c => c.is_vip).length },
+          { label: 'Boutique Resorts', value: filtered.filter(c => c.segment === 'boutique_resort').length },
+          { label: 'HV Homeowners', value: filtered.filter(c => c.segment === 'high_value_homeowner').length },
+        ].map((k, i) => (
+          <div key={i} style={{ background: '#111827', padding: '1rem 1.2rem' }}>
+            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#8fa3b8' }}>{k.label}</div>
+            <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.6rem', fontWeight: 900, color: '#c9933a', marginTop: '0.2rem' }}>{k.value}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Filters */}
+      <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap', marginBottom: '1.2rem' }}>
+        <input className="crm-input" style={{ maxWidth: 280 }} placeholder="Search name, company, email…" value={search} onChange={e => setSearch(e.target.value)} />
+        <select className="crm-select" style={{ maxWidth: 180 }} value={filterSegment} onChange={e => setFilterSegment(e.target.value)}>
+          <option value="">All Segments</option>
+          {Object.entries(SEGMENT_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+        </select>
+        <select className="crm-select" style={{ maxWidth: 180 }} value={filterIsland} onChange={e => setFilterIsland(e.target.value)}>
+          <option value="">All Islands</option>
+          {Object.entries(ISLAND_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+        </select>
+      </div>
+
+      {/* Table */}
+      <div style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.12)', overflow: 'auto' }}>
+        <table className="crm-table">
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Segment</th>
+              <th>Island</th>
+              <th>Policies</th>
+              <th>Total Premium</th>
+              <th>Risk Score</th>
+              <th>VIP</th>
+              <th>Broker</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr><td colSpan={8} style={{ textAlign: 'center', padding: '2rem', color: '#8fa3b8' }}>Loading…</td></tr>
+            ) : filtered.map(c => {
+              const activePolicies = (c.policies || []).filter((p: any) => p.status === 'active')
+              const totalPrem = activePolicies.reduce((s: number, p: any) => s + (p.annual_premium || 0), 0)
+              const risk = getRiskLabel(c.risk_score || 50)
+              return (
+                <tr key={c.id} style={{ cursor: 'pointer' }} onClick={() => setSelected(c)}>
+                  <td>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                      <div style={{ width: 32, height: 32, borderRadius: '50%', background: `${getRiskColor(c.risk_score || 50)}22`, border: `1px solid ${getRiskColor(c.risk_score || 50)}44`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: getRiskColor(c.risk_score || 50), flexShrink: 0 }}>
+                        {c.first_name?.[0]}{c.last_name?.[0]}
+                      </div>
+                      <div>
+                        <div style={{ fontFamily: 'Barlow', fontSize: '0.88rem', color: '#f5f0e8' }}>{c.first_name} {c.last_name}</div>
+                        {c.company_name && <div style={{ fontSize: '0.75rem', color: '#8fa3b8' }}>{c.company_name}</div>}
+                      </div>
+                    </div>
+                  </td>
+                  <td><span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: '#c9933a' }}>{SEGMENT_LABELS[c.segment as ClientSegment] || c.segment}</span></td>
+                  <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.8rem' }}>{getIslandFlag(c.island)} {getIslandLabel(c.island)}</td>
+                  <td style={{ fontFamily: 'Barlow Condensed', color: '#f5f0e8' }}>{activePolicies.length} active</td>
+                  <td style={{ fontFamily: 'Barlow Condensed', color: '#c9933a' }}>{totalPrem > 0 ? formatCurrency(totalPrem, c.preferred_currency, true) : '—'}</td>
+                  <td>
+                    <span className={`badge ${RISK_BG[risk]}`}>{risk}</span>
+                  </td>
+                  <td>{c.is_vip && <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.15em', color: '#e8b04a', background: 'rgba(201,147,58,0.12)', border: '1px solid rgba(201,147,58,0.3)', padding: '0.15rem 0.5rem' }}>VIP</span>}</td>
+                  <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: '#8fa3b8' }}>{c.brokers?.name || '—'}</td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Client Detail */}
+      {selected && (
+        <div className="modal-backdrop" onClick={() => setSelected(null)}>
+          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 580, maxHeight: '88vh', overflowY: 'auto' }}>
+            <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                <div style={{ width: 44, height: 44, borderRadius: '50%', background: `${getRiskColor(selected.risk_score || 50)}22`, border: `1px solid ${getRiskColor(selected.risk_score || 50)}44`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Playfair Display', fontSize: '1rem', color: getRiskColor(selected.risk_score || 50) }}>
+                  {selected.first_name?.[0]}{selected.last_name?.[0]}
+                </div>
+                <div>
+                  <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>{selected.first_name} {selected.last_name}</div>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', color: '#8fa3b8' }}>{selected.company_name || SEGMENT_LABELS[selected.segment as ClientSegment]}</div>
+                </div>
+              </div>
+              <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: '#8fa3b8', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
+            </div>
+            <div style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              {[
+                ['Email', selected.email],
+                ['Phone', selected.phone || '—'],
+                ['Island', `${getIslandFlag(selected.island)} ${getIslandLabel(selected.island)}`],
+                ['Segment', SEGMENT_LABELS[selected.segment as ClientSegment] || selected.segment],
+                ['Preferred Currency', selected.preferred_currency],
+                ['VIP Status', selected.is_vip ? '⭐ VIP Client' : 'Standard'],
+                ['Risk Score', `${selected.risk_score || 50}/100`],
+                ['Broker', selected.brokers?.name || 'Direct'],
+              ].map(([label, value], i) => (
+                <div key={i}>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>{label}</div>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.88rem', color: '#f5f0e8' }}>{value}</div>
+                </div>
+              ))}
+              <div style={{ gridColumn: '1 / -1' }}>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>Address</div>
+                <div style={{ fontFamily: 'Barlow', fontSize: '0.85rem', color: '#f5f0e8' }}>{selected.address}</div>
+              </div>
+              {selected.notes && (
+                <div style={{ gridColumn: '1 / -1' }}>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>Notes</div>
+                  <div style={{ fontFamily: 'Barlow', fontSize: '0.85rem', color: '#8fa3b8', lineHeight: 1.6 }}>{selected.notes}</div>
+                </div>
+              )}
+            </div>
+            <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid rgba(201,147,58,0.1)', display: 'flex', gap: '0.8rem' }}>
+              <a href={`/policies?client=${selected.id}`} className="btn-gold" style={{ textDecoration: 'none' }}>View Policies</a>
+              <a href={`/claims?client=${selected.id}`} className="btn-ghost" style={{ textDecoration: 'none' }}>View Claims</a>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* New Client Form */}
+      {showForm && (
+        <div className="modal-backdrop" onClick={() => setShowForm(false)}>
+          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 620, maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
+              <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>New Client</div>
+              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>Client Profile</div>
+            </div>
+            <form onSubmit={handleSave} style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div><label className="crm-label">First Name *</label><input className="crm-input" value={form.first_name} onChange={e => setForm(f => ({ ...f, first_name: e.target.value }))} required /></div>
+              <div><label className="crm-label">Last Name *</label><input className="crm-input" value={form.last_name} onChange={e => setForm(f => ({ ...f, last_name: e.target.value }))} required /></div>
+              <div style={{ gridColumn: '1 / -1' }}><label className="crm-label">Company Name</label><input className="crm-input" value={form.company_name} onChange={e => setForm(f => ({ ...f, company_name: e.target.value }))} /></div>
+              <div><label className="crm-label">Email *</label><input className="crm-input" type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} required /></div>
+              <div><label className="crm-label">Phone</label><input className="crm-input" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} /></div>
+              <div>
+                <label className="crm-label">Segment *</label>
+                <select className="crm-select" value={form.segment} onChange={e => setForm(f => ({ ...f, segment: e.target.value as ClientSegment }))} required>
+                  {Object.entries(SEGMENT_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="crm-label">Island *</label>
+                <select className="crm-select" value={form.island} onChange={e => setForm(f => ({ ...f, island: e.target.value as Island }))} required>
+                  {Object.entries(ISLAND_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="crm-label">Preferred Currency</label>
+                <select className="crm-select" value={form.preferred_currency} onChange={e => setForm(f => ({ ...f, preferred_currency: e.target.value as Currency }))}>
+                  {['USD','BBD','JMD','KYD','TTD','BSD','GBP','EUR'].map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', paddingTop: '1.4rem' }}>
+                <input type="checkbox" id="vip" checked={form.is_vip} onChange={e => setForm(f => ({ ...f, is_vip: e.target.checked }))} style={{ accentColor: '#c9933a', width: 16, height: 16 }} />
+                <label htmlFor="vip" style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c9933a', cursor: 'pointer' }}>VIP Client</label>
+              </div>
+              <div style={{ gridColumn: '1 / -1' }}><label className="crm-label">Address *</label><input className="crm-input" value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} required /></div>
+              <div style={{ gridColumn: '1 / -1' }}><label className="crm-label">Notes</label><textarea className="crm-input" rows={3} value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} /></div>
+              <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '0.8rem', justifyContent: 'flex-end' }}>
+                <button type="button" className="btn-ghost" onClick={() => setShowForm(false)}>Cancel</button>
+                <button type="submit" className="btn-gold" disabled={saving}>{saving ? 'Saving…' : 'Create Client'}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}

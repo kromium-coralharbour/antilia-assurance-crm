@@ -1,0 +1,250 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --storm: #0a0f1e;
+  --deep: #111827;
+  --slate-dark: #1e2d45;
+  --steel: #2e4060;
+  --gold: #c9933a;
+  --amber: #e8b04a;
+  --pale: #f5f0e8;
+  --mist: #8fa3b8;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  background-color: var(--storm);
+  color: var(--pale);
+  font-family: 'Barlow', system-ui, sans-serif;
+  font-weight: 300;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--deep); }
+::-webkit-scrollbar-thumb { background: var(--steel); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+/* Focus styles */
+*:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* Table styles */
+.crm-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.crm-table th {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mist);
+  font-weight: 600;
+  padding: 0.8rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(201,147,58,0.15);
+  white-space: nowrap;
+}
+.crm-table td {
+  padding: 0.85rem 1rem;
+  font-size: 0.88rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  vertical-align: middle;
+}
+.crm-table tr:hover td {
+  background: rgba(46,64,96,0.2);
+}
+
+/* Status badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 2px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+
+/* Card */
+.crm-card {
+  background: var(--deep);
+  border: 1px solid rgba(201,147,58,0.12);
+  padding: 1.5rem;
+}
+
+/* Input */
+.crm-input {
+  background: rgba(30,45,69,0.5);
+  border: 1px solid rgba(201,147,58,0.2);
+  color: var(--pale);
+  padding: 0.6rem 0.9rem;
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.88rem;
+  width: 100%;
+  transition: border-color 0.2s;
+}
+.crm-input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+.crm-input::placeholder { color: var(--mist); }
+
+/* Select */
+.crm-select {
+  background: rgba(30,45,69,0.5);
+  border: 1px solid rgba(201,147,58,0.2);
+  color: var(--pale);
+  padding: 0.6rem 2rem 0.6rem 0.9rem;
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.88rem;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238fa3b8' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  cursor: pointer;
+  width: 100%;
+}
+.crm-select:focus { outline: none; border-color: var(--gold); }
+.crm-select option { background: var(--deep); }
+
+/* Label */
+.crm-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mist);
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+/* Buttons */
+.btn-gold {
+  background: var(--gold);
+  color: var(--storm);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 0.65rem 1.4rem;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+.btn-gold:hover { background: var(--amber); transform: translateY(-1px); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--mist);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 0.65rem 1.2rem;
+  border: 1px solid rgba(201,147,58,0.2);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+.btn-ghost:hover { border-color: var(--gold); color: var(--pale); }
+
+.btn-danger {
+  background: rgba(192,57,43,0.2);
+  color: #fc8181;
+  border: 1px solid rgba(192,57,43,0.4);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 0.65rem 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.btn-danger:hover { background: rgba(192,57,43,0.35); }
+
+/* Section heading */
+.section-eyebrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+/* Gold divider */
+.gold-divider {
+  height: 1px;
+  background: linear-gradient(to right, var(--gold), transparent);
+  margin: 1.5rem 0;
+}
+
+/* Animated heatmap cells */
+@keyframes pulse-risk {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+.risk-cell-extreme { animation: pulse-risk 2s ease-in-out infinite; }
+
+/* Page transition */
+.page-enter {
+  animation: page-in 0.3s ease-out;
+}
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Modal backdrop */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10,15,30,0.85);
+  backdrop-filter: blur(4px);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+/* Stat card */
+.stat-card {
+  background: var(--deep);
+  border: 1px solid rgba(201,147,58,0.12);
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.stat-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%; height: 2px;
+  background: linear-gradient(to right, var(--gold), transparent);
+}
