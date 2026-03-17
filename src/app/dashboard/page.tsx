@@ -47,38 +47,6 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         </div>
       ))}
 
-      {/* Quick claim view from dashboard */}
-      {selectedClaim && (
-        <div className="modal-backdrop" onClick={() => setSelectedClaim(null)}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 520, maxHeight: '80vh', overflowY: 'auto' }}>
-            <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)', display: 'flex', justifyContent: 'space-between' }}>
-              <div>
-                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#c9933a', marginBottom: '0.3rem' }}>Claim Summary</div>
-                <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>{selectedClaim.claim_number}</div>
-              </div>
-              <button onClick={() => setSelectedClaim(null)} style={{ background: 'none', border: 'none', color: '#8fa3b8', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
-            </div>
-            <div style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-              {[
-                ['Status', selectedClaim.status ? selectedClaim.status.replace(/_/g,' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) : '—'],
-                ['Fraud Risk', selectedClaim.fraud_risk || '—'],
-                ['Coverage', selectedClaim.coverage_type || '—'],
-                ['Island', selectedClaim.island || '—'],
-                ['Incident Date', selectedClaim.incident_date ? new Date(selectedClaim.incident_date).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : '—'],
-                ['Reported Loss', selectedClaim.reported_loss ? `$${(selectedClaim.reported_loss/1000).toFixed(0)}K` : '—'],
-              ].map(([label, value], i) => (
-                <div key={i}>
-                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>{label}</div>
-                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.85rem', color: '#f5f0e8' }}>{value}</div>
-                </div>
-              ))}
-            </div>
-            <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid rgba(201,147,58,0.1)' }}>
-              <a href="/claims" className="btn-gold" style={{ textDecoration: 'none', fontSize: '0.75rem' }}>Open Claims Register →</a>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

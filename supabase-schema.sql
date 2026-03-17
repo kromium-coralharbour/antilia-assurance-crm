@@ -8,54 +8,87 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- ── ENUMS ──────────────────────────────────────────────────────────
 
-CREATE TYPE island AS ENUM (
+DO $$ BEGIN
+  CREATE TYPE island AS ENUM (
   'barbados', 'jamaica', 'cayman_islands', 'trinidad_tobago', 'bahamas'
 );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE TYPE currency AS ENUM (
+DO $$ BEGIN
+  CREATE TYPE currency AS ENUM (
   'USD', 'BBD', 'JMD', 'KYD', 'TTD', 'BSD', 'GBP', 'EUR'
 );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE TYPE risk_level AS ENUM (
+DO $$ BEGIN
+  CREATE TYPE risk_level AS ENUM (
   'extreme', 'high', 'moderate', 'low', 'minimal'
 );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE TYPE policy_status AS ENUM (
+DO $$ BEGIN
+  CREATE TYPE policy_status AS ENUM (
   'active', 'pending', 'renewal_due', 'lapsed', 'cancelled', 'quoted'
 );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE TYPE claim_status AS ENUM (
+DO $$ BEGIN
+  CREATE TYPE claim_status AS ENUM (
   'fnol_received', 'under_review', 'adjuster_assigned', 'inspection_scheduled',
   'assessment_complete', 'approved', 'partial_approved', 'settled', 'rejected',
   'fraud_investigation'
 );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE TYPE coverage_type AS ENUM (
+DO $$ BEGIN
+  CREATE TYPE coverage_type AS ENUM (
   'residential', 'commercial', 'hospitality', 'real_estate', 'construction', 'yacht_marine'
 );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE TYPE client_segment AS ENUM (
+DO $$ BEGIN
+  CREATE TYPE client_segment AS ENUM (
   'high_value_homeowner', 'commercial_owner', 'real_estate_developer',
   'boutique_resort', 'construction_company', 'hnw_yacht_owner'
 );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE TYPE broker_status AS ENUM ('active', 'inactive', 'pending_approval');
+DO $$ BEGIN
+  CREATE TYPE broker_status AS ENUM ('active', 'inactive', 'pending_approval');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE TYPE fraud_risk AS ENUM (
+DO $$ BEGIN
+  CREATE TYPE fraud_risk AS ENUM (
   'clear', 'watch', 'suspicious', 'flagged', 'confirmed_fraud'
 );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE TYPE catastrophe_event AS ENUM (
+DO $$ BEGIN
+  CREATE TYPE catastrophe_event AS ENUM (
   'hurricane', 'tropical_storm', 'flood', 'earthquake', 'fire', 'other'
 );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE TYPE treaty_type AS ENUM (
+DO $$ BEGIN
+  CREATE TYPE treaty_type AS ENUM (
   'quota_share', 'excess_of_loss', 'catastrophe_xl', 'facultative'
 );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- ── BROKERS ────────────────────────────────────────────────────────
 
-CREATE TABLE brokers (
+CREATE TABLE IF NOT EXISTS brokers (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
@@ -77,7 +110,7 @@ CREATE TABLE brokers (
 
 -- ── CLIENTS ────────────────────────────────────────────────────────
 
-CREATE TABLE clients (
+CREATE TABLE IF NOT EXISTS clients (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
@@ -101,7 +134,7 @@ CREATE TABLE clients (
 
 -- ── POLICIES ───────────────────────────────────────────────────────
 
-CREATE TABLE policies (
+CREATE TABLE IF NOT EXISTS policies (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
@@ -131,7 +164,7 @@ CREATE TABLE policies (
 
 -- ── POLICY ENDORSEMENTS ────────────────────────────────────────────
 
-CREATE TABLE policy_endorsements (
+CREATE TABLE IF NOT EXISTS policy_endorsements (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   policy_id UUID NOT NULL REFERENCES policies(id) ON DELETE CASCADE,
@@ -144,7 +177,7 @@ CREATE TABLE policy_endorsements (
 
 -- ── CLAIMS ─────────────────────────────────────────────────────────
 
-CREATE TABLE claims (
+CREATE TABLE IF NOT EXISTS claims (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
@@ -175,7 +208,7 @@ CREATE TABLE claims (
 
 -- ── CLAIM DOCUMENTS ────────────────────────────────────────────────
 
-CREATE TABLE claim_documents (
+CREATE TABLE IF NOT EXISTS claim_documents (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   claim_id UUID NOT NULL REFERENCES claims(id) ON DELETE CASCADE,
@@ -186,7 +219,7 @@ CREATE TABLE claim_documents (
 
 -- ── ADJUSTERS ──────────────────────────────────────────────────────
 
-CREATE TABLE adjusters (
+CREATE TABLE IF NOT EXISTS adjusters (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   name TEXT NOT NULL,
@@ -200,7 +233,7 @@ CREATE TABLE adjusters (
 
 -- ── REINSURANCE TREATIES ───────────────────────────────────────────
 
-CREATE TABLE reinsurance_treaties (
+CREATE TABLE IF NOT EXISTS reinsurance_treaties (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
@@ -225,7 +258,7 @@ CREATE TABLE reinsurance_treaties (
 
 -- ── FX RATES ───────────────────────────────────────────────────────
 
-CREATE TABLE fx_rates (
+CREATE TABLE IF NOT EXISTS fx_rates (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   from_currency currency NOT NULL,
@@ -236,7 +269,7 @@ CREATE TABLE fx_rates (
 
 -- ── FRAUD ALERTS ───────────────────────────────────────────────────
 
-CREATE TABLE fraud_alerts (
+CREATE TABLE IF NOT EXISTS fraud_alerts (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
@@ -252,7 +285,7 @@ CREATE TABLE fraud_alerts (
 
 -- ── HURRICANE EXPOSURE CACHE ───────────────────────────────────────
 
-CREATE TABLE hurricane_exposure_cache (
+CREATE TABLE IF NOT EXISTS hurricane_exposure_cache (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   island island NOT NULL UNIQUE,
@@ -269,7 +302,7 @@ CREATE TABLE hurricane_exposure_cache (
 
 -- ── AUDIT LOG ──────────────────────────────────────────────────────
 
-CREATE TABLE audit_log (
+CREATE TABLE IF NOT EXISTS audit_log (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   user_id UUID,
@@ -292,16 +325,21 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS update_clients_updated_at ON clients;
 CREATE TRIGGER update_clients_updated_at BEFORE UPDATE ON clients FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+DROP TRIGGER IF EXISTS update_policies_updated_at ON policies;
 CREATE TRIGGER update_policies_updated_at BEFORE UPDATE ON policies FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+DROP TRIGGER IF EXISTS update_claims_updated_at ON claims;
 CREATE TRIGGER update_claims_updated_at BEFORE UPDATE ON claims FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+DROP TRIGGER IF EXISTS update_brokers_updated_at ON brokers;
 CREATE TRIGGER update_brokers_updated_at BEFORE UPDATE ON brokers FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+DROP TRIGGER IF EXISTS update_treaties_updated_at ON reinsurance_treaties;
 CREATE TRIGGER update_treaties_updated_at BEFORE UPDATE ON reinsurance_treaties FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- ── GENERATE POLICY NUMBER ─────────────────────────────────────────
 
-CREATE SEQUENCE policy_seq START 10000;
-CREATE SEQUENCE claim_seq START 50000;
+CREATE SEQUENCE IF NOT EXISTS policy_seq START 10000;
+CREATE SEQUENCE IF NOT EXISTS claim_seq START 50000;
 
 CREATE OR REPLACE FUNCTION generate_policy_number()
 RETURNS TEXT AS $$
@@ -333,17 +371,29 @@ ALTER TABLE policy_endorsements ENABLE ROW LEVEL SECURITY;
 ALTER TABLE claim_documents ENABLE ROW LEVEL SECURITY;
 
 -- Allow authenticated users full access (customize per role in production)
+DROP POLICY IF EXISTS "auth_all" ON clients;
 CREATE POLICY "auth_all" ON clients FOR ALL TO authenticated USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "auth_all" ON policies;
 CREATE POLICY "auth_all" ON policies FOR ALL TO authenticated USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "auth_all" ON claims;
 CREATE POLICY "auth_all" ON claims FOR ALL TO authenticated USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "auth_all" ON brokers;
 CREATE POLICY "auth_all" ON brokers FOR ALL TO authenticated USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "auth_all" ON reinsurance_treaties;
 CREATE POLICY "auth_all" ON reinsurance_treaties FOR ALL TO authenticated USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "auth_all" ON fraud_alerts;
 CREATE POLICY "auth_all" ON fraud_alerts FOR ALL TO authenticated USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "auth_all" ON adjusters;
 CREATE POLICY "auth_all" ON adjusters FOR ALL TO authenticated USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "auth_all" ON fx_rates;
 CREATE POLICY "auth_all" ON fx_rates FOR ALL TO authenticated USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "auth_all" ON hurricane_exposure_cache;
 CREATE POLICY "auth_all" ON hurricane_exposure_cache FOR ALL TO authenticated USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "auth_all" ON audit_log;
 CREATE POLICY "auth_all" ON audit_log FOR ALL TO authenticated USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "auth_all" ON policy_endorsements;
 CREATE POLICY "auth_all" ON policy_endorsements FOR ALL TO authenticated USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "auth_all" ON claim_documents;
 CREATE POLICY "auth_all" ON claim_documents FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- ── SEED FX RATES ──────────────────────────────────────────────────
@@ -360,7 +410,8 @@ INSERT INTO fx_rates (from_currency, to_currency, rate) VALUES
   ('JMD', 'USD', 0.0064),
   ('KYD', 'USD', 1.2195),
   ('TTD', 'USD', 0.1473),
-  ('BSD', 'USD', 1.0000);
+  ('BSD', 'USD', 1.0000)
+ON CONFLICT (from_currency, to_currency) DO NOTHING;
 
 -- ── SEED HURRICANE EXPOSURE CACHE ──────────────────────────────────
 
@@ -369,28 +420,15 @@ INSERT INTO hurricane_exposure_cache (island, total_policies, total_exposure, cu
   ('jamaica', 0, 0, 'USD', 0, 0, 0, 0, 0, 0),
   ('cayman_islands', 0, 0, 'USD', 0, 0, 0, 0, 0, 0),
   ('trinidad_tobago', 0, 0, 'USD', 0, 0, 0, 0, 0, 0),
-  ('bahamas', 0, 0, 'USD', 0, 0, 0, 0, 0, 0);
+  ('bahamas', 0, 0, 'USD', 0, 0, 0, 0, 0, 0)
+ON CONFLICT (island) DO NOTHING;
 
--- Endorsements additive migration (safe to re-run)
-CREATE TABLE IF NOT EXISTS policy_endorsements (
-  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-  created_at timestamptz DEFAULT now(),
-  updated_at timestamptz DEFAULT now(),
-  policy_id uuid REFERENCES policies(id) ON DELETE CASCADE,
-  endorsement_number text NOT NULL,
-  type text NOT NULL CHECK (type IN ('coverage_extension','coverage_reduction','premium_adjustment','address_change','name_change','deductible_change','wind_zone_change','other')),
-  description text NOT NULL,
-  effective_date date NOT NULL,
-  additional_premium numeric(12,2) DEFAULT 0,
-  currency text DEFAULT 'USD',
-  status text DEFAULT 'active' CHECK (status IN ('active','voided')),
-  issued_by text,
-  notes text
-);
-
-ALTER TABLE policy_endorsements ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "endorsements_all" ON policy_endorsements;
-CREATE POLICY "endorsements_all" ON policy_endorsements FOR ALL USING (auth.role() = 'authenticated');
+-- Endorsements: additive column additions (safe to re-run)
+ALTER TABLE policy_endorsements ADD COLUMN IF NOT EXISTS endorsement_number text;
+ALTER TABLE policy_endorsements ADD COLUMN IF NOT EXISTS status text DEFAULT 'active';
+ALTER TABLE policy_endorsements ADD COLUMN IF NOT EXISTS issued_by text;
+ALTER TABLE policy_endorsements ADD COLUMN IF NOT EXISTS notes text;
+ALTER TABLE policy_endorsements ADD COLUMN IF NOT EXISTS updated_at timestamptz DEFAULT now();
 
 -- Cat surge events table
 CREATE TABLE IF NOT EXISTS cat_surge_events (
@@ -412,30 +450,15 @@ ALTER TABLE cat_surge_events ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "surge_all" ON cat_surge_events;
 CREATE POLICY "surge_all" ON cat_surge_events FOR ALL USING (auth.role() = 'authenticated');
 
--- FX rates table (upsertable)
-CREATE TABLE IF NOT EXISTS fx_rates (
-  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-  updated_at timestamptz DEFAULT now(),
-  from_currency text NOT NULL,
-  to_currency text DEFAULT 'USD',
-  rate numeric(12,6) NOT NULL,
-  source text DEFAULT 'Manual',
-  UNIQUE(from_currency, to_currency)
-);
-
-ALTER TABLE fx_rates ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "fx_all" ON fx_rates;
-CREATE POLICY "fx_all" ON fx_rates FOR ALL USING (auth.role() = 'authenticated');
-
--- Seed FX rates
-INSERT INTO fx_rates (from_currency, to_currency, rate, source) VALUES
-  ('BBD','USD',0.5000,'Central Bank of Barbados'),
-  ('JMD','USD',0.006390,'Bank of Jamaica'),
-  ('KYD','USD',1.2195,'Cayman Islands Monetary Authority'),
-  ('TTD','USD',0.1473,'Central Bank of T&T'),
-  ('BSD','USD',1.0000,'Central Bank of Bahamas'),
-  ('GBP','USD',1.2658,'Bank of England'),
-  ('EUR','USD',1.0850,'European Central Bank')
+-- FX rates: upsert with canonical source labels
+INSERT INTO fx_rates (from_currency, to_currency, rate) VALUES
+  ('BBD','USD',0.5000),
+  ('JMD','USD',0.006390),
+  ('KYD','USD',1.2195),
+  ('TTD','USD',0.1473),
+  ('BSD','USD',1.0000),
+  ('GBP','USD',1.2658),
+  ('EUR','USD',1.0850)
 ON CONFLICT (from_currency, to_currency) DO NOTHING;
 
 -- Seed cat surge events
@@ -456,4 +479,7 @@ SELECT
   p.premium_currency,
   'Senior Underwriter'
 FROM policies p
+WHERE NOT EXISTS (
+  SELECT 1 FROM policy_endorsements pe WHERE pe.policy_id = p.id
+)
 LIMIT 5;
