@@ -69,55 +69,55 @@ ON CONFLICT (id) DO NOTHING;
 -- ── REINSURANCE TREATIES (6 active + 2 historical expired) ──────────────
 
 INSERT INTO reinsurance_treaties (id, treaty_name, reinsurer_name, treaty_type, islands_covered, inception_date, expiry_date, limit_amount, retention, currency, cession_rate, attachment_point, premium_ceded, exposure_ceded, loss_recoverable, status, notes) VALUES
-  ('r1000000-0000-0000-0000-000000000001', 'Caribbean Cat XL Layer 1 2024',  'Hannover Re',           'catastrophe_xl', ARRAY['barbados','jamaica','cayman_islands','trinidad_tobago','bahamas']::island[], '2024-01-01', '2024-12-31', 25000000,  5000000,  'USD', NULL, 5000000,  3200000,  18400000, 1200000,  'active',  'Primary cat layer. Covers all 5 islands. 4th consecutive year with Hannover.'),
-  ('r1000000-0000-0000-0000-000000000002', 'Caribbean Cat XL Layer 2 2024',  'Swiss Re',              'catastrophe_xl', ARRAY['barbados','jamaica','cayman_islands','trinidad_tobago','bahamas']::island[], '2024-01-01', '2024-12-31', 50000000,  30000000, 'USD', NULL, 30000000, 2800000,  12600000, 0,        'active',  'Second layer. Attachment $30M xs $30M. Pricing improved 8% YoY.'),
-  ('r1000000-0000-0000-0000-000000000003', 'Cayman & Bahamas QS 2024',       'Munich Re',             'quota_share',    ARRAY['cayman_islands','bahamas']::island[],                                       '2024-01-01', '2024-12-31', 30000000,  0,        'USD', 30.00, NULL,     4100000,  24800000, 0,        'active',  '30% quota share. Cayman + Bahamas highest cat exposure islands.'),
-  ('r1000000-0000-0000-0000-000000000004', 'Marine & Yacht Facultative 2024','Lloyd''s Syndicate 2623','facultative',   ARRAY['cayman_islands','bahamas','barbados']::island[],                            '2024-01-01', '2024-12-31', 12000000,  2000000,  'USD', NULL, 2000000,  980000,   6200000,  420000,   'active',  'Facultative cover for yacht & marine portfolio. 3-island scope.'),
-  ('r1000000-0000-0000-0000-000000000005', 'T&T Construction XL 2024',       'Scor SE',               'excess_of_loss', ARRAY['trinidad_tobago']::island[],                                                '2024-01-01', '2024-12-31', 8000000,   1500000,  'USD', NULL, 1500000,  620000,   3800000,  0,        'active',  'Specialist construction XL for T&T energy & industrial exposure.'),
-  ('r1000000-0000-0000-0000-000000000006', 'Jamaica Commercial XL 2024',     'Everest Re',            'excess_of_loss', ARRAY['jamaica']::island[],                                                        '2024-01-01', '2024-12-31', 15000000,  3000000,  'USD', NULL, 3000000,  1480000,  8200000,  0,        'active',  'Jamaica commercial property XL. Covers Kingston and resort corridor.'),
-  ('r1000000-0000-0000-0000-000000000007', 'Caribbean Cat XL 2019',          'Hannover Re',           'catastrophe_xl', ARRAY['barbados','jamaica','cayman_islands','trinidad_tobago','bahamas']::island[], '2019-01-01', '2019-12-31', 20000000,  4000000,  'USD', NULL, 4000000,  2900000,  17200000, 8400000,  'active',  'HISTORICAL 2019. Dorian triggered $8.4M recovery. Treaty closed.'),
-  ('r1000000-0000-0000-0000-000000000008', 'Caribbean Cat XL 2017',          'Munich Re',             'catastrophe_xl', ARRAY['barbados','jamaica','cayman_islands','trinidad_tobago','bahamas']::island[], '2017-01-01', '2017-12-31', 18000000,  3500000,  'USD', NULL, 3500000,  2600000,  15800000, 11200000, 'active',  'HISTORICAL 2017. Hurricane Irma/Maria triggered $11.2M recovery.')
+  ('21000000-0000-0000-0000-000000000001', 'Caribbean Cat XL Layer 1 2024',  'Hannover Re',           'catastrophe_xl', ARRAY['barbados','jamaica','cayman_islands','trinidad_tobago','bahamas']::island[], '2024-01-01', '2024-12-31', 25000000,  5000000,  'USD', NULL, 5000000,  3200000,  18400000, 1200000,  'active',  'Primary cat layer. Covers all 5 islands. 4th consecutive year with Hannover.'),
+  ('21000000-0000-0000-0000-000000000002', 'Caribbean Cat XL Layer 2 2024',  'Swiss Re',              'catastrophe_xl', ARRAY['barbados','jamaica','cayman_islands','trinidad_tobago','bahamas']::island[], '2024-01-01', '2024-12-31', 50000000,  30000000, 'USD', NULL, 30000000, 2800000,  12600000, 0,        'active',  'Second layer. Attachment $30M xs $30M. Pricing improved 8% YoY.'),
+  ('21000000-0000-0000-0000-000000000003', 'Cayman & Bahamas QS 2024',       'Munich Re',             'quota_share',    ARRAY['cayman_islands','bahamas']::island[],                                       '2024-01-01', '2024-12-31', 30000000,  0,        'USD', 30.00, NULL,     4100000,  24800000, 0,        'active',  '30% quota share. Cayman + Bahamas highest cat exposure islands.'),
+  ('21000000-0000-0000-0000-000000000004', 'Marine & Yacht Facultative 2024','Lloyd''s Syndicate 2623','facultative',   ARRAY['cayman_islands','bahamas','barbados']::island[],                            '2024-01-01', '2024-12-31', 12000000,  2000000,  'USD', NULL, 2000000,  980000,   6200000,  420000,   'active',  'Facultative cover for yacht & marine portfolio. 3-island scope.'),
+  ('21000000-0000-0000-0000-000000000005', 'T&T Construction XL 2024',       'Scor SE',               'excess_of_loss', ARRAY['trinidad_tobago']::island[],                                                '2024-01-01', '2024-12-31', 8000000,   1500000,  'USD', NULL, 1500000,  620000,   3800000,  0,        'active',  'Specialist construction XL for T&T energy & industrial exposure.'),
+  ('21000000-0000-0000-0000-000000000006', 'Jamaica Commercial XL 2024',     'Everest Re',            'excess_of_loss', ARRAY['jamaica']::island[],                                                        '2024-01-01', '2024-12-31', 15000000,  3000000,  'USD', NULL, 3000000,  1480000,  8200000,  0,        'active',  'Jamaica commercial property XL. Covers Kingston and resort corridor.'),
+  ('21000000-0000-0000-0000-000000000007', 'Caribbean Cat XL 2019',          'Hannover Re',           'catastrophe_xl', ARRAY['barbados','jamaica','cayman_islands','trinidad_tobago','bahamas']::island[], '2019-01-01', '2019-12-31', 20000000,  4000000,  'USD', NULL, 4000000,  2900000,  17200000, 8400000,  'active',  'HISTORICAL 2019. Dorian triggered $8.4M recovery. Treaty closed.'),
+  ('21000000-0000-0000-0000-000000000008', 'Caribbean Cat XL 2017',          'Munich Re',             'catastrophe_xl', ARRAY['barbados','jamaica','cayman_islands','trinidad_tobago','bahamas']::island[], '2017-01-01', '2017-12-31', 18000000,  3500000,  'USD', NULL, 3500000,  2600000,  15800000, 11200000, 'active',  'HISTORICAL 2017. Hurricane Irma/Maria triggered $11.2M recovery.')
 ON CONFLICT (id) DO NOTHING;
 
 -- ── POLICIES (30 policies across all statuses and years) ─────────────────
 
 INSERT INTO policies (id, policy_number, client_id, broker_id, coverage_type, status, island, insured_value, currency, annual_premium, premium_currency, start_date, end_date, renewal_date, risk_score, wind_zone, flood_zone, structural_compliance_rating, construction_year, property_address, notes, hurricane_deductible_pct, reinsurance_treaty_id) VALUES
   -- Active Barbados policies
-  ('p1000000-0000-0000-0000-000000000001','AAG-2024-010001','c1000000-0000-0000-0000-000000000001','b1000000-0000-0000-0000-000000000001','residential',    'active',       'barbados',       4200000, 'USD','42000','USD','2024-01-15','2025-01-14','2025-01-15', 38,'Zone 2 – Moderate','Zone X – Minimal Flood', 88, 2008,'Sandy Lane Estate, Lot 14, St. James, Barbados',          'VIP. Reinforced concrete. Pool house included.',5.0, 'r1000000-0000-0000-0000-000000000001'),
-  ('p1000000-0000-0000-0000-000000000002','AAG-2024-010002','c1000000-0000-0000-0000-000000000002','b1000000-0000-0000-0000-000000000001','commercial',     'active',       'barbados',       8700000, 'USD','104400','USD','2024-03-01','2025-02-28','2025-03-01', 52,'Zone 2 – Moderate','Zone X – Minimal Flood', 76, 2012,'Warrens Business Park Units 1-3, St. Michael, Barbados',  '3 commercial units. Warrens industrial corridor.',5.0, 'r1000000-0000-0000-0000-000000000001'),
-  ('p1000000-0000-0000-0000-000000000003','AAG-2024-010003','c1000000-0000-0000-0000-000000000003','b1000000-0000-0000-0000-000000000001','hospitality',    'active',       'barbados',       12400000,'USD','186000','USD','2024-02-01','2025-01-31','2025-02-01', 61,'Zone 3 – High',    'Zone AE – Base Flood',   79, 1998,'Coral Bay Resort, Mullins Bay, St. Peter, Barbados',       'Beachfront. Cat deductible 7.5%. Post-Matthew upgrade.',7.5,'r1000000-0000-0000-0000-000000000001'),
-  ('p1000000-0000-0000-0000-000000000004','AAG-2024-010004','c1000000-0000-0000-0000-000000000004','b1000000-0000-0000-0000-000000000007','construction',   'active',       'barbados',       5600000, 'USD','84000','USD','2024-05-01','2025-04-30','2025-05-01', 68,'Zone 2 – Moderate','Zone X – Minimal Flood', 65, 2024,'Wildey Industrial Park Site B, St. Michael, Barbados',    'Active construction site. Monthly value declarations.',8.0,'r1000000-0000-0000-0000-000000000001'),
-  ('p1000000-0000-0000-0000-000000000005','AAG-2024-010005','c1000000-0000-0000-0000-000000000022','b1000000-0000-0000-0000-000000000001','hospitality',    'active',       'barbados',       9800000, 'USD','147000','USD','2024-01-01','2024-12-31','2025-01-01', 54,'Zone 3 – High',    'Zone AE – Base Flood',   81, 2006,'Blue Horizon Hotel, Paynes Bay, St. James, Barbados',      'Beachfront resort. Storm surge exposure noted.',7.0,'r1000000-0000-0000-0000-000000000001'),
+  ('11000000-0000-0000-0000-000000000001','AAG-2024-010001','c1000000-0000-0000-0000-000000000001','b1000000-0000-0000-0000-000000000001','residential',    'active',       'barbados',       4200000, 'USD','42000','USD','2024-01-15','2025-01-14','2025-01-15', 38,'Zone 2 – Moderate','Zone X – Minimal Flood', 88, 2008,'Sandy Lane Estate, Lot 14, St. James, Barbados',          'VIP. Reinforced concrete. Pool house included.',5.0, '21000000-0000-0000-0000-000000000001'),
+  ('11000000-0000-0000-0000-000000000002','AAG-2024-010002','c1000000-0000-0000-0000-000000000002','b1000000-0000-0000-0000-000000000001','commercial',     'active',       'barbados',       8700000, 'USD','104400','USD','2024-03-01','2025-02-28','2025-03-01', 52,'Zone 2 – Moderate','Zone X – Minimal Flood', 76, 2012,'Warrens Business Park Units 1-3, St. Michael, Barbados',  '3 commercial units. Warrens industrial corridor.',5.0, '21000000-0000-0000-0000-000000000001'),
+  ('11000000-0000-0000-0000-000000000003','AAG-2024-010003','c1000000-0000-0000-0000-000000000003','b1000000-0000-0000-0000-000000000001','hospitality',    'active',       'barbados',       12400000,'USD','186000','USD','2024-02-01','2025-01-31','2025-02-01', 61,'Zone 3 – High',    'Zone AE – Base Flood',   79, 1998,'Coral Bay Resort, Mullins Bay, St. Peter, Barbados',       'Beachfront. Cat deductible 7.5%. Post-Matthew upgrade.',7.5,'21000000-0000-0000-0000-000000000001'),
+  ('11000000-0000-0000-0000-000000000004','AAG-2024-010004','c1000000-0000-0000-0000-000000000004','b1000000-0000-0000-0000-000000000007','construction',   'active',       'barbados',       5600000, 'USD','84000','USD','2024-05-01','2025-04-30','2025-05-01', 68,'Zone 2 – Moderate','Zone X – Minimal Flood', 65, 2024,'Wildey Industrial Park Site B, St. Michael, Barbados',    'Active construction site. Monthly value declarations.',8.0,'21000000-0000-0000-0000-000000000001'),
+  ('11000000-0000-0000-0000-000000000005','AAG-2024-010005','c1000000-0000-0000-0000-000000000022','b1000000-0000-0000-0000-000000000001','hospitality',    'active',       'barbados',       9800000, 'USD','147000','USD','2024-01-01','2024-12-31','2025-01-01', 54,'Zone 3 – High',    'Zone AE – Base Flood',   81, 2006,'Blue Horizon Hotel, Paynes Bay, St. James, Barbados',      'Beachfront resort. Storm surge exposure noted.',7.0,'21000000-0000-0000-0000-000000000001'),
   -- Jamaica policies
-  ('p1000000-0000-0000-0000-000000000006','AAG-2023-020001','c1000000-0000-0000-0000-000000000005','b1000000-0000-0000-0000-000000000002','residential',    'active',       'jamaica',        3800000, 'USD','41800','USD','2023-06-01','2024-05-31','2024-06-01', 44,'Zone 2 – Moderate','Zone X – Minimal Flood', 72, 2015,'Cherry Gardens, Plot 22, Kingston 8, Jamaica',            'Fraud flag on prior claim. Under enhanced monitoring.',5.0,'r1000000-0000-0000-0000-000000000006'),
-  ('p1000000-0000-0000-0000-000000000007','AAG-2024-020002','c1000000-0000-0000-0000-000000000006','b1000000-0000-0000-0000-000000000002','residential',    'active',       'jamaica',        2900000, 'USD','31900','USD','2024-04-01','2025-03-31','2025-04-01', 41,'Zone 2 – Moderate','Zone X – Minimal Flood', 84, 2019,'Norbrook Heights, Kingston, Jamaica',                      'VIP. Modern construction. Low risk profile.',5.0,'r1000000-0000-0000-0000-000000000006'),
-  ('p1000000-0000-0000-0000-000000000008','AAG-2024-020003','c1000000-0000-0000-0000-000000000007','b1000000-0000-0000-0000-000000000002','real_estate',    'active',       'jamaica',        14200000,'USD','184600','USD','2024-01-01','2024-12-31','2025-01-01', 57,'Zone 3 – High',    'Zone A – 100-Year Floodplain',62,2021,'Rose Hall Development Zone, St. James, Jamaica',          'Active phase 2 development. 220 residential units.',6.0,'r1000000-0000-0000-0000-000000000006'),
-  ('p1000000-0000-0000-0000-000000000009','AAG-2024-020004','c1000000-0000-0000-0000-000000000008','b1000000-0000-0000-0000-000000000002','construction',   'active',       'jamaica',        6800000, 'USD','102000','USD','2024-02-15','2025-02-14','2025-02-15', 74,'Zone 4 – Very High','Zone A – 100-Year Floodplain',54,2024,'Spanish Town Road, Industrial Zone, Kingston, Jamaica',    'High risk. Zone 4 wind. Structural issues flagged.',8.0,'r1000000-0000-0000-0000-000000000006'),
+  ('11000000-0000-0000-0000-000000000006','AAG-2023-020001','c1000000-0000-0000-0000-000000000005','b1000000-0000-0000-0000-000000000002','residential',    'active',       'jamaica',        3800000, 'USD','41800','USD','2023-06-01','2024-05-31','2024-06-01', 44,'Zone 2 – Moderate','Zone X – Minimal Flood', 72, 2015,'Cherry Gardens, Plot 22, Kingston 8, Jamaica',            'Fraud flag on prior claim. Under enhanced monitoring.',5.0,'21000000-0000-0000-0000-000000000006'),
+  ('11000000-0000-0000-0000-000000000007','AAG-2024-020002','c1000000-0000-0000-0000-000000000006','b1000000-0000-0000-0000-000000000002','residential',    'active',       'jamaica',        2900000, 'USD','31900','USD','2024-04-01','2025-03-31','2025-04-01', 41,'Zone 2 – Moderate','Zone X – Minimal Flood', 84, 2019,'Norbrook Heights, Kingston, Jamaica',                      'VIP. Modern construction. Low risk profile.',5.0,'21000000-0000-0000-0000-000000000006'),
+  ('11000000-0000-0000-0000-000000000008','AAG-2024-020003','c1000000-0000-0000-0000-000000000007','b1000000-0000-0000-0000-000000000002','real_estate',    'active',       'jamaica',        14200000,'USD','184600','USD','2024-01-01','2024-12-31','2025-01-01', 57,'Zone 3 – High',    'Zone A – 100-Year Floodplain',62,2021,'Rose Hall Development Zone, St. James, Jamaica',          'Active phase 2 development. 220 residential units.',6.0,'21000000-0000-0000-0000-000000000006'),
+  ('11000000-0000-0000-0000-000000000009','AAG-2024-020004','c1000000-0000-0000-0000-000000000008','b1000000-0000-0000-0000-000000000002','construction',   'active',       'jamaica',        6800000, 'USD','102000','USD','2024-02-15','2025-02-14','2025-02-15', 74,'Zone 4 – Very High','Zone A – 100-Year Floodplain',54,2024,'Spanish Town Road, Industrial Zone, Kingston, Jamaica',    'High risk. Zone 4 wind. Structural issues flagged.',8.0,'21000000-0000-0000-0000-000000000006'),
   -- Cayman policies
-  ('p1000000-0000-0000-0000-000000000010','AAG-2024-030001','c1000000-0000-0000-0000-000000000009','b1000000-0000-0000-0000-000000000003','residential',    'active',       'cayman_islands', 6100000, 'USD','79300','USD','2024-01-01','2024-12-31','2025-01-01', 35,'Zone 2 – Moderate','Zone AE – Base Flood',    91, 2020,'Seven Mile Beach Villa, West Bay, Grand Cayman',          'VIP. Post-Ivan 2004 rebuild. Best structural rating.',5.0,'r1000000-0000-0000-0000-000000000003'),
-  ('p1000000-0000-0000-0000-000000000011','AAG-2024-030002','c1000000-0000-0000-0000-000000000010','b1000000-0000-0000-0000-000000000003','hospitality',    'active',       'cayman_islands', 18500000,'USD','277500','USD','2024-01-01','2024-12-31','2025-01-01', 66,'Zone 4 – Very High','Zone AE – Base Flood',    78, 2014,'Rum Point Club, North Side, Grand Cayman',                'High value resort. Faces North Sound. Cat 5 zone.',7.5,'r1000000-0000-0000-0000-000000000003'),
-  ('p1000000-0000-0000-0000-000000000012','AAG-2024-030003','c1000000-0000-0000-0000-000000000011','b1000000-0000-0000-0000-000000000006','yacht_marine',   'active',       'cayman_islands', 3400000, 'USD','51000','USD','2024-03-01','2025-02-28','2025-03-01', 42,'Zone 2 – Moderate','Zone X – Minimal Flood',  NULL,2021,'Cayman Yacht Club Marina, George Town, Grand Cayman',     '78ft Sunseeker Predator + 42ft tender. Full Caribbean nav.',5.0,'r1000000-0000-0000-0000-000000000004'),
-  ('p1000000-0000-0000-0000-000000000013','AAG-2024-030004','c1000000-0000-0000-0000-000000000021','b1000000-0000-0000-0000-000000000006','yacht_marine',   'active',       'cayman_islands', 5600000, 'USD','84000','USD','2024-02-01','2025-01-31','2025-02-01', 39,'Zone 2 – Moderate','Zone X – Minimal Flood',  NULL,2022,'North Sound, Grand Cayman',                               'VIP. 95ft Ferretti. Full Caribbean nav area.',5.0,'r1000000-0000-0000-0000-000000000004'),
-  ('p1000000-0000-0000-0000-000000000014','AAG-2024-030005','c1000000-0000-0000-0000-000000000012','b1000000-0000-0000-0000-000000000003','real_estate',    'active',       'cayman_islands', 22800000,'USD','319200','USD','2024-01-01','2024-12-31','2025-01-01', 49,'Zone 3 – High',    'Zone AE – Base Flood',    85, 2022,'Camana Bay Phase 4, Grand Cayman',                        'Premium mixed-use development. Excellent compliance.',6.0,'r1000000-0000-0000-0000-000000000003'),
-  ('p1000000-0000-0000-0000-000000000015','AAG-2024-030006','c1000000-0000-0000-0000-000000000023','b1000000-0000-0000-0000-000000000003','commercial',     'active',       'cayman_islands', 11200000,'USD','145600','USD','2024-01-01','2024-12-31','2025-01-01', 60,'Zone 3 – High',    'Zone AE – Base Flood',    74, 2008,'George Town Harbour Warehouse Complex, Grand Cayman',     'Port infrastructure. Storm surge risk.',6.0,'r1000000-0000-0000-0000-000000000003'),
+  ('11000000-0000-0000-0000-000000000010','AAG-2024-030001','c1000000-0000-0000-0000-000000000009','b1000000-0000-0000-0000-000000000003','residential',    'active',       'cayman_islands', 6100000, 'USD','79300','USD','2024-01-01','2024-12-31','2025-01-01', 35,'Zone 2 – Moderate','Zone AE – Base Flood',    91, 2020,'Seven Mile Beach Villa, West Bay, Grand Cayman',          'VIP. Post-Ivan 2004 rebuild. Best structural rating.',5.0,'21000000-0000-0000-0000-000000000003'),
+  ('11000000-0000-0000-0000-000000000011','AAG-2024-030002','c1000000-0000-0000-0000-000000000010','b1000000-0000-0000-0000-000000000003','hospitality',    'active',       'cayman_islands', 18500000,'USD','277500','USD','2024-01-01','2024-12-31','2025-01-01', 66,'Zone 4 – Very High','Zone AE – Base Flood',    78, 2014,'Rum Point Club, North Side, Grand Cayman',                'High value resort. Faces North Sound. Cat 5 zone.',7.5,'21000000-0000-0000-0000-000000000003'),
+  ('11000000-0000-0000-0000-000000000012','AAG-2024-030003','c1000000-0000-0000-0000-000000000011','b1000000-0000-0000-0000-000000000006','yacht_marine',   'active',       'cayman_islands', 3400000, 'USD','51000','USD','2024-03-01','2025-02-28','2025-03-01', 42,'Zone 2 – Moderate','Zone X – Minimal Flood',  NULL,2021,'Cayman Yacht Club Marina, George Town, Grand Cayman',     '78ft Sunseeker Predator + 42ft tender. Full Caribbean nav.',5.0,'21000000-0000-0000-0000-000000000004'),
+  ('11000000-0000-0000-0000-000000000013','AAG-2024-030004','c1000000-0000-0000-0000-000000000021','b1000000-0000-0000-0000-000000000006','yacht_marine',   'active',       'cayman_islands', 5600000, 'USD','84000','USD','2024-02-01','2025-01-31','2025-02-01', 39,'Zone 2 – Moderate','Zone X – Minimal Flood',  NULL,2022,'North Sound, Grand Cayman',                               'VIP. 95ft Ferretti. Full Caribbean nav area.',5.0,'21000000-0000-0000-0000-000000000004'),
+  ('11000000-0000-0000-0000-000000000014','AAG-2024-030005','c1000000-0000-0000-0000-000000000012','b1000000-0000-0000-0000-000000000003','real_estate',    'active',       'cayman_islands', 22800000,'USD','319200','USD','2024-01-01','2024-12-31','2025-01-01', 49,'Zone 3 – High',    'Zone AE – Base Flood',    85, 2022,'Camana Bay Phase 4, Grand Cayman',                        'Premium mixed-use development. Excellent compliance.',6.0,'21000000-0000-0000-0000-000000000003'),
+  ('11000000-0000-0000-0000-000000000015','AAG-2024-030006','c1000000-0000-0000-0000-000000000023','b1000000-0000-0000-0000-000000000003','commercial',     'active',       'cayman_islands', 11200000,'USD','145600','USD','2024-01-01','2024-12-31','2025-01-01', 60,'Zone 3 – High',    'Zone AE – Base Flood',    74, 2008,'George Town Harbour Warehouse Complex, Grand Cayman',     'Port infrastructure. Storm surge risk.',6.0,'21000000-0000-0000-0000-000000000003'),
   -- Trinidad & Tobago
-  ('p1000000-0000-0000-0000-000000000016','AAG-2024-040001','c1000000-0000-0000-0000-000000000013','b1000000-0000-0000-0000-000000000004','commercial',     'active',       'trinidad_tobago',9200000, 'USD','96600','USD','2024-01-01','2024-12-31','2025-01-01', 55,'Zone 2 – Moderate','Zone X – Minimal Flood',  70, 2010,'Independence Square Office Tower, Port of Spain, T&T',    'CBD commercial. 12 floors. Good compliance rating.',5.0,'r1000000-0000-0000-0000-000000000005'),
-  ('p1000000-0000-0000-0000-000000000017','AAG-2024-040002','c1000000-0000-0000-0000-000000000014','b1000000-0000-0000-0000-000000000004','construction',   'active',       'trinidad_tobago',7400000, 'USD','111000','USD','2024-03-15','2025-03-14','2025-03-15', 79,'Zone 3 – High',    'Zone A – 100-Year Floodplain',45,2024,'Chaguaramas Industrial Estate Site C, T&T',               'Energy sector. Highest risk in portfolio. Zone 3.',10.0,'r1000000-0000-0000-0000-000000000005'),
-  ('p1000000-0000-0000-0000-000000000018','AAG-2024-040003','c1000000-0000-0000-0000-000000000015','b1000000-0000-0000-0000-000000000004','residential',    'active',       'trinidad_tobago',2100000, 'USD','21000','USD','2024-06-01','2025-05-31','2025-06-01', 40,'Zone 1 – Low',     'Zone X – Minimal Flood',  82, 2016,'Maraval Valley, Port of Spain, T&T',                      'Low risk residential. Hill location, minimal flood.',5.0,NULL),
+  ('11000000-0000-0000-0000-000000000016','AAG-2024-040001','c1000000-0000-0000-0000-000000000013','b1000000-0000-0000-0000-000000000004','commercial',     'active',       'trinidad_tobago',9200000, 'USD','96600','USD','2024-01-01','2024-12-31','2025-01-01', 55,'Zone 2 – Moderate','Zone X – Minimal Flood',  70, 2010,'Independence Square Office Tower, Port of Spain, T&T',    'CBD commercial. 12 floors. Good compliance rating.',5.0,'21000000-0000-0000-0000-000000000005'),
+  ('11000000-0000-0000-0000-000000000017','AAG-2024-040002','c1000000-0000-0000-0000-000000000014','b1000000-0000-0000-0000-000000000004','construction',   'active',       'trinidad_tobago',7400000, 'USD','111000','USD','2024-03-15','2025-03-14','2025-03-15', 79,'Zone 3 – High',    'Zone A – 100-Year Floodplain',45,2024,'Chaguaramas Industrial Estate Site C, T&T',               'Energy sector. Highest risk in portfolio. Zone 3.',10.0,'21000000-0000-0000-0000-000000000005'),
+  ('11000000-0000-0000-0000-000000000018','AAG-2024-040003','c1000000-0000-0000-0000-000000000015','b1000000-0000-0000-0000-000000000004','residential',    'active',       'trinidad_tobago',2100000, 'USD','21000','USD','2024-06-01','2025-05-31','2025-06-01', 40,'Zone 1 – Low',     'Zone X – Minimal Flood',  82, 2016,'Maraval Valley, Port of Spain, T&T',                      'Low risk residential. Hill location, minimal flood.',5.0,NULL),
   -- Bahamas
-  ('p1000000-0000-0000-0000-000000000019','AAG-2024-050001','c1000000-0000-0000-0000-000000000016','b1000000-0000-0000-0000-000000000005','hospitality',    'active',       'bahamas',        24600000,'USD','393600','USD','2024-01-01','2024-12-31','2025-01-01', 72,'Zone 5 – Extreme', 'Zone AE – Base Flood',    77, 2002,'Cable Beach Resort Complex, Nassau, Bahamas',             'VIP flagship. Cat 5 direct hit exposure. Post-Dorian rebuild.', 10.0,'r1000000-0000-0000-0000-000000000003'),
-  ('p1000000-0000-0000-0000-000000000020','AAG-2024-050002','c1000000-0000-0000-0000-000000000017','b1000000-0000-0000-0000-000000000005','residential',    'active',       'bahamas',        5800000, 'USD','75400','USD','2024-01-01','2024-12-31','2025-01-01', 36,'Zone 2 – Moderate','Zone X – Minimal Flood',  88, 2018,'Lyford Cay Estate, Nassau, Bahamas',                      'VIP. Gated community. Excellent structural compliance.',5.0,'r1000000-0000-0000-0000-000000000003'),
-  ('p1000000-0000-0000-0000-000000000021','AAG-2024-050003','c1000000-0000-0000-0000-000000000018','b1000000-0000-0000-0000-000000000005','real_estate',    'active',       'bahamas',        31200000,'USD','468000','USD','2024-01-01','2024-12-31','2025-01-01', 63,'Zone 4 – Very High','Zone AE – Base Flood',    69, 2023,'Paradise Island Phase 2, Nassau, Bahamas',               'Largest single policy. Phase 2 of Paradise Island dev.',8.0,'r1000000-0000-0000-0000-000000000003'),
-  ('p1000000-0000-0000-0000-000000000022','AAG-2024-050004','c1000000-0000-0000-0000-000000000019','b1000000-0000-0000-0000-000000000005','yacht_marine',   'active',       'bahamas',        4200000, 'USD','63000','USD','2024-02-01','2025-01-31','2025-02-01', 48,'Zone 3 – High',    'Zone X – Minimal Flood',  NULL,2019,'Exuma Harbour, Great Exuma, Bahamas',                     'Charter fleet. 3 vessels post-Dorian. 1 total loss settled.',5.0,'r1000000-0000-0000-0000-000000000004'),
-  ('p1000000-0000-0000-0000-000000000023','AAG-2024-050005','c1000000-0000-0000-0000-000000000020','b1000000-0000-0000-0000-000000000005','commercial',     'active',       'bahamas',        6400000, 'USD','83200','USD','2024-01-01','2024-12-31','2025-01-01', 58,'Zone 3 – High',    'Zone AE – Base Flood',    73, 2005,'Bay Street Commercial Block, Nassau, Bahamas',            'Nassau CBD. High pedestrian exposure. Cat deductible 8%.',8.0,'r1000000-0000-0000-0000-000000000003'),
-  ('p1000000-0000-0000-0000-000000000024','AAG-2024-050006','c1000000-0000-0000-0000-000000000024','b1000000-0000-0000-0000-000000000005','construction',   'active',       'bahamas',        8900000, 'USD','133500','USD','2024-04-01','2025-03-31','2025-04-01', 71,'Zone 4 – Very High','Zone A – 100-Year Floodplain',51,2024,'Freeport Development Zone, Grand Bahama, Bahamas',       'Post-Dorian rebuild contract. High cat exposure.',10.0,'r1000000-0000-0000-0000-000000000003'),
+  ('11000000-0000-0000-0000-000000000019','AAG-2024-050001','c1000000-0000-0000-0000-000000000016','b1000000-0000-0000-0000-000000000005','hospitality',    'active',       'bahamas',        24600000,'USD','393600','USD','2024-01-01','2024-12-31','2025-01-01', 72,'Zone 5 – Extreme', 'Zone AE – Base Flood',    77, 2002,'Cable Beach Resort Complex, Nassau, Bahamas',             'VIP flagship. Cat 5 direct hit exposure. Post-Dorian rebuild.', 10.0,'21000000-0000-0000-0000-000000000003'),
+  ('11000000-0000-0000-0000-000000000020','AAG-2024-050002','c1000000-0000-0000-0000-000000000017','b1000000-0000-0000-0000-000000000005','residential',    'active',       'bahamas',        5800000, 'USD','75400','USD','2024-01-01','2024-12-31','2025-01-01', 36,'Zone 2 – Moderate','Zone X – Minimal Flood',  88, 2018,'Lyford Cay Estate, Nassau, Bahamas',                      'VIP. Gated community. Excellent structural compliance.',5.0,'21000000-0000-0000-0000-000000000003'),
+  ('11000000-0000-0000-0000-000000000021','AAG-2024-050003','c1000000-0000-0000-0000-000000000018','b1000000-0000-0000-0000-000000000005','real_estate',    'active',       'bahamas',        31200000,'USD','468000','USD','2024-01-01','2024-12-31','2025-01-01', 63,'Zone 4 – Very High','Zone AE – Base Flood',    69, 2023,'Paradise Island Phase 2, Nassau, Bahamas',               'Largest single policy. Phase 2 of Paradise Island dev.',8.0,'21000000-0000-0000-0000-000000000003'),
+  ('11000000-0000-0000-0000-000000000022','AAG-2024-050004','c1000000-0000-0000-0000-000000000019','b1000000-0000-0000-0000-000000000005','yacht_marine',   'active',       'bahamas',        4200000, 'USD','63000','USD','2024-02-01','2025-01-31','2025-02-01', 48,'Zone 3 – High',    'Zone X – Minimal Flood',  NULL,2019,'Exuma Harbour, Great Exuma, Bahamas',                     'Charter fleet. 3 vessels post-Dorian. 1 total loss settled.',5.0,'21000000-0000-0000-0000-000000000004'),
+  ('11000000-0000-0000-0000-000000000023','AAG-2024-050005','c1000000-0000-0000-0000-000000000020','b1000000-0000-0000-0000-000000000005','commercial',     'active',       'bahamas',        6400000, 'USD','83200','USD','2024-01-01','2024-12-31','2025-01-01', 58,'Zone 3 – High',    'Zone AE – Base Flood',    73, 2005,'Bay Street Commercial Block, Nassau, Bahamas',            'Nassau CBD. High pedestrian exposure. Cat deductible 8%.',8.0,'21000000-0000-0000-0000-000000000003'),
+  ('11000000-0000-0000-0000-000000000024','AAG-2024-050006','c1000000-0000-0000-0000-000000000024','b1000000-0000-0000-0000-000000000005','construction',   'active',       'bahamas',        8900000, 'USD','133500','USD','2024-04-01','2025-03-31','2025-04-01', 71,'Zone 4 – Very High','Zone A – 100-Year Floodplain',51,2024,'Freeport Development Zone, Grand Bahama, Bahamas',       'Post-Dorian rebuild contract. High cat exposure.',10.0,'21000000-0000-0000-0000-000000000003'),
   -- Historical / non-active
-  ('p1000000-0000-0000-0000-000000000025','AAG-2022-010001','c1000000-0000-0000-0000-000000000003','b1000000-0000-0000-0000-000000000001','hospitality',    'lapsed',       'barbados',       11000000,'USD','165000','USD','2022-02-01','2023-01-31','2023-02-01', 61,'Zone 3 – High',    'Zone AE – Base Flood',    74, 1998,'Coral Bay Resort, Mullins Bay, St. Peter, Barbados',       'Lapsed 2023. Renewed as AAG-2024-010003.',7.5, NULL),
-  ('p1000000-0000-0000-0000-000000000026','AAG-2021-050001','c1000000-0000-0000-0000-000000000016','b1000000-0000-0000-0000-000000000005','hospitality',    'renewal_due',  'bahamas',        22000000,'USD','352000','USD','2023-12-01','2024-11-30','2024-12-01', 72,'Zone 5 – Extreme', 'Zone AE – Base Flood',    77, 2002,'Cable Beach Resort Complex, Nassau, Bahamas',             'Renewal due. Premium increase 12% due to Beryl losses.',10.0,'r1000000-0000-0000-0000-000000000003'),
-  ('p1000000-0000-0000-0000-000000000027','AAG-2019-050001','c1000000-0000-0000-0000-000000000019','b1000000-0000-0000-0000-000000000005','yacht_marine',   'cancelled',    'bahamas',        1800000, 'USD','27000','USD','2019-01-01','2019-12-31','2020-01-01', 48,'Zone 3 – High',    'Zone X – Minimal Flood',  NULL,2016,'Exuma Harbour, Great Exuma, Bahamas',                     'CANCELLED. Vessel total loss Hurricane Dorian Sep 2019.',5.0,NULL),
-  ('p1000000-0000-0000-0000-000000000028','AAG-2017-030001','c1000000-0000-0000-0000-000000000009','b1000000-0000-0000-0000-000000000003','residential',    'cancelled',    'cayman_islands', 4800000, 'USD','57600','USD','2017-01-01','2017-12-31','2018-01-01', 35,'Zone 2 – Moderate','Zone AE – Base Flood',    87, 2014,'Seven Mile Beach Villa, West Bay, Grand Cayman',          'CANCELLED. Client upgraded property. New policy 2020.',5.0,NULL),
-  ('p1000000-0000-0000-0000-000000000029','AAG-2024-010006','c1000000-0000-0000-0000-000000000001','b1000000-0000-0000-0000-000000000001','residential',    'quoted',       'barbados',       1800000, 'USD','18000','USD','2024-11-01','2025-10-31','2025-11-01', 33,'Zone 1 – Low',     'Zone X – Minimal Flood',  92, 2023,'Pool House, Sandy Lane Estate, St. James, Barbados',     'Additional structure quote. Awaiting client sign-off.',5.0,NULL),
-  ('p1000000-0000-0000-0000-000000000030','AAG-2024-020005','c1000000-0000-0000-0000-000000000007','b1000000-0000-0000-0000-000000000002','real_estate',    'pending',      'jamaica',        8600000, 'USD','111800','USD','2025-01-01','2025-12-31','2026-01-01', 55,'Zone 3 – High',    'Zone A – 100-Year Floodplain',68,2025,'Rose Hall Phase 3, St. James, Jamaica',                   'Pending underwriting sign-off. Phase 3 of Rose Hall.',6.0,NULL)
+  ('11000000-0000-0000-0000-000000000025','AAG-2022-010001','c1000000-0000-0000-0000-000000000003','b1000000-0000-0000-0000-000000000001','hospitality',    'lapsed',       'barbados',       11000000,'USD','165000','USD','2022-02-01','2023-01-31','2023-02-01', 61,'Zone 3 – High',    'Zone AE – Base Flood',    74, 1998,'Coral Bay Resort, Mullins Bay, St. Peter, Barbados',       'Lapsed 2023. Renewed as AAG-2024-010003.',7.5, NULL),
+  ('11000000-0000-0000-0000-000000000026','AAG-2021-050001','c1000000-0000-0000-0000-000000000016','b1000000-0000-0000-0000-000000000005','hospitality',    'renewal_due',  'bahamas',        22000000,'USD','352000','USD','2023-12-01','2024-11-30','2024-12-01', 72,'Zone 5 – Extreme', 'Zone AE – Base Flood',    77, 2002,'Cable Beach Resort Complex, Nassau, Bahamas',             'Renewal due. Premium increase 12% due to Beryl losses.',10.0,'21000000-0000-0000-0000-000000000003'),
+  ('11000000-0000-0000-0000-000000000027','AAG-2019-050001','c1000000-0000-0000-0000-000000000019','b1000000-0000-0000-0000-000000000005','yacht_marine',   'cancelled',    'bahamas',        1800000, 'USD','27000','USD','2019-01-01','2019-12-31','2020-01-01', 48,'Zone 3 – High',    'Zone X – Minimal Flood',  NULL,2016,'Exuma Harbour, Great Exuma, Bahamas',                     'CANCELLED. Vessel total loss Hurricane Dorian Sep 2019.',5.0,NULL),
+  ('11000000-0000-0000-0000-000000000028','AAG-2017-030001','c1000000-0000-0000-0000-000000000009','b1000000-0000-0000-0000-000000000003','residential',    'cancelled',    'cayman_islands', 4800000, 'USD','57600','USD','2017-01-01','2017-12-31','2018-01-01', 35,'Zone 2 – Moderate','Zone AE – Base Flood',    87, 2014,'Seven Mile Beach Villa, West Bay, Grand Cayman',          'CANCELLED. Client upgraded property. New policy 2020.',5.0,NULL),
+  ('11000000-0000-0000-0000-000000000029','AAG-2024-010006','c1000000-0000-0000-0000-000000000001','b1000000-0000-0000-0000-000000000001','residential',    'quoted',       'barbados',       1800000, 'USD','18000','USD','2024-11-01','2025-10-31','2025-11-01', 33,'Zone 1 – Low',     'Zone X – Minimal Flood',  92, 2023,'Pool House, Sandy Lane Estate, St. James, Barbados',     'Additional structure quote. Awaiting client sign-off.',5.0,NULL),
+  ('11000000-0000-0000-0000-000000000030','AAG-2024-020005','c1000000-0000-0000-0000-000000000007','b1000000-0000-0000-0000-000000000002','real_estate',    'pending',      'jamaica',        8600000, 'USD','111800','USD','2025-01-01','2025-12-31','2026-01-01', 55,'Zone 3 – High',    'Zone A – 100-Year Floodplain',68,2025,'Rose Hall Phase 3, St. James, Jamaica',                   'Pending underwriting sign-off. Phase 3 of Rose Hall.',6.0,NULL)
 ON CONFLICT (id) DO NOTHING;
 
 -- ── CLAIMS (18 claims spanning 2016–2024 including major cat events) ─────
@@ -125,28 +125,28 @@ ON CONFLICT (id) DO NOTHING;
 INSERT INTO claims (id, claim_number, policy_id, client_id, adjuster_id, status, coverage_type, catastrophe_event, storm_name, incident_date, fnol_date, reported_loss, assessed_loss, approved_amount, settlement_amount, currency, fx_rate_usd, description, property_address, island, fraud_risk, fraud_flags, adjuster_notes, settlement_date) VALUES
 
   -- Active / open claims (2024)
-  ('cl000000-0000-0000-0000-000000000001','CLM-2024-010001','p1000000-0000-0000-0000-000000000003','c1000000-0000-0000-0000-000000000003','a1000000-0000-0000-0000-000000000001',
+  ('10000000-0000-0000-0000-000000000001','CLM-2024-010001','11000000-0000-0000-0000-000000000003','c1000000-0000-0000-0000-000000000003','a1000000-0000-0000-0000-000000000001',
    'adjuster_assigned','hospitality','hurricane','Hurricane Beryl','2024-07-01','2024-07-02',
    2400000,NULL,NULL,NULL,'USD',1.0,
    'Significant roof damage and flooding to main pool terrace and beachfront bar area. Hurricane Beryl direct impact.',
    'Coral Bay Resort, Mullins Bay, St. Peter, Barbados','barbados','clear',NULL,
    'Structural assessment scheduled. Roof contractor engaged. Timeline 6-8 weeks.', NULL),
 
-  ('cl000000-0000-0000-0000-000000000002','CLM-2024-020001','p1000000-0000-0000-0000-000000000008','c1000000-0000-0000-0000-000000000007','a1000000-0000-0000-0000-000000000003',
+  ('10000000-0000-0000-0000-000000000002','CLM-2024-020001','11000000-0000-0000-0000-000000000008','c1000000-0000-0000-0000-000000000007','a1000000-0000-0000-0000-000000000003',
    'under_review','real_estate','hurricane','Hurricane Beryl','2024-07-02','2024-07-04',
    1850000,NULL,NULL,NULL,'USD',1.0,
    'Partial collapse of Phase 2 construction scaffolding. Wind damage to partially completed structures. Beryl CAT 4 at landfall Jamaica.',
    'Rose Hall Development Zone, St. James, Jamaica','jamaica','clear',NULL,
    'Engineering report commissioned. Contractor liability under review.',NULL),
 
-  ('cl000000-0000-0000-0000-000000000003','CLM-2024-050001','p1000000-0000-0000-0000-000000000019','c1000000-0000-0000-0000-000000000016','a1000000-0000-0000-0000-000000000007',
+  ('10000000-0000-0000-0000-000000000003','CLM-2024-050001','11000000-0000-0000-0000-000000000019','c1000000-0000-0000-0000-000000000016','a1000000-0000-0000-0000-000000000007',
    'inspection_scheduled','hospitality','hurricane','Hurricane Beryl','2024-07-01','2024-07-01',
    4800000,NULL,NULL,NULL,'USD',1.0,
    'Extensive damage to beach facilities, pool deck, and north wing guest rooms. Nassau Sands Resort suffered direct Beryl impact.',
    'Cable Beach Resort Complex, Nassau, Bahamas','bahamas','clear',NULL,
    'Largest Beryl claim in portfolio. Site inspection Day 3. Quantum specialists engaged.',NULL),
 
-  ('cl000000-0000-0000-0000-000000000004','CLM-2024-050002','p1000000-0000-0000-0000-000000000023','c1000000-0000-0000-0000-000000000020','a1000000-0000-0000-0000-000000000007',
+  ('10000000-0000-0000-0000-000000000004','CLM-2024-050002','11000000-0000-0000-0000-000000000023','c1000000-0000-0000-0000-000000000020','a1000000-0000-0000-0000-000000000007',
    'fnol_received','commercial','hurricane','Hurricane Beryl','2024-07-01','2024-07-03',
    580000,NULL,NULL,NULL,'USD',1.0,
    'Bay Street shopfronts damaged. Storm surge inundated ground floor. 4 tenants affected.',
@@ -154,7 +154,7 @@ INSERT INTO claims (id, claim_number, policy_id, client_id, adjuster_id, status,
    ARRAY['3rd claim filed in 6 years','Previous claim same perils 2019'],
    'Surveillance footage requested from Bay Street cameras.',NULL),
 
-  ('cl000000-0000-0000-0000-000000000005','CLM-2024-030001','p1000000-0000-0000-0000-000000000011','c1000000-0000-0000-0000-000000000010','a1000000-0000-0000-0000-000000000005',
+  ('10000000-0000-0000-0000-000000000005','CLM-2024-030001','11000000-0000-0000-0000-000000000011','c1000000-0000-0000-0000-000000000010','a1000000-0000-0000-0000-000000000005',
    'assessment_complete','hospitality',NULL,NULL,'2024-03-15','2024-03-16',
    320000,290000,NULL,NULL,'USD',1.0,
    'Fire damage to kitchen and adjacent dining area. Electrical fault. Non-cat event.',
@@ -162,7 +162,7 @@ INSERT INTO claims (id, claim_number, policy_id, client_id, adjuster_id, status,
    'Assessment complete. Fire marshal report received. Electrical fault confirmed. Recommending approval.',NULL),
 
   -- Under fraud investigation
-  ('cl000000-0000-0000-0000-000000000006','CLM-2024-020002','p1000000-0000-0000-0000-000000000006','c1000000-0000-0000-0000-000000000005','a1000000-0000-0000-0000-000000000003',
+  ('10000000-0000-0000-0000-000000000006','CLM-2024-020002','11000000-0000-0000-0000-000000000006','c1000000-0000-0000-0000-000000000005','a1000000-0000-0000-0000-000000000003',
    'fraud_investigation','residential',NULL,NULL,'2024-05-22','2024-05-23',
    580000,NULL,NULL,NULL,'USD',1.0,
    'Reported water damage and structural cracking. Third claim by this client in 14 months. Loss inconsistency with property age.',
@@ -171,21 +171,21 @@ INSERT INTO claims (id, claim_number, policy_id, client_id, adjuster_id, status,
    'SIU referral initiated 2024-06-01. Contractor records subpoenaed.',NULL),
 
   -- Settled claims
-  ('cl000000-0000-0000-0000-000000000007','CLM-2023-010001','p1000000-0000-0000-0000-000000000025','c1000000-0000-0000-0000-000000000003','a1000000-0000-0000-0000-000000000002',
+  ('10000000-0000-0000-0000-000000000007','CLM-2023-010001','11000000-0000-0000-0000-000000000025','c1000000-0000-0000-0000-000000000003','a1000000-0000-0000-0000-000000000002',
    'settled','hospitality',NULL,NULL,'2023-09-18','2023-09-19',
    285000,260000,260000,255000,'USD',1.0,
    'Tropical storm rain intrusion through roof membrane. Non-cat seasonal damage.',
    'Coral Bay Resort, Mullins Bay, St. Peter, Barbados','barbados','clear',NULL,
    'Settled within 45 days. Contractor approved. Client satisfied.','2023-11-15'),
 
-  ('cl000000-0000-0000-0000-000000000008','CLM-2022-020001','p1000000-0000-0000-0000-000000000009','c1000000-0000-0000-0000-000000000008','a1000000-0000-0000-0000-000000000003',
+  ('10000000-0000-0000-0000-000000000008','CLM-2022-020001','11000000-0000-0000-0000-000000000009','c1000000-0000-0000-0000-000000000008','a1000000-0000-0000-0000-000000000003',
    'settled','construction',NULL,NULL,'2022-04-10','2022-04-11',
    145000,130000,130000,128000,'USD',1.0,
    'Crane collapse during site operations. Equipment damage. No injuries.',
    'Spanish Town Road, Industrial Zone, Kingston, Jamaica','jamaica','clear',NULL,
    'Equipment liability assessed. Crane rental company partial liability established.','2022-07-20'),
 
-  ('cl000000-0000-0000-0000-000000000009','CLM-2021-030001','p1000000-0000-0000-0000-000000000012','c1000000-0000-0000-0000-000000000011','a1000000-0000-0000-0000-000000000008',
+  ('10000000-0000-0000-0000-000000000009','CLM-2021-030001','11000000-0000-0000-0000-000000000012','c1000000-0000-0000-0000-000000000011','a1000000-0000-0000-0000-000000000008',
    'settled','yacht_marine',NULL,NULL,'2021-08-05','2021-08-06',
    420000,380000,380000,375000,'USD',1.0,
    'Sunseeker tender sustained hull damage after mooring line failure during tropical swell. Dry dock repair.',
@@ -193,14 +193,14 @@ INSERT INTO claims (id, claim_number, policy_id, client_id, adjuster_id, status,
    'Surveyor report confirmed mooring failure. Settled 42 days from FNOL.','2021-10-01'),
 
   -- Historical Hurricane Dorian 2019 claims (Bahamas)
-  ('cl000000-0000-0000-0000-000000000010','CLM-2019-050001','p1000000-0000-0000-0000-000000000027','c1000000-0000-0000-0000-000000000019','a1000000-0000-0000-0000-000000000007',
+  ('10000000-0000-0000-0000-000000000010','CLM-2019-050001','11000000-0000-0000-0000-000000000027','c1000000-0000-0000-0000-000000000019','a1000000-0000-0000-0000-000000000007',
    'settled','yacht_marine','hurricane','Hurricane Dorian','2019-09-01','2019-09-03',
    1800000,1800000,1800000,1800000,'USD',1.0,
    'Total loss. 54ft sailing yacht sank at mooring during Dorian storm surge. Grand Bahama.',
    'Exuma Harbour, Great Exuma, Bahamas','bahamas','clear',NULL,
    'Total loss declared. Salvage rights assigned. Reinsurance recovery triggered.','2019-12-20'),
 
-  ('cl000000-0000-0000-0000-000000000011','CLM-2019-050002','p1000000-0000-0000-0000-000000000026','c1000000-0000-0000-0000-000000000016','a1000000-0000-0000-0000-000000000007',
+  ('10000000-0000-0000-0000-000000000011','CLM-2019-050002','11000000-0000-0000-0000-000000000026','c1000000-0000-0000-0000-000000000016','a1000000-0000-0000-0000-000000000007',
    'settled','hospitality','hurricane','Hurricane Dorian','2019-09-01','2019-09-02',
    8200000,7600000,7600000,7450000,'USD',1.0,
    'Catastrophic damage to resort. Roof structure partially collapsed. Guest wing uninhabitable. 8-month restoration.',
@@ -208,14 +208,14 @@ INSERT INTO claims (id, claim_number, policy_id, client_id, adjuster_id, status,
    'Largest single claim in company history at time. Reinsurance treaty triggered. Hannover Re recovery $5.1M.','2020-06-15'),
 
   -- Historical Hurricane Irma/Maria 2017 claims
-  ('cl000000-0000-0000-0000-000000000012','CLM-2017-030001','p1000000-0000-0000-0000-000000000028','c1000000-0000-0000-0000-000000000009','a1000000-0000-0000-0000-000000000005',
+  ('10000000-0000-0000-0000-000000000012','CLM-2017-030001','11000000-0000-0000-0000-000000000028','c1000000-0000-0000-0000-000000000009','a1000000-0000-0000-0000-000000000005',
    'settled','residential','hurricane','Hurricane Irma','2017-09-08','2017-09-10',
    980000,870000,870000,860000,'USD',1.0,
    'Significant wind damage to roof and pool house. Irma passed directly over Cayman. Category 5 at closest approach.',
    'Seven Mile Beach Villa, West Bay, Grand Cayman','cayman_islands','clear',NULL,
    'Settled within 90 days. Engineering assessment confirmed wind-only loss. No storm surge.','2017-12-20'),
 
-  ('cl000000-0000-0000-0000-000000000013','CLM-2017-010001','p1000000-0000-0000-0000-000000000025','c1000000-0000-0000-0000-000000000003','a1000000-0000-0000-0000-000000000001',
+  ('10000000-0000-0000-0000-000000000013','CLM-2017-010001','11000000-0000-0000-0000-000000000025','c1000000-0000-0000-0000-000000000003','a1000000-0000-0000-0000-000000000001',
    'settled','hospitality','hurricane','Hurricane Irma','2017-09-07','2017-09-08',
    2100000,1950000,1950000,1920000,'USD',1.0,
    'Beachfront damage. Pool deck destroyed. Beach bar roof failure. Coral Bay Resort Irma impact.',
@@ -223,7 +223,7 @@ INSERT INTO claims (id, claim_number, policy_id, client_id, adjuster_id, status,
    'Reinsurance recovery $1.4M from Munich Re 2017 treaty. Rebuilding complete by Feb 2018.','2018-03-10'),
 
   -- Hurricane Matthew 2016
-  ('cl000000-0000-0000-0000-000000000014','CLM-2016-010001','p1000000-0000-0000-0000-000000000025','c1000000-0000-0000-0000-000000000003','a1000000-0000-0000-0000-000000000001',
+  ('10000000-0000-0000-0000-000000000014','CLM-2016-010001','11000000-0000-0000-0000-000000000025','c1000000-0000-0000-0000-000000000003','a1000000-0000-0000-0000-000000000001',
    'settled','hospitality','hurricane','Hurricane Matthew','2016-10-01','2016-10-02',
    1400000,1280000,1280000,1250000,'USD',1.0,
    'Hurricane Matthew. Roof damage, flooding of ground floor. First major claim for Coral Bay Resort.',
@@ -231,7 +231,7 @@ INSERT INTO claims (id, claim_number, policy_id, client_id, adjuster_id, status,
    'First major cat event for this client. Settled in 75 days.','2016-12-20'),
 
   -- Rejected and partial approval examples
-  ('cl000000-0000-0000-0000-000000000015','CLM-2023-050001','p1000000-0000-0000-0000-000000000021','c1000000-0000-0000-0000-000000000018','a1000000-0000-0000-0000-000000000007',
+  ('10000000-0000-0000-0000-000000000015','CLM-2023-050001','11000000-0000-0000-0000-000000000021','c1000000-0000-0000-0000-000000000018','a1000000-0000-0000-0000-000000000007',
    'rejected','real_estate',NULL,NULL,'2023-06-15','2023-06-16',
    380000,210000,0,0,'USD',1.0,
    'Claimed structural cracking due to storm. Investigation showed pre-existing foundation issues not covered under policy.',
@@ -239,7 +239,7 @@ INSERT INTO claims (id, claim_number, policy_id, client_id, adjuster_id, status,
    ARRAY['Loss pre-dated storm by estimated 6-18 months','Contractor not on approved panel','Claim filed 45 days post-storm'],
    'Rejected per policy exclusion: pre-existing damage. Client notified.','2023-10-01'),
 
-  ('cl000000-0000-0000-0000-000000000016','CLM-2022-050001','p1000000-0000-0000-0000-000000000020','c1000000-0000-0000-0000-000000000017','a1000000-0000-0000-0000-000000000007',
+  ('10000000-0000-0000-0000-000000000016','CLM-2022-050001','11000000-0000-0000-0000-000000000020','c1000000-0000-0000-0000-000000000017','a1000000-0000-0000-0000-000000000007',
    'partial_approved','residential',NULL,NULL,'2022-08-20','2022-08-21',
    290000,180000,180000,NULL,'USD',1.0,
    'Reported wind damage to guest house and landscaping. Assessment confirmed partial wind damage only.',
@@ -248,7 +248,7 @@ INSERT INTO claims (id, claim_number, policy_id, client_id, adjuster_id, status,
    'Partial approval $180K. Client queried reduction. Negotiation ongoing.', NULL),
 
   -- T&T construction claim
-  ('cl000000-0000-0000-0000-000000000017','CLM-2023-040001','p1000000-0000-0000-0000-000000000017','c1000000-0000-0000-0000-000000000014','a1000000-0000-0000-0000-000000000006',
+  ('10000000-0000-0000-0000-000000000017','CLM-2023-040001','11000000-0000-0000-0000-000000000017','c1000000-0000-0000-0000-000000000014','a1000000-0000-0000-0000-000000000006',
    'settled','construction',NULL,NULL,'2023-11-12','2023-11-13',
    620000,580000,580000,570000,'TTD',0.1473,
    'Industrial pipeline section failure during pressure testing. Equipment damage and site cleanup.',
@@ -256,7 +256,7 @@ INSERT INTO claims (id, claim_number, policy_id, client_id, adjuster_id, status,
    'Settled in TTD. FX converted at 6.79 rate. Engineering liability confirmed.','2024-02-28'),
 
   -- Approved pending settlement
-  ('cl000000-0000-0000-0000-000000000018','CLM-2024-040001','p1000000-0000-0000-0000-000000000016','c1000000-0000-0000-0000-000000000013','a1000000-0000-0000-0000-000000000006',
+  ('10000000-0000-0000-0000-000000000018','CLM-2024-040001','11000000-0000-0000-0000-000000000016','c1000000-0000-0000-0000-000000000013','a1000000-0000-0000-0000-000000000006',
    'approved','commercial',NULL,NULL,'2024-02-08','2024-02-09',
    145000,128000,128000,NULL,'USD',1.0,
    'Burst pipe flooding of 3rd floor office suites. Water damage to tenant improvements.',
@@ -269,19 +269,19 @@ ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO fraud_alerts (id, claim_id, client_id, alert_type, risk_score, flags, status, assigned_to, resolution_notes) VALUES
   ('f1000000-0000-0000-0000-000000000001',
-   'cl000000-0000-0000-0000-000000000006',
+   '10000000-0000-0000-0000-000000000006',
    'c1000000-0000-0000-0000-000000000005',
    'Multiple Claims Pattern',82,
    ARRAY['3rd claim in 14 months','Identical contractor all 3 claims','Loss quantum 2.8× market comparables','No police report filed','Refused independent site access Day 1'],
    'escalated','Senior Adjuster — Marcus Alleyne','SIU engaged. Contractor financial relationship under review.'),
   ('f1000000-0000-0000-0000-000000000002',
-   'cl000000-0000-0000-0000-000000000004',
+   '10000000-0000-0000-0000-000000000004',
    'c1000000-0000-0000-0000-000000000020',
    'Repeat Cat Event Claim',58,
    ARRAY['3rd claim in 6 years for same peril','Previous settlement $420K (2019)','Loss inconsistency with neighbouring properties'],
    'under_review','Adjuster — James McIntosh',NULL),
   ('f1000000-0000-0000-0000-000000000003',
-   'cl000000-0000-0000-0000-000000000015',
+   '10000000-0000-0000-0000-000000000015',
    'c1000000-0000-0000-0000-000000000018',
    'Pre-Existing Damage',71,
    ARRAY['Loss pre-dated storm by 6-18 months','Contractor not on approved panel','Claim filed 45 days post-storm','Foundation damage inconsistent with wind event'],
@@ -290,22 +290,22 @@ ON CONFLICT (id) DO NOTHING;
 
 -- ── POLICY ENDORSEMENTS (real mid-term changes) ──────────────────────────
 
-INSERT INTO policy_endorsements (policy_id, endorsement_number, type, description, effective_date, additional_premium, currency, issued_by, status) VALUES
-  ('p1000000-0000-0000-0000-000000000003','END-AAG-2024-010003-001','coverage_extension',
+INSERT INTO policy_endorsements (policy_id, endorsement_number, type, description, effective_date, additional_premium, currency, issued_by) VALUES
+  ('11000000-0000-0000-0000-000000000003','END-AAG-2024-010003-001','coverage_extension',
    'Post-Beryl endorsement: Temporary accommodation cover added for displaced guests. Limit $150,000 for 90 days.',
-   '2024-07-05',4500,'USD','Senior Underwriter — D. Hutchinson','active'),
-  ('p1000000-0000-0000-0000-000000000019','END-AAG-2024-050001-001','deductible_change',
+   '2024-07-05',4500,'USD','Senior Underwriter — D. Hutchinson'),
+  ('11000000-0000-0000-0000-000000000019','END-AAG-2024-050001-001','deductible_change',
    'Hurricane deductible increased from 7.5% to 10% following 2024 Beryl loss. Effective at renewal.',
-   '2024-08-01',0,'USD','Chief Underwriter — Antillia AG','active'),
-  ('p1000000-0000-0000-0000-000000000011','END-AAG-2024-030002-001','coverage_extension',
+   '2024-08-01',0,'USD','Chief Underwriter — Antillia AG'),
+  ('11000000-0000-0000-0000-000000000011','END-AAG-2024-030002-001','coverage_extension',
    'Business interruption cover extended from 6 months to 12 months following fire claim review.',
-   '2024-04-01',8200,'USD','Senior Underwriter — D. Hutchinson','active'),
-  ('p1000000-0000-0000-0000-000000000014','END-AAG-2024-030005-001','premium_adjustment',
+   '2024-04-01',8200,'USD','Senior Underwriter — D. Hutchinson'),
+  ('11000000-0000-0000-0000-000000000014','END-AAG-2024-030005-001','premium_adjustment',
    'Mid-term premium adjustment. Additional floor added to Camana Bay Phase 4 tower. Insured value increase $2.1M.',
-   '2024-06-15',31500,'USD','Senior Underwriter — C. Ebanks','active'),
-  ('p1000000-0000-0000-0000-000000000013','END-AAG-2024-030004-001','coverage_extension',
+   '2024-06-15',31500,'USD','Senior Underwriter — C. Ebanks'),
+  ('11000000-0000-0000-0000-000000000013','END-AAG-2024-030004-001','coverage_extension',
    'Navigation area extended to include Gulf of Mexico waters for charter season Nov-Apr.',
-   '2024-11-01',6800,'USD','Marine Underwriter — K. Francis','active')
+   '2024-11-01',6800,'USD','Marine Underwriter — K. Francis')
 ON CONFLICT DO NOTHING;
 
 -- ── UPDATE HURRICANE EXPOSURE CACHE ──────────────────────────────────────

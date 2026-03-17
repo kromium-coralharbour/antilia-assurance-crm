@@ -22,9 +22,7 @@ export const metadata: Metadata = {
       { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
       { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
     ],
-    apple: [
-      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
-    ],
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
   },
 }
 
@@ -38,6 +36,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Antillia CRM" />
         <meta name="mobile-web-app-capable" content="yes" />
+        {/* Inline script: apply saved theme before first paint to avoid flash */}
+        <script dangerouslySetInnerHTML={{ __html: `
+          (function() {
+            try {
+              var t = localStorage.getItem('antillia-theme');
+              if (!t) {
+                t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+              }
+              document.documentElement.setAttribute('data-theme', t);
+            } catch(e) {}
+          })();
+        `}} />
       </head>
       <body>{children}</body>
     </html>

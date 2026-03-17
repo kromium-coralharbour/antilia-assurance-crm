@@ -226,10 +226,26 @@ CREATE TABLE IF NOT EXISTS adjusters (
   email TEXT UNIQUE NOT NULL,
   phone TEXT,
   island island NOT NULL,
-  specialization coverage_type[],
+  specialization TEXT DEFAULT 'general',
+  license_number TEXT,
+  daily_rate NUMERIC(10,2),
+  currency TEXT DEFAULT 'USD',
   active_claims INTEGER DEFAULT 0,
-  is_available BOOLEAN DEFAULT TRUE
+  is_available BOOLEAN DEFAULT TRUE,
+  notes TEXT
 );
+
+-- Additive column additions for existing deployments (safe to re-run)
+ALTER TABLE adjusters ADD COLUMN IF NOT EXISTS specialization_text TEXT DEFAULT 'general';
+ALTER TABLE adjusters ADD COLUMN IF NOT EXISTS license_number TEXT;
+ALTER TABLE adjusters ADD COLUMN IF NOT EXISTS daily_rate NUMERIC(10,2);
+ALTER TABLE adjusters ADD COLUMN IF NOT EXISTS currency TEXT DEFAULT 'USD';
+ALTER TABLE adjusters ADD COLUMN IF NOT EXISTS notes TEXT;
+-- Convert specialization from coverage_type[] to TEXT if it's still an array type
+ALTER TABLE adjusters ALTER COLUMN specialization TYPE TEXT USING
+  CASE WHEN specialization IS NULL THEN 'general'
+       ELSE REPLACE(REPLACE(REPLACE(specialization::TEXT, '{', ''), '}', ''), '"', '')
+  END;
 
 -- ── REINSURANCE TREATIES ───────────────────────────────────────────
 
