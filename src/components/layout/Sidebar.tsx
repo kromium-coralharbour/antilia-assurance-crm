@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
+import ThemeToggle from '@/components/ThemeToggle'
 import { createClient } from '@/lib/supabase/client'
 
 const NAV_ITEMS = [
@@ -130,12 +131,15 @@ export default function Sidebar() {
           <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: '#f5f0e8', letterSpacing: '0.06em' }}>Underwriter</div>
           <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#c9933a' }}>AAG Staff</div>
         </div>
-        <button
-          onClick={handleLogout}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#4a6080', fontSize: '0.75rem', fontFamily: 'Barlow Condensed', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.3rem 0.5rem' }}
-        >
-          Out
-        </button>
+        <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+          <ThemeToggle />
+          <button
+            onClick={handleLogout}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#4a6080', fontSize: '0.75rem', fontFamily: 'Barlow Condensed', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.3rem 0.5rem' }}
+          >
+            Out
+          </button>
+        </div>
       </div>
     </aside>
   )

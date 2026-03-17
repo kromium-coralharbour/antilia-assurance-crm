@@ -15,6 +15,114 @@
   --mist: #8fa3b8;
 }
 
+
+/* ─── LIGHT MODE ──────────────────────────────────────────────── */
+
+[data-theme="light"] {
+  --storm: #f0f2f7;
+  --deep: #ffffff;
+  --slate-dark: #e8edf5;
+  --steel: #c8d4e8;
+  --gold: #a8721e;
+  --amber: #c9933a;
+  --pale: #1a2035;
+  --mist: #4a5a7a;
+  --sidebar-bg: #1a2540;
+  --sidebar-border: rgba(201,147,58,0.2);
+  --sidebar-text: #e8edf5;
+  --sidebar-mist: #8fa3b8;
+}
+
+[data-theme="light"] html,
+[data-theme="light"] body {
+  background-color: var(--storm);
+  color: var(--pale);
+}
+
+[data-theme="light"] .crm-card {
+  background: #ffffff;
+  border-color: rgba(100,120,160,0.15);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+[data-theme="light"] .crm-card:hover {
+  border-color: rgba(168,114,30,0.3) !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+
+[data-theme="light"] .stat-card {
+  background: #ffffff;
+  border-color: rgba(100,120,160,0.15);
+}
+
+[data-theme="light"] .crm-table th {
+  color: #4a5a7a;
+  border-bottom-color: rgba(100,120,160,0.2);
+  background: #f8f9fc;
+}
+
+[data-theme="light"] .crm-table td {
+  border-bottom-color: rgba(100,120,160,0.08);
+}
+
+[data-theme="light"] .crm-table tr:hover td {
+  background: rgba(168,114,30,0.04) !important;
+}
+
+[data-theme="light"] .crm-input,
+[data-theme="light"] .crm-select {
+  background: #f8f9fc;
+  border-color: rgba(100,120,160,0.25);
+  color: #1a2035;
+}
+
+[data-theme="light"] .crm-input:focus,
+[data-theme="light"] .crm-select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px rgba(168,114,30,0.12);
+}
+
+[data-theme="light"] .crm-input::placeholder {
+  color: #9aa5bc;
+}
+
+[data-theme="light"] .crm-select option {
+  background: #ffffff;
+  color: #1a2035;
+}
+
+[data-theme="light"] .modal-backdrop {
+  background: rgba(20,30,60,0.5);
+}
+
+[data-theme="light"] .modal-backdrop > div {
+  background: #ffffff !important;
+  border-color: rgba(100,120,160,0.2) !important;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-track {
+  background: #f0f2f7;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: #c8d4e8;
+}
+
+[data-theme="light"] .section-eyebrow {
+  color: var(--gold);
+}
+
+[data-theme="light"] .gold-divider {
+  background: linear-gradient(to right, var(--gold), transparent);
+}
+
+/* Sidebar stays dark in light mode for contrast */
+[data-theme="light"] .crm-sidebar {
+  background: #1a2540 !important;
+}
+
+
 * { box-sizing: border-box; }
 
 html, body {
