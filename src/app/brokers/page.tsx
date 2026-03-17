@@ -17,6 +17,8 @@ export default function BrokersPage() {
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState(EMPTY)
   const [saving, setSaving] = useState(false)
+  const [showEditForm, setShowEditForm] = useState(false)
+  const [editForm, setEditForm] = useState<any>(null)
   const [selected, setSelected] = useState<any>(null)
   const [search, setSearch] = useState('')
   const [brokerTab, setBrokerTab] = useState<'profile'|'policies'>('profile')
@@ -57,6 +59,25 @@ export default function BrokersPage() {
 
   const totalVolume = filtered.reduce((s, b) => s + (b.ytd_premium_volume || 0), 0)
   const totalCommission = filtered.reduce((s, b) => s + (b.ytd_commission_earned || 0), 0)
+
+  async function handleEditBroker(e: React.FormEvent) {
+    e.preventDefault()
+    if (!editForm) return
+    setSaving(true)
+    const { error } = await supabase.from('brokers').update({
+      name: editForm.name,
+      company: editForm.company,
+      email: editForm.email,
+      phone: editForm.phone,
+      island: editForm.island,
+      license_number: editForm.license_number,
+      commission_rate: parseFloat(editForm.commission_rate),
+      currency: editForm.currency,
+      notes: editForm.notes,
+    }).eq('id', editForm.id)
+    if (!error) { setShowEditForm(false); setEditForm(null); setSelected(null); load() }
+    setSaving(false)
+  }
 
   return (
     <div className="page-enter" style={{ padding: '2rem', minHeight: '100vh', background: '#0a0f1e' }}>
@@ -185,6 +206,7 @@ export default function BrokersPage() {
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: '0.8rem' }}>
+                  <button className="btn-ghost" onClick={() => { setEditForm({ ...selected, commission_rate: String(selected.commission_rate) }); setShowEditForm(true) }}>Edit Broker</button>
                   <button className="btn-ghost" onClick={() => toggleStatus(selected.id, selected.status)}>
                     {selected.status === 'active' ? 'Deactivate' : 'Activate'}
                   </button>
@@ -198,7 +220,26 @@ export default function BrokersPage() {
                 brokerPolicies.map(p => {
                   const days = p.renewal_date ? daysUntil(p.renewal_date) : 999
                   const client = p.clients
-                  return (
+                  async function handleEditBroker(e: React.FormEvent) {
+    e.preventDefault()
+    if (!editForm) return
+    setSaving(true)
+    const { error } = await supabase.from('brokers').update({
+      name: editForm.name,
+      company: editForm.company,
+      email: editForm.email,
+      phone: editForm.phone,
+      island: editForm.island,
+      license_number: editForm.license_number,
+      commission_rate: parseFloat(editForm.commission_rate),
+      currency: editForm.currency,
+      notes: editForm.notes,
+    }).eq('id', editForm.id)
+    if (!error) { setShowEditForm(false); setEditForm(null); setSelected(null); load() }
+    setSaving(false)
+  }
+
+  return (
                     <div key={p.id} style={{ padding: '1rem 1.5rem', borderBottom: '1px solid rgba(201,147,58,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                       <div>
                         <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.82rem', color: '#c9933a', fontWeight: 600 }}>{p.policy_number}</div>
@@ -216,6 +257,41 @@ export default function BrokersPage() {
                 })}
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Edit Broker Form */}
+      {showEditForm && editForm && (
+        <div className="modal-backdrop" onClick={() => setShowEditForm(false)}>
+          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 580, maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
+              <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>Edit Broker</div>
+              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>{editForm.name}</div>
+            </div>
+            <form onSubmit={handleEditBroker} style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div><label className="crm-label">Full Name *</label><input className="crm-input" value={editForm.name} onChange={e => setEditForm((f: any) => ({ ...f, name: e.target.value }))} required /></div>
+              <div><label className="crm-label">Company *</label><input className="crm-input" value={editForm.company} onChange={e => setEditForm((f: any) => ({ ...f, company: e.target.value }))} required /></div>
+              <div><label className="crm-label">Email *</label><input className="crm-input" type="email" value={editForm.email} onChange={e => setEditForm((f: any) => ({ ...f, email: e.target.value }))} required /></div>
+              <div><label className="crm-label">Phone</label><input className="crm-input" value={editForm.phone || ''} onChange={e => setEditForm((f: any) => ({ ...f, phone: e.target.value }))} /></div>
+              <div><label className="crm-label">Island</label>
+                <select className="crm-select" value={editForm.island} onChange={e => setEditForm((f: any) => ({ ...f, island: e.target.value }))}>
+                  {Object.entries(ISLAND_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                </select>
+              </div>
+              <div><label className="crm-label">License Number</label><input className="crm-input" value={editForm.license_number || ''} onChange={e => setEditForm((f: any) => ({ ...f, license_number: e.target.value }))} /></div>
+              <div><label className="crm-label">Commission Rate %</label><input className="crm-input" type="number" step="0.5" value={editForm.commission_rate} onChange={e => setEditForm((f: any) => ({ ...f, commission_rate: e.target.value }))} /></div>
+              <div><label className="crm-label">Currency</label>
+                <select className="crm-select" value={editForm.currency} onChange={e => setEditForm((f: any) => ({ ...f, currency: e.target.value }))}>
+                  {['USD','BBD','JMD','KYD','TTD','BSD'].map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
+              <div style={{ gridColumn: '1 / -1' }}><label className="crm-label">Notes</label><textarea className="crm-input" rows={2} value={editForm.notes || ''} onChange={e => setEditForm((f: any) => ({ ...f, notes: e.target.value }))} /></div>
+              <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '0.8rem', justifyContent: 'flex-end' }}>
+                <button type="button" className="btn-ghost" onClick={() => setShowEditForm(false)}>Cancel</button>
+                <button type="submit" className="btn-gold" disabled={saving}>{saving ? 'Saving…' : 'Save Changes'}</button>
+              </div>
+            </form>
           </div>
         </div>
       )}

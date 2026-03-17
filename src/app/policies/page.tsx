@@ -63,6 +63,8 @@ export default function PoliciesPage() {
   const [filterIsland, setFilterIsland] = useState('')
   const [filterCoverage, setFilterCoverage] = useState('')
   const [showForm, setShowForm] = useState(false)
+  const [showEditForm, setShowEditForm] = useState(false)
+  const [editForm, setEditForm] = useState<any>(null)
   const [form, setForm] = useState(EMPTY_FORM)
   const [saving, setSaving] = useState(false)
   const [selected, setSelected] = useState<any>(null)
@@ -124,6 +126,42 @@ export default function PoliciesPage() {
       risk_score: computedRisk,
     })
     if (!error) { setShowForm(false); setForm(EMPTY_FORM); load() }
+    setSaving(false)
+  }
+
+  async function handleEdit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!editForm) return
+    setSaving(true)
+    const { error } = await supabase.from('policies').update({
+      coverage_type: editForm.coverage_type,
+      island: editForm.island,
+      insured_value: parseFloat(editForm.insured_value),
+      currency: editForm.currency,
+      annual_premium: parseFloat(editForm.annual_premium),
+      premium_currency: editForm.currency,
+      start_date: editForm.start_date,
+      end_date: editForm.end_date,
+      renewal_date: editForm.renewal_date,
+      wind_zone: editForm.wind_zone,
+      flood_zone: editForm.flood_zone,
+      structural_compliance_rating: editForm.structural_compliance_rating ? parseFloat(editForm.structural_compliance_rating) : null,
+      construction_year: editForm.construction_year ? parseInt(editForm.construction_year) : null,
+      hurricane_deductible_pct: parseFloat(editForm.hurricane_deductible_pct) || 5,
+      property_address: editForm.property_address,
+      notes: editForm.notes,
+      risk_score: calculateRiskScore(editForm),
+      vessel_name: editForm.vessel_name,
+      hull_value: editForm.hull_value ? parseFloat(editForm.hull_value) : null,
+      navigation_area: editForm.navigation_area,
+      mooring_location: editForm.mooring_location,
+      vessel_year: editForm.vessel_year ? parseInt(editForm.vessel_year) : null,
+    }).eq('id', editForm.id)
+    if (!error) {
+      setShowEditForm(false)
+      setEditForm(null)
+      load()
+    }
     setSaving(false)
   }
 
@@ -341,7 +379,8 @@ export default function PoliciesPage() {
                   {selected.status === 'quoted' && <button className="btn-gold" onClick={() => updateStatus(selected.id, 'active')}>Bind Policy</button>}
                   {selected.status === 'active' && <button className="btn-ghost" onClick={() => updateStatus(selected.id, 'renewal_due')}>Flag for Renewal</button>}
                   {selected.status === 'renewal_due' && <button className="btn-gold" onClick={() => updateStatus(selected.id, 'active')}>Renew Policy</button>}
-                  {selected.status === 'active' && <button className="btn-ghost" onClick={() => { setSelectedTab('endorsements'); setShowEndorseForm(true) }}>+ Add Endorsement</button>}
+                  <button className="btn-ghost" onClick={() => { setEditForm({ ...selected, insured_value: String(selected.insured_value), annual_premium: String(selected.annual_premium), structural_compliance_rating: String(selected.structural_compliance_rating || ''), construction_year: String(selected.construction_year || ''), hurricane_deductible_pct: String(selected.hurricane_deductible_pct || 5), hull_value: String(selected.hull_value || ''), vessel_year: String(selected.vessel_year || '') }); setShowEditForm(true) }}>Edit Policy</button>
+              {selected.status === 'active' && <button className="btn-ghost" onClick={() => { setSelectedTab('endorsements'); setShowEndorseForm(true) }}>+ Add Endorsement</button>}
                   {selected.status !== 'cancelled' && <button className="btn-danger" onClick={() => updateStatus(selected.id, 'cancelled')}>Cancel Policy</button>}
                 </div>
               </>
@@ -609,6 +648,66 @@ export default function PoliciesPage() {
               <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '0.8rem', justifyContent: 'flex-end' }}>
                 <button type="button" className="btn-ghost" onClick={() => setShowForm(false)}>Cancel</button>
                 <button type="submit" className="btn-gold" disabled={saving}>{saving ? 'Saving…' : `Create Quote · Risk ${computedRisk}`}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {/* Edit Policy Form */}
+      {showEditForm && editForm && (
+        <div className="modal-backdrop" onClick={() => setShowEditForm(false)}>
+          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 720, maxHeight: '92vh', overflowY: 'auto' }}>
+            <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
+              <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>Edit Policy</div>
+              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>{editForm.policy_number}</div>
+            </div>
+            <form onSubmit={handleEdit} style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div><label className="crm-label">Coverage Type</label>
+                <select className="crm-select" value={editForm.coverage_type} onChange={e => setEditForm((f: any) => ({ ...f, coverage_type: e.target.value }))}>
+                  {Object.entries(COVERAGE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                </select>
+              </div>
+              <div><label className="crm-label">Island</label>
+                <select className="crm-select" value={editForm.island} onChange={e => setEditForm((f: any) => ({ ...f, island: e.target.value }))}>
+                  {Object.entries(ISLAND_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                </select>
+              </div>
+              <div><label className="crm-label">Insured Value</label><input className="crm-input" type="number" value={editForm.insured_value} onChange={e => setEditForm((f: any) => ({ ...f, insured_value: e.target.value }))} /></div>
+              <div><label className="crm-label">Currency</label>
+                <select className="crm-select" value={editForm.currency} onChange={e => setEditForm((f: any) => ({ ...f, currency: e.target.value }))}>
+                  {['USD','BBD','JMD','KYD','TTD','BSD','GBP','EUR'].map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
+              <div><label className="crm-label">Annual Premium</label><input className="crm-input" type="number" value={editForm.annual_premium} onChange={e => setEditForm((f: any) => ({ ...f, annual_premium: e.target.value }))} /></div>
+              <div><label className="crm-label">Hurricane Deductible %</label><input className="crm-input" type="number" value={editForm.hurricane_deductible_pct} onChange={e => setEditForm((f: any) => ({ ...f, hurricane_deductible_pct: e.target.value }))} /></div>
+              <div><label className="crm-label">Start Date</label><input className="crm-input" type="date" value={editForm.start_date?.split('T')[0] || ''} onChange={e => setEditForm((f: any) => ({ ...f, start_date: e.target.value }))} /></div>
+              <div><label className="crm-label">End Date</label><input className="crm-input" type="date" value={editForm.end_date?.split('T')[0] || ''} onChange={e => setEditForm((f: any) => ({ ...f, end_date: e.target.value }))} /></div>
+              <div><label className="crm-label">Renewal Date</label><input className="crm-input" type="date" value={editForm.renewal_date?.split('T')[0] || ''} onChange={e => setEditForm((f: any) => ({ ...f, renewal_date: e.target.value }))} /></div>
+              <div><label className="crm-label">Wind Zone</label>
+                <select className="crm-select" value={editForm.wind_zone || ''} onChange={e => setEditForm((f: any) => ({ ...f, wind_zone: e.target.value }))}>
+                  <option value="">Select…</option>
+                  {['Zone 1 – Low','Zone 2 – Moderate','Zone 3 – High','Zone 4 – Very High','Zone 5 – Extreme'].map(z => <option key={z} value={z}>{z}</option>)}
+                </select>
+              </div>
+              <div><label className="crm-label">Flood Zone</label>
+                <select className="crm-select" value={editForm.flood_zone || ''} onChange={e => setEditForm((f: any) => ({ ...f, flood_zone: e.target.value }))}>
+                  <option value="">Select…</option>
+                  {['Zone A – 100-Year Floodplain','Zone AE – Base Flood','Zone X – Minimal Flood','Zone D – Unknown'].map(z => <option key={z} value={z}>{z}</option>)}
+                </select>
+              </div>
+              <div><label className="crm-label">Structural Compliance %</label><input className="crm-input" type="number" min="0" max="100" value={editForm.structural_compliance_rating} onChange={e => setEditForm((f: any) => ({ ...f, structural_compliance_rating: e.target.value }))} /></div>
+              <div><label className="crm-label">Construction Year</label><input className="crm-input" type="number" value={editForm.construction_year} onChange={e => setEditForm((f: any) => ({ ...f, construction_year: e.target.value }))} /></div>
+              {editForm.coverage_type === 'yacht_marine' && <>
+                <div><label className="crm-label">Vessel Name</label><input className="crm-input" value={editForm.vessel_name || ''} onChange={e => setEditForm((f: any) => ({ ...f, vessel_name: e.target.value }))} /></div>
+                <div><label className="crm-label">Hull Value</label><input className="crm-input" type="number" value={editForm.hull_value || ''} onChange={e => setEditForm((f: any) => ({ ...f, hull_value: e.target.value }))} /></div>
+                <div><label className="crm-label">Mooring Location</label><input className="crm-input" value={editForm.mooring_location || ''} onChange={e => setEditForm((f: any) => ({ ...f, mooring_location: e.target.value }))} /></div>
+                <div><label className="crm-label">Vessel Year</label><input className="crm-input" type="number" value={editForm.vessel_year || ''} onChange={e => setEditForm((f: any) => ({ ...f, vessel_year: e.target.value }))} /></div>
+              </>}
+              <div style={{ gridColumn: '1 / -1' }}><label className="crm-label">Property Address</label><input className="crm-input" value={editForm.property_address || ''} onChange={e => setEditForm((f: any) => ({ ...f, property_address: e.target.value }))} /></div>
+              <div style={{ gridColumn: '1 / -1' }}><label className="crm-label">Notes</label><textarea className="crm-input" rows={3} value={editForm.notes || ''} onChange={e => setEditForm((f: any) => ({ ...f, notes: e.target.value }))} /></div>
+              <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '0.8rem', justifyContent: 'flex-end' }}>
+                <button type="button" className="btn-ghost" onClick={() => setShowEditForm(false)}>Cancel</button>
+                <button type="submit" className="btn-gold" disabled={saving}>{saving ? 'Saving…' : 'Save Changes'}</button>
               </div>
             </form>
           </div>

@@ -30,6 +30,8 @@ export default function ClientsPage() {
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState(EMPTY)
   const [saving, setSaving] = useState(false)
+  const [showEditForm, setShowEditForm] = useState(false)
+  const [editForm, setEditForm] = useState<any>(null)
   const [selected, setSelected] = useState<any>(null)
   const [clientTab, setClientTab] = useState<'profile'|'policies'|'claims'>('profile')
   const [clientPolicies, setClientPolicies] = useState<any[]>([])
@@ -70,6 +72,32 @@ export default function ClientsPage() {
     setSaving(true)
     const { error } = await supabase.from('clients').insert({ ...form, risk_score: 50, total_insured_value: 0, total_insured_value_currency: 'USD' })
     if (!error) { setShowForm(false); setForm(EMPTY); load() }
+    setSaving(false)
+  }
+
+  async function handleEditClient(e: React.FormEvent) {
+    e.preventDefault()
+    if (!editForm) return
+    setSaving(true)
+    const { error } = await supabase.from('clients').update({
+      first_name: editForm.first_name,
+      last_name: editForm.last_name,
+      company_name: editForm.company_name,
+      email: editForm.email,
+      phone: editForm.phone,
+      segment: editForm.segment,
+      island: editForm.island,
+      address: editForm.address,
+      preferred_currency: editForm.preferred_currency,
+      notes: editForm.notes,
+      is_vip: editForm.is_vip,
+    }).eq('id', editForm.id)
+    if (!error) {
+      setShowEditForm(false)
+      setEditForm(null)
+      setSelected(null)
+      load()
+    }
     setSaving(false)
   }
 
@@ -133,7 +161,33 @@ export default function ClientsPage() {
               const activePolicies = (c.policies || []).filter((p: any) => p.status === 'active')
               const totalPrem = activePolicies.reduce((s: number, p: any) => s + (p.annual_premium || 0), 0)
               const risk = getRiskLabel(c.risk_score || 50)
-              return (
+              async function handleEditClient(e: React.FormEvent) {
+    e.preventDefault()
+    if (!editForm) return
+    setSaving(true)
+    const { error } = await supabase.from('clients').update({
+      first_name: editForm.first_name,
+      last_name: editForm.last_name,
+      company_name: editForm.company_name,
+      email: editForm.email,
+      phone: editForm.phone,
+      segment: editForm.segment,
+      island: editForm.island,
+      address: editForm.address,
+      preferred_currency: editForm.preferred_currency,
+      notes: editForm.notes,
+      is_vip: editForm.is_vip,
+    }).eq('id', editForm.id)
+    if (!error) {
+      setShowEditForm(false)
+      setEditForm(null)
+      setSelected(null)
+      load()
+    }
+    setSaving(false)
+  }
+
+  return (
                 <tr key={c.id} style={{ cursor: 'pointer' }} onClick={() => openClient(c)}>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
@@ -206,6 +260,9 @@ export default function ClientsPage() {
                   <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>Address</div>
                   <div style={{ fontFamily: 'Barlow', fontSize: '0.85rem', color: '#f5f0e8' }}>{selected.address}</div>
                 </div>
+                <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '0.8rem', paddingTop: '0.5rem' }}>
+                  <button className="btn-ghost" style={{ fontSize: '0.75rem' }} onClick={() => { setEditForm({ ...selected }); setShowEditForm(true) }}>Edit Client</button>
+                </div>
                 {selected.notes && <div style={{ gridColumn: '1 / -1' }}>
                   <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>Notes</div>
                   <div style={{ fontFamily: 'Barlow', fontSize: '0.85rem', color: '#8fa3b8', lineHeight: 1.6 }}>{selected.notes}</div>
@@ -219,7 +276,33 @@ export default function ClientsPage() {
                 clientPolicies.length === 0 ? <div style={{ padding: '2rem', textAlign: 'center', color: '#4a6080', fontFamily: 'Barlow Condensed', letterSpacing: '0.1em' }}>No policies on record</div> :
                 clientPolicies.map(p => {
                   const days = p.renewal_date ? daysUntil(p.renewal_date) : 999
-                  return (
+                  async function handleEditClient(e: React.FormEvent) {
+    e.preventDefault()
+    if (!editForm) return
+    setSaving(true)
+    const { error } = await supabase.from('clients').update({
+      first_name: editForm.first_name,
+      last_name: editForm.last_name,
+      company_name: editForm.company_name,
+      email: editForm.email,
+      phone: editForm.phone,
+      segment: editForm.segment,
+      island: editForm.island,
+      address: editForm.address,
+      preferred_currency: editForm.preferred_currency,
+      notes: editForm.notes,
+      is_vip: editForm.is_vip,
+    }).eq('id', editForm.id)
+    if (!error) {
+      setShowEditForm(false)
+      setEditForm(null)
+      setSelected(null)
+      load()
+    }
+    setSaving(false)
+  }
+
+  return (
                     <div key={p.id} style={{ padding: '1rem 1.5rem', borderBottom: '1px solid rgba(201,147,58,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                       <div>
                         <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.82rem', color: '#c9933a', fontWeight: 600 }}>{p.policy_number}</div>
@@ -256,6 +339,50 @@ export default function ClientsPage() {
                 ))}
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Edit Client Form */}
+      {showEditForm && editForm && (
+        <div className="modal-backdrop" onClick={() => setShowEditForm(false)}>
+          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 620, maxHeight: '92vh', overflowY: 'auto' }}>
+            <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
+              <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>Edit Client</div>
+              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>{editForm.first_name} {editForm.last_name}</div>
+            </div>
+            <form onSubmit={handleEditClient} style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div><label className="crm-label">First Name *</label><input className="crm-input" value={editForm.first_name} onChange={e => setEditForm((f: any) => ({ ...f, first_name: e.target.value }))} required /></div>
+              <div><label className="crm-label">Last Name *</label><input className="crm-input" value={editForm.last_name} onChange={e => setEditForm((f: any) => ({ ...f, last_name: e.target.value }))} required /></div>
+              <div style={{ gridColumn: '1 / -1' }}><label className="crm-label">Company Name</label><input className="crm-input" value={editForm.company_name || ''} onChange={e => setEditForm((f: any) => ({ ...f, company_name: e.target.value }))} /></div>
+              <div><label className="crm-label">Email *</label><input className="crm-input" type="email" value={editForm.email} onChange={e => setEditForm((f: any) => ({ ...f, email: e.target.value }))} required /></div>
+              <div><label className="crm-label">Phone</label><input className="crm-input" value={editForm.phone || ''} onChange={e => setEditForm((f: any) => ({ ...f, phone: e.target.value }))} /></div>
+              <div><label className="crm-label">Segment</label>
+                <select className="crm-select" value={editForm.segment} onChange={e => setEditForm((f: any) => ({ ...f, segment: e.target.value }))}>
+                  {Object.entries(SEGMENT_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                </select>
+              </div>
+              <div><label className="crm-label">Island</label>
+                <select className="crm-select" value={editForm.island} onChange={e => setEditForm((f: any) => ({ ...f, island: e.target.value }))}>
+                  {Object.entries(ISLAND_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                </select>
+              </div>
+              <div><label className="crm-label">Preferred Currency</label>
+                <select className="crm-select" value={editForm.preferred_currency} onChange={e => setEditForm((f: any) => ({ ...f, preferred_currency: e.target.value }))}>
+                  {['USD','BBD','JMD','KYD','TTD','BSD','GBP','EUR'].map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', paddingTop: '1.4rem' }}>
+                <input type="checkbox" id="edit-vip" checked={editForm.is_vip} onChange={e => setEditForm((f: any) => ({ ...f, is_vip: e.target.checked }))} style={{ accentColor: '#c9933a', width: 16, height: 16 }} />
+                <label htmlFor="edit-vip" style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c9933a', cursor: 'pointer' }}>VIP Client</label>
+              </div>
+              <div style={{ gridColumn: '1 / -1' }}><label className="crm-label">Address</label><input className="crm-input" value={editForm.address || ''} onChange={e => setEditForm((f: any) => ({ ...f, address: e.target.value }))} /></div>
+              <div style={{ gridColumn: '1 / -1' }}><label className="crm-label">Notes</label><textarea className="crm-input" rows={3} value={editForm.notes || ''} onChange={e => setEditForm((f: any) => ({ ...f, notes: e.target.value }))} /></div>
+              <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '0.8rem', justifyContent: 'flex-end' }}>
+                <button type="button" className="btn-ghost" onClick={() => setShowEditForm(false)}>Cancel</button>
+                <button type="submit" className="btn-gold" disabled={saving}>{saving ? 'Saving…' : 'Save Changes'}</button>
+              </div>
+            </form>
           </div>
         </div>
       )}

@@ -164,7 +164,7 @@ export default function DashboardPage() {
       </div>
 
       {/* KPI Grid */}
-      <div className="kpi-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1px', marginBottom: '2rem', background: 'rgba(201,147,58,0.08)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1px', marginBottom: '2rem', background: 'rgba(201,147,58,0.08)' }}>
         {KPI_CARDS.map((card, i) => (
           <a key={i} href={card.href || '#'} className="stat-card" style={{ position: 'relative', textDecoration: 'none', display: 'block', cursor: 'pointer' }}>
             <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#8fa3b8', marginBottom: '0.5rem' }}>
@@ -292,8 +292,8 @@ export default function DashboardPage() {
                   { claim: 'CLM-2024-050004', status: 'FNOL Received', loss: '$45K', island: '🇹🇹 T&T' },
                   { claim: 'CLM-2024-050003', status: 'Settled', loss: '$380K', island: '🇰🇾 Cayman' },
                 ].map((row, i) => (
-                  <tr key={i}>
-                    <td style={{ fontFamily: 'Barlow Condensed', color: '#c9933a', fontSize: '0.8rem' }}>{row.claim}</td>
+                  <tr key={i} style={{ cursor: 'pointer' }} onClick={() => setSelectedClaim({ claim_number: row.claim, status: row.status?.toLowerCase().replace(/ /g,'_'), fraud_risk: row.alert ? 'flagged' : 'clear', coverage_type: 'commercial', island: 'barbados', incident_date: null, reported_loss: null })}>
+                    <td style={{ fontFamily: 'Barlow Condensed', color: '#c9933a', fontSize: '0.8rem', fontWeight: 600 }}>{row.claim}</td>
                     <td><span className="badge" style={{ background: row.alert ? 'rgba(192,57,43,0.2)' : 'rgba(201,147,58,0.1)', borderColor: row.alert ? 'rgba(192,57,43,0.4)' : 'rgba(201,147,58,0.3)', color: row.alert ? '#fc8181' : '#e8b04a' }}>{row.status}</span></td>
                     <td style={{ fontFamily: 'Barlow Condensed', color: '#f5f0e8' }}>{row.loss}</td>
                     <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: '#8fa3b8' }}>{row.island}</td>

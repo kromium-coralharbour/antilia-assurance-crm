@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { href: '/brokers', label: 'Brokers & Commission', icon: '◉', eyebrow: 'Distribution' },
   { href: '/reinsurance', label: 'Reinsurance', icon: '◈', eyebrow: 'Treaty Reporting' },
   { href: '/risk-intelligence', label: 'Risk Intelligence', icon: '◑', eyebrow: 'Hurricane · Cat · Exposure' },
+  { href: '/adjusters', label: 'Adjusters', icon: '◆', eyebrow: 'Claims Operations' },
   { href: '/fraud', label: 'Fraud Detection', icon: '⚠', eyebrow: 'Intelligence Layer' },
   { href: '/reports', label: 'Reports & Compliance', icon: '▤', eyebrow: 'Regulatory' },
 ]
