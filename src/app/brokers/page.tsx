@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { formatCurrency, formatStatus, getIslandLabel, getIslandFlag } from '@/lib/utils'
+import { formatCurrency, formatStatus, formatDate, getIslandLabel, getIslandFlag, POLICY_STATUS_STYLES, daysUntil } from '@/lib/utils'
 import { Island, Currency, ISLAND_LABELS } from '@/types'
 
 const EMPTY = {
@@ -19,6 +19,9 @@ export default function BrokersPage() {
   const [saving, setSaving] = useState(false)
   const [selected, setSelected] = useState<any>(null)
   const [search, setSearch] = useState('')
+  const [brokerTab, setBrokerTab] = useState<'profile'|'policies'>('profile')
+  const [brokerPolicies, setBrokerPolicies] = useState<any[]>([])
+  const [brokerLoading, setBrokerLoading] = useState(false)
 
   async function load() {
     const { data } = await supabase.from('brokers').select('*').order('ytd_premium_volume', { ascending: false })
@@ -28,6 +31,15 @@ export default function BrokersPage() {
   useEffect(() => { load() }, [])
 
   const filtered = brokers.filter(b => !search || `${b.name} ${b.company} ${b.email}`.toLowerCase().includes(search.toLowerCase()))
+
+  async function openBroker(b: any) {
+    setSelected(b)
+    setBrokerTab('profile')
+    setBrokerLoading(true)
+    const { data } = await supabase.from('policies').select('id, policy_number, coverage_type, status, annual_premium, premium_currency, insured_value, currency, renewal_date, island, clients(first_name, last_name, company_name)').eq('broker_id', b.id).order('created_at', { ascending: false })
+    setBrokerPolicies(data || [])
+    setBrokerLoading(false)
+  }
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault()
@@ -57,7 +69,7 @@ export default function BrokersPage() {
       </div>
 
       {/* KPIs */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', marginBottom: '1.5rem', background: 'rgba(201,147,58,0.08)' }}>
+      <div className="stats-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', marginBottom: '1.5rem', background: 'rgba(201,147,58,0.08)' }}>
         {[
           { label: 'Active Brokers', value: filtered.filter(b => b.status === 'active').length.toString() },
           { label: 'YTD Premium Volume', value: formatCurrency(totalVolume, 'USD', true) },
@@ -80,7 +92,7 @@ export default function BrokersPage() {
         {loading ? (
           <div style={{ color: '#8fa3b8', fontFamily: 'Barlow Condensed' }}>Loading…</div>
         ) : filtered.map(b => (
-          <div key={b.id} className="crm-card" style={{ cursor: 'pointer', transition: 'border-color 0.2s', position: 'relative' }} onClick={() => setSelected(b)}>
+          <div key={b.id} className="crm-card" style={{ cursor: 'pointer', transition: 'border-color 0.2s', position: 'relative' }} onClick={() => openBroker(b)}>
             {b.status !== 'active' && (
               <div style={{ position: 'absolute', top: '0.8rem', right: '0.8rem' }}>
                 <span className="badge" style={{ background: 'rgba(100,100,100,0.2)', borderColor: '#4a5a6a', color: '#8fa3b8' }}>Inactive</span>
@@ -121,60 +133,89 @@ export default function BrokersPage() {
       {/* Broker Detail Modal */}
       {selected && (
         <div className="modal-backdrop" onClick={() => setSelected(null)}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 560, maxHeight: '88vh', overflowY: 'auto' }}>
-            <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)', display: 'flex', justifyContent: 'space-between' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 640, maxHeight: '92vh', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)', display: 'flex', justifyContent: 'space-between', flexShrink: 0 }}>
               <div>
                 <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>Broker Profile</div>
                 <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>{selected.name}</div>
-                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', color: '#8fa3b8', marginTop: '0.2rem' }}>{selected.company}</div>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', color: '#8fa3b8', marginTop: '0.2rem' }}>{selected.company} · #{selected.license_number}</div>
               </div>
               <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: '#8fa3b8', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
             </div>
-            <div style={{ padding: '1.5rem' }}>
-              {/* Commission Summary */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1px', background: 'rgba(201,147,58,0.08)', marginBottom: '1.5rem' }}>
-                {[
-                  { label: 'YTD Volume', value: formatCurrency(selected.ytd_premium_volume, selected.currency, true) },
-                  { label: 'Commission Earned', value: formatCurrency(selected.ytd_commission_earned, selected.currency, true) },
-                  { label: 'Commission Rate', value: `${selected.commission_rate}%` },
-                ].map((k, i) => (
-                  <div key={i} style={{ background: '#0d1321', padding: '1rem', textAlign: 'center' }}>
-                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080' }}>{k.label}</div>
-                    <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 900, color: '#c9933a', marginTop: '0.3rem' }}>{k.value}</div>
-                  </div>
-                ))}
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.2rem' }}>
-                {[
-                  ['Email', selected.email],
-                  ['Phone', selected.phone || '—'],
-                  ['Island', `${getIslandFlag(selected.island)} ${getIslandLabel(selected.island)}`],
-                  ['License', selected.license_number],
-                  ['Status', formatStatus(selected.status)],
-                  ['Policies', `${selected.policy_count} policies · ${selected.client_count} clients`],
-                ].map(([label, value], i) => (
-                  <div key={i}>
-                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>{label}</div>
-                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.88rem', color: '#f5f0e8' }}>{value}</div>
-                  </div>
-                ))}
-              </div>
-              {/* Commission Progress Bar */}
-              <div style={{ padding: '1rem', background: 'rgba(46,64,96,0.2)', border: '1px solid rgba(201,147,58,0.1)' }}>
-                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#c9933a', marginBottom: '0.5rem' }}>Commission Earning Progress (vs. Target)</div>
-                <div style={{ height: 6, background: 'rgba(46,64,96,0.5)', borderRadius: 3 }}>
-                  <div style={{ height: '100%', width: `${Math.min(100, (selected.ytd_commission_earned / (selected.ytd_premium_volume * 0.15)) * 100)}%`, background: '#c9933a', borderRadius: 3 }} />
-                </div>
-                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: '#8fa3b8', marginTop: '0.3rem' }}>
-                  {((selected.ytd_commission_earned / Math.max(1, selected.ytd_premium_volume * 0.15)) * 100).toFixed(0)}% of annual target
-                </div>
-              </div>
+            {/* Tabs */}
+            <div style={{ display: 'flex', borderBottom: '1px solid rgba(201,147,58,0.1)', flexShrink: 0 }}>
+              {[['profile','Profile'], ['policies', `Policies (${brokerPolicies.length})`]].map(([id, label]) => (
+                <button key={id} onClick={() => setBrokerTab(id as any)} style={{ padding: '0.8rem 1.2rem', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Barlow Condensed', fontSize: '0.72rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: brokerTab === id ? '#c9933a' : '#4a6080', borderBottom: brokerTab === id ? '2px solid #c9933a' : '2px solid transparent', marginBottom: '-1px' }}>{label}</button>
+              ))}
             </div>
-            <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid rgba(201,147,58,0.1)', display: 'flex', gap: '0.8rem' }}>
-              <button className="btn-ghost" onClick={() => toggleStatus(selected.id, selected.status)}>
-                {selected.status === 'active' ? 'Deactivate' : 'Activate'}
-              </button>
-            </div>
+            {brokerTab === 'profile' && (
+              <div style={{ padding: '1.5rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1px', background: 'rgba(201,147,58,0.08)', marginBottom: '1.5rem' }}>
+                  {[
+                    { label: 'YTD Volume', value: formatCurrency(selected.ytd_premium_volume, selected.currency, true) },
+                    { label: 'Commission Earned', value: formatCurrency(selected.ytd_commission_earned, selected.currency, true) },
+                    { label: 'Commission Rate', value: `${selected.commission_rate}%` },
+                  ].map((k, i) => (
+                    <div key={i} style={{ background: '#0d1321', padding: '1rem', textAlign: 'center' }}>
+                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080' }}>{k.label}</div>
+                      <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 900, color: '#c9933a', marginTop: '0.3rem' }}>{k.value}</div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.2rem' }}>
+                  {[
+                    ['Email', selected.email], ['Phone', selected.phone || '—'],
+                    ['Island', `${getIslandFlag(selected.island)} ${getIslandLabel(selected.island)}`],
+                    ['Status', formatStatus(selected.status)],
+                    ['Policies', `${selected.policy_count}`], ['Clients', `${selected.client_count}`],
+                  ].map(([label, value], i) => (
+                    <div key={i}>
+                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>{label}</div>
+                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.88rem', color: '#f5f0e8' }}>{value}</div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ padding: '1rem', background: 'rgba(46,64,96,0.2)', border: '1px solid rgba(201,147,58,0.1)', marginBottom: '1rem' }}>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#c9933a', marginBottom: '0.5rem' }}>Commission Progress vs Target</div>
+                  <div style={{ height: 6, background: 'rgba(46,64,96,0.5)', borderRadius: 3 }}>
+                    <div style={{ height: '100%', width: `${Math.min(100, (selected.ytd_commission_earned / (selected.ytd_premium_volume * 0.15)) * 100)}%`, background: '#c9933a', borderRadius: 3 }} />
+                  </div>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: '#8fa3b8', marginTop: '0.3rem' }}>
+                    {((selected.ytd_commission_earned / Math.max(1, selected.ytd_premium_volume * 0.15)) * 100).toFixed(0)}% of annual target · Est. commission on {formatCurrency(selected.ytd_premium_volume * (selected.commission_rate / 100), selected.currency, true)}
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '0.8rem' }}>
+                  <button className="btn-ghost" onClick={() => toggleStatus(selected.id, selected.status)}>
+                    {selected.status === 'active' ? 'Deactivate' : 'Activate'}
+                  </button>
+                </div>
+              </div>
+            )}
+            {brokerTab === 'policies' && (
+              <div style={{ flex: 1 }}>
+                {brokerLoading ? <div style={{ padding: '2rem', textAlign: 'center', color: '#8fa3b8' }}>Loading…</div> :
+                brokerPolicies.length === 0 ? <div style={{ padding: '2rem', textAlign: 'center', color: '#4a6080', fontFamily: 'Barlow Condensed', letterSpacing: '0.1em' }}>No policies distributed through this broker</div> :
+                brokerPolicies.map(p => {
+                  const days = p.renewal_date ? daysUntil(p.renewal_date) : 999
+                  const client = p.clients
+                  return (
+                    <div key={p.id} style={{ padding: '1rem 1.5rem', borderBottom: '1px solid rgba(201,147,58,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <div>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.82rem', color: '#c9933a', fontWeight: 600 }}>{p.policy_number}</div>
+                        <div style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: '#f5f0e8', marginTop: '0.15rem' }}>{client ? `${client.first_name} ${client.last_name}${client.company_name ? ` — ${client.company_name}` : ''}` : '—'}</div>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.68rem', color: '#8fa3b8', marginTop: '0.15rem' }}>{p.coverage_type} · {getIslandFlag(p.island)} {getIslandLabel(p.island)}</div>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: days <= 30 ? '#fc8181' : '#4a6080', marginTop: '0.15rem' }}>Renewal: {formatDate(p.renewal_date)}{days <= 30 ? ` ⚠ ${days}d` : ''}</div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <span className={`badge ${POLICY_STATUS_STYLES[p.status] || ''}`}>{formatStatus(p.status)}</span>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: '#e8b04a', marginTop: '0.3rem' }}>{formatCurrency(p.annual_premium, p.premium_currency, true)}</div>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', color: '#c9933a' }}>Est. comm: {formatCurrency(p.annual_premium * (selected.commission_rate / 100), p.premium_currency, true)}</div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
           </div>
         </div>
       )}

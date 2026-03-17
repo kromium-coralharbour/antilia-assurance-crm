@@ -46,6 +46,39 @@ const CustomTooltip = ({ active, payload, label }: any) => {
           {p.name}: {formatCurrency(p.value, 'USD', true)}
         </div>
       ))}
+
+      {/* Quick claim view from dashboard */}
+      {selectedClaim && (
+        <div className="modal-backdrop" onClick={() => setSelectedClaim(null)}>
+          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 520, maxHeight: '80vh', overflowY: 'auto' }}>
+            <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)', display: 'flex', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#c9933a', marginBottom: '0.3rem' }}>Claim Summary</div>
+                <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>{selectedClaim.claim_number}</div>
+              </div>
+              <button onClick={() => setSelectedClaim(null)} style={{ background: 'none', border: 'none', color: '#8fa3b8', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
+            </div>
+            <div style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              {[
+                ['Status', selectedClaim.status ? selectedClaim.status.replace(/_/g,' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) : '—'],
+                ['Fraud Risk', selectedClaim.fraud_risk || '—'],
+                ['Coverage', selectedClaim.coverage_type || '—'],
+                ['Island', selectedClaim.island || '—'],
+                ['Incident Date', selectedClaim.incident_date ? new Date(selectedClaim.incident_date).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : '—'],
+                ['Reported Loss', selectedClaim.reported_loss ? `$${(selectedClaim.reported_loss/1000).toFixed(0)}K` : '—'],
+              ].map(([label, value], i) => (
+                <div key={i}>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>{label}</div>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.85rem', color: '#f5f0e8' }}>{value}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid rgba(201,147,58,0.1)' }}>
+              <a href="/claims" className="btn-gold" style={{ textDecoration: 'none', fontSize: '0.75rem' }}>Open Claims Register →</a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -59,6 +92,7 @@ export default function DashboardPage() {
   const [recentClaims, setRecentClaims] = useState<any[]>([])
   const [hurricaneExposure, setHurricaneExposure] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [selectedClaim, setSelectedClaim] = useState<any>(null)
 
   useEffect(() => {
     async function load() {
@@ -93,11 +127,11 @@ export default function DashboardPage() {
   }, [])
 
   const KPI_CARDS = [
-    { label: 'Gross Written Premium', value: formatCurrency(stats.grossPremium || 28340000, 'USD', true), sub: 'YTD 2024', color: '#c9933a', change: '+12.4%' },
-    { label: 'Active Policies', value: (stats.totalPolicies || 207).toString(), sub: 'In force', color: '#27ae60', change: '+8 this month' },
-    { label: 'Open Claims', value: (stats.activeClaims || 14).toString(), sub: `${stats.openFraudAlerts || 2} fraud alerts`, color: stats.activeClaims > 20 ? '#c0392b' : '#e8b04a', change: '6 post-Beryl' },
-    { label: 'Cat Exposure', value: formatCurrency(stats.totalExposure || 85330000, 'USD', true), sub: 'Total insured value', color: '#c0392b', change: 'All 5 islands' },
-    { label: 'Renewals Due', value: (stats.renewalsDue || 18).toString(), sub: 'Next 60 days', color: '#e67e22', change: 'Action required' },
+    { label: 'Gross Written Premium', value: formatCurrency(stats.grossPremium || 28340000, 'USD', true), sub: 'YTD 2024', color: '#c9933a', change: '+12.4%', href: '/reports' },
+    { label: 'Active Policies', value: (stats.totalPolicies || 207).toString(), sub: 'In force', color: '#27ae60', change: '+8 this month', href: '/policies' },
+    { label: 'Open Claims', value: (stats.activeClaims || 14).toString(), sub: `${stats.openFraudAlerts || 2} fraud alerts`, color: stats.activeClaims > 20 ? '#c0392b' : '#e8b04a', change: '6 post-Beryl', href: '/claims' },
+    { label: 'Cat Exposure', value: formatCurrency(stats.totalExposure || 85330000, 'USD', true), sub: 'Total insured value', color: '#c0392b', change: 'All 5 islands', href: '/risk-intelligence' },
+    { label: 'Renewals Due', value: (stats.renewalsDue || 18).toString(), sub: 'Next 60 days', color: '#e67e22', change: 'Action required', href: '/policies' },
     { label: 'Combined Ratio', value: '94.2%', sub: 'Loss 68.4% · Exp 25.8%', color: '#27ae60', change: 'YTD 2024' },
   ]
 
@@ -130,25 +164,25 @@ export default function DashboardPage() {
       </div>
 
       {/* KPI Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1px', marginBottom: '2rem', background: 'rgba(201,147,58,0.08)' }}>
+      <div className="kpi-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1px', marginBottom: '2rem', background: 'rgba(201,147,58,0.08)' }}>
         {KPI_CARDS.map((card, i) => (
-          <div key={i} className="stat-card" style={{ position: 'relative' }}>
+          <a key={i} href={card.href || '#'} className="stat-card" style={{ position: 'relative', textDecoration: 'none', display: 'block', cursor: 'pointer' }}>
             <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#8fa3b8', marginBottom: '0.5rem' }}>
               {card.label}
             </div>
-            <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '2rem', fontWeight: 900, color: card.color, lineHeight: 1, marginBottom: '0.4rem' }}>
+            <div className="kpi-value" style={{ fontFamily: 'Playfair Display, serif', fontSize: '2rem', fontWeight: 900, color: card.color, lineHeight: 1, marginBottom: '0.4rem' }}>
               {card.value}
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.3rem' }}>
               <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: '#8fa3b8' }}>{card.sub}</span>
               <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: card.color, letterSpacing: '0.08em' }}>{card.change}</span>
             </div>
-          </div>
+          </a>
         ))}
       </div>
 
       {/* Charts Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1rem', marginBottom: '2rem' }}>
+      <div className="charts-row" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1rem', marginBottom: '2rem' }}>
         {/* Premium vs Claims Trend */}
         <div className="crm-card">
           <div style={{ marginBottom: '1.2rem' }}>
@@ -202,7 +236,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Island Exposure + Recent Claims */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: '1rem', marginBottom: '2rem' }}>
+      <div className="charts-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: '1rem', marginBottom: '2rem' }}>
         {/* Island Exposure Bar */}
         <div className="crm-card">
           <div style={{ marginBottom: '1.2rem' }}>
@@ -232,7 +266,7 @@ export default function DashboardPage() {
               View All →
             </a>
           </div>
-          <table className="crm-table">
+          <div className="table-scroll"><table className="crm-table">
             <thead>
               <tr>
                 <th>Claim #</th>
@@ -243,10 +277,8 @@ export default function DashboardPage() {
             </thead>
             <tbody>
               {recentClaims.length > 0 ? recentClaims.slice(0, 5).map((c: any) => (
-                <tr key={c.id}>
-                  <td style={{ fontFamily: 'Barlow Condensed', color: '#c9933a', fontSize: '0.8rem' }}>
-                    <a href={`/claims/${c.id}`} style={{ color: '#c9933a', textDecoration: 'none' }}>{c.claim_number}</a>
-                  </td>
+                <tr key={c.id} style={{ cursor: 'pointer' }} onClick={() => setSelectedClaim(c)}>
+                  <td style={{ fontFamily: 'Barlow Condensed', color: '#c9933a', fontSize: '0.8rem', fontWeight: 600 }}>{c.claim_number}</td>
                   <td><span className="badge" style={{ background: 'rgba(201,147,58,0.1)', borderColor: 'rgba(201,147,58,0.3)', color: '#e8b04a' }}>{formatStatus(c.status)}</span></td>
                   <td style={{ fontFamily: 'Barlow Condensed', color: '#f5f0e8' }}>{formatCurrency(c.reported_loss, c.currency, true)}</td>
                   <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: '#8fa3b8' }}>{getIslandFlag(c.island)} {getIslandLabel(c.island)}</td>
@@ -269,7 +301,7 @@ export default function DashboardPage() {
                 ))
               )}
             </tbody>
-          </table>
+          </table></div>
         </div>
       </div>
 
@@ -286,7 +318,7 @@ export default function DashboardPage() {
             Full Exposure Report →
           </a>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '1px', background: 'rgba(192,57,43,0.1)' }}>
+        <div className="exposure-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '1px', background: 'rgba(192,57,43,0.1)' }}>
           {[
             { island: '🇧🇧 Barbados', cat5: '$3.5M', cat34: '$7.9M', policies: 47, compliance: 79 },
             { island: '🇯🇲 Jamaica', cat5: '$3.0M', cat34: '$6.7M', policies: 38, compliance: 72 },
@@ -318,6 +350,39 @@ export default function DashboardPage() {
           ))}
         </div>
       </div>
+
+      {/* Quick claim view from dashboard */}
+      {selectedClaim && (
+        <div className="modal-backdrop" onClick={() => setSelectedClaim(null)}>
+          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 520, maxHeight: '80vh', overflowY: 'auto' }}>
+            <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)', display: 'flex', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#c9933a', marginBottom: '0.3rem' }}>Claim Summary</div>
+                <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>{selectedClaim.claim_number}</div>
+              </div>
+              <button onClick={() => setSelectedClaim(null)} style={{ background: 'none', border: 'none', color: '#8fa3b8', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
+            </div>
+            <div style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              {[
+                ['Status', selectedClaim.status ? selectedClaim.status.replace(/_/g,' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) : '—'],
+                ['Fraud Risk', selectedClaim.fraud_risk || '—'],
+                ['Coverage', selectedClaim.coverage_type || '—'],
+                ['Island', selectedClaim.island || '—'],
+                ['Incident Date', selectedClaim.incident_date ? new Date(selectedClaim.incident_date).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : '—'],
+                ['Reported Loss', selectedClaim.reported_loss ? `$${(selectedClaim.reported_loss/1000).toFixed(0)}K` : '—'],
+              ].map(([label, value], i) => (
+                <div key={i}>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>{label}</div>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.85rem', color: '#f5f0e8' }}>{value}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid rgba(201,147,58,0.1)' }}>
+              <a href="/claims" className="btn-gold" style={{ textDecoration: 'none', fontSize: '0.75rem' }}>Open Claims Register →</a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -248,3 +248,171 @@ html, body {
   width: 100%; height: 2px;
   background: linear-gradient(to right, var(--gold), transparent);
 }
+
+/* ─── MOBILE RESPONSIVE ─────────────────────────────────────────── */
+
+/* Mobile nav overlay */
+.mobile-nav-open { overflow: hidden; }
+
+/* Sidebar hidden on mobile by default */
+.crm-sidebar {
+  width: 240px;
+  min-height: 100vh;
+  flex-shrink: 0;
+}
+
+.crm-main {
+  flex: 1;
+  overflow-x: hidden;
+  min-height: 100vh;
+  min-width: 0;
+}
+
+/* Mobile overlay backdrop */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10,15,30,0.7);
+  z-index: 40;
+  backdrop-filter: blur(2px);
+}
+.sidebar-overlay.active { display: block; }
+
+/* Mobile hamburger button */
+.mobile-menu-btn {
+  display: none;
+  position: fixed;
+  top: 0.9rem;
+  left: 0.9rem;
+  z-index: 60;
+  background: #0d1321;
+  border: 1px solid rgba(201,147,58,0.25);
+  color: #c9933a;
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 2px;
+  font-size: 1.1rem;
+}
+
+/* Table scroll wrapper */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.table-scroll .crm-table {
+  min-width: 560px;
+}
+
+/* Modal full-screen on mobile */
+@media (max-width: 640px) {
+  .modal-backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .modal-sheet {
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Show hamburger, hide sidebar by default */
+  .mobile-menu-btn { display: flex; }
+
+  .crm-sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 100vh;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .crm-sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 40px rgba(0,0,0,0.6);
+  }
+
+  /* Add top padding to main for hamburger */
+  .crm-main { padding-top: 3.5rem !important; }
+
+  /* Page inner padding */
+  .page-inner {
+    padding: 1rem !important;
+  }
+
+  /* KPI grid: 2 cols on mobile */
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Charts: stack on mobile */
+  .charts-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Island grid: 2 cols on mobile, scroll */
+  .island-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    overflow-x: auto;
+  }
+
+  /* Page header: stack */
+  .page-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.8rem !important;
+  }
+
+  /* Filter bar: wrap */
+  .filter-bar {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+  }
+  .filter-bar input,
+  .filter-bar select {
+    min-width: 0 !important;
+    flex: 1 1 140px !important;
+  }
+
+  /* Stats row: 2 col */
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Detail grid: single col */
+  .detail-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Reduce font sizes on KPI values */
+  .kpi-value {
+    font-size: 1.4rem !important;
+  }
+
+  /* Exposure grid: 2 col */
+  .exposure-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Heatmap scroll */
+  .heatmap-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 400px) {
+  .kpi-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .stats-row {
+    grid-template-columns: 1fr !important;
+  }
+}

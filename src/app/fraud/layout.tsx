@@ -6,7 +6,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <AuthGuard>
       <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0f1e' }}>
         <Sidebar />
-        <main style={{ flex: 1, overflowX: 'hidden', minHeight: '100vh' }}>
+        <main className="crm-main">
           {children}
         </main>
       </div>

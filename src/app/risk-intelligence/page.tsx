@@ -49,14 +49,9 @@ const LOSS_MODEL = [
   { scenario: '1-in-250yr Storm', probable_loss: 78900000, reinsured: 65700000, net_retention: 13200000 },
 ]
 
-const FX_RATES = [
-  { from: 'BBD', rate: 2.0000, change: 0.0, flag: '🇧🇧' },
-  { from: 'JMD', rate: 156.50, change: +1.2, flag: '🇯🇲' },
-  { from: 'KYD', rate: 0.8200, change: 0.0, flag: '🇰🇾' },
-  { from: 'TTD', rate: 6.7900, change: -0.08, flag: '🇹🇹' },
-  { from: 'BSD', rate: 1.0000, change: 0.0, flag: '🇧🇸' },
-  { from: 'GBP', rate: 0.7900, change: +0.003, flag: '🇬🇧' },
-]
+const CURRENCY_FLAGS: Record<string, string> = {
+  BBD: '🇧🇧', JMD: '🇯🇲', KYD: '🇰🇾', TTD: '🇹🇹', BSD: '🇧🇸', GBP: '🇬🇧', EUR: '🇪🇺',
+}
 
 const ACTIVE_STORMS = [
   { name: 'Tropical Depression 8', category: 'TD', track: 'WNW at 12 mph', location: '14.2°N 61.8°W', distance_barbados: 'Monitor', risk: 'watch' },
@@ -80,10 +75,18 @@ export default function RiskIntelligencePage() {
   const [policies, setPolicies] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'heatmap' | 'construction' | 'fx' | 'loss'>('heatmap')
+  const [fxRates, setFxRates] = useState<any[]>([])
+  const [editingFx, setEditingFx] = useState<string | null>(null)
+  const [fxEdit, setFxEdit] = useState('')
+  const [fxSaving, setFxSaving] = useState(false)
+  const [selectedPolicy, setSelectedPolicy] = useState<any>(null)
+  const [selectedIsland, setSelectedIsland] = useState<Island | null>(null)
 
   useEffect(() => {
     async function load() {
       const { data } = await supabase.from('policies').select('id, island, insured_value, risk_score, structural_compliance_rating, wind_zone, flood_zone, coverage_type, currency')
+      const { data: fxData } = await supabase.from('fx_rates').select('*').order('from_currency')
+      if (fxData) setFxRates(fxData)
       setPolicies(data || [])
       setLoading(false)
     }
@@ -133,7 +136,7 @@ export default function RiskIntelligencePage() {
       </div>
 
       {/* KPI Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', marginBottom: '2rem', background: 'rgba(201,147,58,0.08)' }}>
+      <div className="stats-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', marginBottom: '2rem', background: 'rgba(201,147,58,0.08)' }}>
         {[
           { label: 'Total Portfolio Exposure', value: formatCurrency(totalExposure || 85330000, 'USD', true), sub: 'All islands · USD', color: '#c0392b' },
           { label: 'Portfolio Avg Risk Score', value: formatPct(avgRisk || 67), sub: `${highRiskPolicies || 42} high-risk policies`, color: getRiskColor(avgRisk || 67) },
@@ -308,7 +311,7 @@ export default function RiskIntelligencePage() {
             <div className="crm-card" style={{ borderColor: 'rgba(192,57,43,0.25)', background: 'rgba(192,57,43,0.04)' }}>
               <div className="section-eyebrow" style={{ color: '#fc8181', marginBottom: '0.8rem' }}>High-Risk Structural Alerts</div>
               {[
-                { policy: 'AAG-2024-010023', type: 'Timber Frame', island: 'Jamaica', score: 38, issue: 'No hurricane straps documented' },
+                { policy: 'AAG-2024-010023', type: 'Timber Frame', island: 'Jamaica', score: 38, issue: 'No hurricane straps documented', id: 'aag-010023' },
                 { policy: 'AAG-2024-010041', type: 'Mixed/Unknown', island: 'T&T', score: 29, issue: 'Pre-1985 construction, no retrofit' },
                 { policy: 'AAG-2024-010067', type: 'Masonry Block', island: 'Bahamas', score: 44, issue: 'Flood zone — no elevation cert' },
               ].map((item, i) => (
@@ -330,35 +333,73 @@ export default function RiskIntelligencePage() {
       {activeTab === 'fx' && (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '1.5rem' }}>
           <div className="crm-card">
-            <div className="section-eyebrow" style={{ marginBottom: '0.4rem' }}>Live FX Rates · vs USD</div>
-            <p style={{ fontFamily: 'Barlow', fontSize: '0.82rem', color: '#8fa3b8', marginBottom: '1.5rem' }}>
-              Multi-currency claims settlement tracking. All exposures and claims can be reported in any of 6 Caribbean currencies.
-            </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              {FX_RATES.map((fx, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.9rem 1rem', background: 'rgba(30,45,69,0.4)', border: '1px solid rgba(201,147,58,0.08)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                    <span style={{ fontSize: '1.1rem' }}>{fx.flag}</span>
-                    <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.88rem', fontWeight: 700, color: '#f5f0e8' }}>{fx.from}</span>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700, fontSize: '1.1rem', color: '#c9933a' }}>{fx.rate.toFixed(4)}</div>
-                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: fx.change > 0 ? '#27ae60' : fx.change < 0 ? '#c0392b' : '#8fa3b8' }}>
-                      {fx.change > 0 ? '+' : ''}{fx.change.toFixed(3)} today
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+              <div>
+                <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>FX Rates · vs USD</div>
+                <div style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: '#8fa3b8' }}>Click any rate to update</div>
+              </div>
+              <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', color: '#4a6080', letterSpacing: '0.12em', textTransform: 'uppercase' }}>Live · Caribbean Central Banks</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+              {(fxRates.length > 0 ? fxRates : [
+                { id: '1', from_currency: 'BBD', rate: 0.5000, source: 'Central Bank of Barbados' },
+                { id: '2', from_currency: 'JMD', rate: 0.006390, source: 'Bank of Jamaica' },
+                { id: '3', from_currency: 'KYD', rate: 1.2195, source: 'CIMA' },
+                { id: '4', from_currency: 'TTD', rate: 0.1473, source: 'Central Bank of T&T' },
+                { id: '5', from_currency: 'BSD', rate: 1.0000, source: 'Central Bank of Bahamas' },
+                { id: '6', from_currency: 'GBP', rate: 1.2658, source: 'Bank of England' },
+              ]).map((fx: any) => (
+                <div key={fx.id} style={{ padding: '0.8rem 1rem', background: 'rgba(30,45,69,0.4)', border: `1px solid ${editingFx === fx.id ? 'rgba(201,147,58,0.4)' : 'rgba(201,147,58,0.08)'}`, transition: 'border-color 0.2s' }}>
+                  {editingFx === fx.id ? (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                      <span style={{ fontSize: '1rem' }}>{CURRENCY_FLAGS[fx.from_currency] || '🏦'}</span>
+                      <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.85rem', fontWeight: 700, color: '#c9933a', minWidth: 40 }}>{fx.from_currency}</span>
+                      <input
+                        className="crm-input"
+                        type="number"
+                        step="0.0001"
+                        value={fxEdit}
+                        onChange={e => setFxEdit(e.target.value)}
+                        style={{ maxWidth: 100, padding: '0.3rem 0.5rem', fontSize: '0.85rem' }}
+                        autoFocus
+                      />
+                      <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: '#8fa3b8' }}>USD</span>
+                      <button onClick={async () => {
+                        setFxSaving(true)
+                        await supabase.from('fx_rates').update({ rate: parseFloat(fxEdit), updated_at: new Date().toISOString() }).eq('id', fx.id)
+                        setFxRates(prev => prev.map(r => r.id === fx.id ? { ...r, rate: parseFloat(fxEdit) } : r))
+                        setEditingFx(null)
+                        setFxSaving(false)
+                      }} className="btn-gold" style={{ padding: '0.25rem 0.6rem', fontSize: '0.65rem' }} disabled={fxSaving}>Save</button>
+                      <button onClick={() => setEditingFx(null)} style={{ background: 'none', border: 'none', color: '#8fa3b8', cursor: 'pointer', fontSize: '0.9rem' }}>✕</button>
                     </div>
-                  </div>
+                  ) : (
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }} onClick={() => { setEditingFx(fx.id); setFxEdit(fx.rate.toString()) }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                        <span style={{ fontSize: '1rem' }}>{CURRENCY_FLAGS[fx.from_currency] || '🏦'}</span>
+                        <div>
+                          <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.85rem', fontWeight: 700, color: '#f5f0e8' }}>{fx.from_currency}</div>
+                          <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', color: '#4a6080' }}>{fx.source}</div>
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700, fontSize: '1.05rem', color: '#c9933a' }}>{fx.rate.toFixed(4)}</div>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', color: '#4a6080' }}>per USD · click to edit</div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
-            <div style={{ marginTop: '1.2rem', padding: '0.8rem', background: 'rgba(201,147,58,0.06)', border: '1px solid rgba(201,147,58,0.15)', fontFamily: 'Barlow', fontSize: '0.78rem', color: '#8fa3b8', lineHeight: 1.6 }}>
-              Rates sourced from Caribbean Central Banks. Claims settled in original currency of policy with FX conversion logged at settlement date.
+            <div style={{ marginTop: '1rem', padding: '0.7rem', background: 'rgba(201,147,58,0.06)', border: '1px solid rgba(201,147,58,0.15)', fontFamily: 'Barlow', fontSize: '0.75rem', color: '#8fa3b8', lineHeight: 1.6 }}>
+              Rates stored in Supabase fx_rates table. Click any row to update. Claims settled at rate logged on settlement date.
             </div>
           </div>
 
           <div className="crm-card">
             <div className="section-eyebrow" style={{ marginBottom: '0.4rem' }}>FX Exposure by Island · Open Claims</div>
             <p style={{ fontFamily: 'Barlow', fontSize: '0.82rem', color: '#8fa3b8', marginBottom: '1.5rem' }}>Currency breakdown of open claims exposure across all markets.</p>
-            <table className="crm-table">
+            <div className="table-scroll"><table className="crm-table">
               <thead>
                 <tr>
                   <th>Island</th>
@@ -392,11 +433,10 @@ export default function RiskIntelligencePage() {
                     </td>
                   </tr>
                 ))}
-              </tbody>
-            </table>
+              </tbody></table></div>
             <div style={{ marginTop: '1.5rem' }}>
               <div className="section-eyebrow" style={{ marginBottom: '0.8rem' }}>Import Duty Adjustment Factors</div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '0.5rem' }}>
+              <div className="exposure-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '0.5rem' }}>
                 {[
                   { island: '🇧🇧 BBD', duty: '22%' }, { island: '🇯🇲 JMD', duty: '15%' },
                   { island: '🇰🇾 KYD', duty: '20%' }, { island: '🇹🇹 TTD', duty: '20%' }, { island: '🇧🇸 BSD', duty: '45%' },
@@ -476,6 +516,105 @@ export default function RiskIntelligencePage() {
                   <span className="badge" style={{ background: 'rgba(39,174,96,0.15)', color: '#4ade80', borderColor: 'rgba(39,174,96,0.3)' }}>Active</span>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Island drill-down modal */}
+      {selectedIsland && (() => {
+        const islandPolicies = policies.filter(p => p.island === selectedIsland)
+        const islandExposure = islandPolicies.reduce((s, p) => s + (p.insured_value || 0), 0)
+        const avgCompliance = islandPolicies.filter(p => p.structural_compliance_rating).reduce((s, p, _, a) => s + p.structural_compliance_rating / a.length, 0) || 0
+        const highRisk = islandPolicies.filter(p => (p.risk_score || 50) >= 65)
+        return (
+          <div className="modal-backdrop" onClick={() => setSelectedIsland(null)}>
+            <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(192,57,43,0.3)', width: '100%', maxWidth: 600, maxHeight: '88vh', overflowY: 'auto' }}>
+              <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(192,57,43,0.15)', background: 'rgba(192,57,43,0.04)', display: 'flex', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#fc8181', marginBottom: '0.3rem' }}>Island Exposure Drill-Down</div>
+                  <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>{getIslandFlag(selectedIsland)} {getIslandLabel(selectedIsland)}</div>
+                </div>
+                <button onClick={() => setSelectedIsland(null)} style={{ background: 'none', border: 'none', color: '#8fa3b8', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1px', background: 'rgba(192,57,43,0.1)' }}>
+                {[
+                  { label: 'Total Policies', value: islandPolicies.length.toString() },
+                  { label: 'Total Exposure', value: formatCurrency(islandExposure, 'USD', true) },
+                  { label: 'High Risk Policies', value: highRisk.length.toString() },
+                  { label: 'Avg Structural Compliance', value: avgCompliance > 0 ? `${avgCompliance.toFixed(0)}%` : '—' },
+                  { label: 'Active', value: islandPolicies.filter(p => p.status === 'active').length.toString() },
+                  { label: 'Avg Risk Score', value: islandPolicies.length > 0 ? Math.round(islandPolicies.reduce((s, p) => s + (p.risk_score || 50), 0) / islandPolicies.length).toString() : '—' },
+                ].map((k, i) => (
+                  <div key={i} style={{ background: '#111827', padding: '1rem' }}>
+                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#8fa3b8' }}>{k.label}</div>
+                    <div style={{ fontFamily: 'Playfair Display, serif', fontWeight: 900, fontSize: '1.3rem', color: '#c9933a', marginTop: '0.2rem' }}>{k.value}</div>
+                  </div>
+                ))}
+              </div>
+              {islandPolicies.length > 0 ? (
+                <div>
+                  <div style={{ padding: '1rem 1.5rem', fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#c9933a', borderBottom: '1px solid rgba(201,147,58,0.08)' }}>Portfolio — {selectedIsland} ({islandPolicies.length} policies)</div>
+                  {islandPolicies.slice(0, 10).map(p => (
+                    <div key={p.id} style={{ padding: '0.8rem 1.5rem', borderBottom: '1px solid rgba(201,147,58,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }} onClick={() => { setSelectedIsland(null); setSelectedPolicy(p) }}>
+                      <div>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.8rem', color: '#c9933a', fontWeight: 600 }}>{p.policy_number || '—'}</div>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: '#8fa3b8', marginTop: '0.15rem' }}>{p.coverage_type} · {p.wind_zone || 'Zone ?'}</div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.8rem', color: '#f5f0e8' }}>{formatCurrency(p.insured_value, p.currency, true)}</div>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: getRiskColor(p.risk_score || 50) }}>Risk: {p.risk_score || 50}</div>
+                      </div>
+                    </div>
+                  ))}
+                  {islandPolicies.length > 10 && <div style={{ padding: '0.8rem 1.5rem', fontFamily: 'Barlow Condensed', fontSize: '0.7rem', color: '#4a6080', textAlign: 'center' }}>+{islandPolicies.length - 10} more policies — view in Policies</div>}
+                </div>
+              ) : (
+                <div style={{ padding: '2rem', textAlign: 'center', color: '#4a6080', fontFamily: 'Barlow Condensed', letterSpacing: '0.1em' }}>No policy data loaded. Seed data required.</div>
+              )}
+            </div>
+          </div>
+        )
+      })()}
+
+      {/* Policy quick-view from Risk Intelligence */}
+      {selectedPolicy && (
+        <div className="modal-backdrop" onClick={() => setSelectedPolicy(null)}>
+          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 520, maxHeight: '80vh', overflowY: 'auto' }}>
+            <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)', display: 'flex', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#c9933a', marginBottom: '0.3rem' }}>Policy Risk Profile</div>
+                <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>{selectedPolicy.policy_number || '—'}</div>
+              </div>
+              <button onClick={() => setSelectedPolicy(null)} style={{ background: 'none', border: 'none', color: '#8fa3b8', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
+            </div>
+            <div style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              {[
+                ['Coverage Type', selectedPolicy.coverage_type],
+                ['Island', `${getIslandFlag(selectedPolicy.island)} ${getIslandLabel(selectedPolicy.island)}`],
+                ['Insured Value', selectedPolicy.insured_value ? formatCurrency(selectedPolicy.insured_value, selectedPolicy.currency, false) : '—'],
+                ['Currency', selectedPolicy.currency || '—'],
+                ['Wind Zone', selectedPolicy.wind_zone || '—'],
+                ['Flood Zone', selectedPolicy.flood_zone || '—'],
+                ['Structural Compliance', selectedPolicy.structural_compliance_rating ? `${selectedPolicy.structural_compliance_rating}%` : '—'],
+                ['Risk Score', selectedPolicy.risk_score ? String(selectedPolicy.risk_score) : '—'],
+              ].map(([label, value], i) => (
+                <div key={i}>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>{label}</div>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.85rem', color: '#f5f0e8' }}>{value || '—'}</div>
+                </div>
+              ))}
+              <div style={{ gridColumn: '1 / -1' }}>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.5rem' }}>Risk Score</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <div style={{ flex: 1, height: 6, background: 'rgba(46,64,96,0.5)', borderRadius: 3 }}>
+                    <div style={{ height: '100%', width: `${selectedPolicy.risk_score || 50}%`, background: getRiskColor(selectedPolicy.risk_score || 50), borderRadius: 3 }} />
+                  </div>
+                  <span style={{ fontFamily: 'Playfair Display, serif', fontWeight: 900, fontSize: '1.3rem', color: getRiskColor(selectedPolicy.risk_score || 50) }}>{selectedPolicy.risk_score || 50}</span>
+                </div>
+              </div>
+            </div>
+            <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid rgba(201,147,58,0.1)' }}>
+              <a href="/policies" className="btn-ghost" style={{ textDecoration: 'none', fontSize: '0.75rem', padding: '0.5rem 1rem' }}>View Full Policy →</a>
             </div>
           </div>
         </div>

@@ -23,6 +23,9 @@ export default function FraudPage() {
   const [loading, setLoading] = useState(true)
   const [filterStatus, setFilterStatus] = useState('')
   const [selected, setSelected] = useState<any>(null)
+  const [fraudTab, setFraudTab] = useState<'detail'|'claim'|'history'>('detail')
+  const [clientHistory, setClientHistory] = useState<any[]>([])
+  const [historyLoading, setHistoryLoading] = useState(false)
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
@@ -54,6 +57,23 @@ export default function FraudPage() {
   const filtered = alerts.filter(a => !filterStatus || a.status === filterStatus)
   const openCount = alerts.filter(a => a.status === 'open').length
   const flaggedCount = alerts.filter(a => ['flagged', 'confirmed_fraud'].includes(a.claims?.fraud_risk || '')).length
+  async function openAlert(alert: any) {
+    setSelected(alert)
+    setFraudTab('detail')
+    if (alert.clients?.first_name || alert.clients?.company_name) {
+      setHistoryLoading(true)
+      // Load all claims for this client from the DB if we have a real client id
+      const clientId = alert.client_id
+      if (clientId) {
+        const { data } = await supabase.from('claims').select('id, claim_number, status, reported_loss, currency, incident_date, fraud_risk, island').eq('client_id', clientId).order('incident_date', { ascending: false })
+        setClientHistory(data || [])
+      } else {
+        setClientHistory([])
+      }
+      setHistoryLoading(false)
+    }
+  }
+
   const avgRisk = alerts.length > 0 ? Math.round(alerts.reduce((s, a) => s + (a.risk_score || 0), 0) / alerts.length) : 0
   const totalExposure = alerts.reduce((s, a) => s + (a.claims?.reported_loss || 0), 0)
 
@@ -98,7 +118,7 @@ export default function FraudPage() {
       </div>
 
       {/* KPIs */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', marginBottom: '2rem', background: 'rgba(201,147,58,0.08)' }}>
+      <div className="stats-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', marginBottom: '2rem', background: 'rgba(201,147,58,0.08)' }}>
         {[
           { label: 'Open Alerts', value: (openCount || MOCK_ALERTS.filter(a => a.status === 'open').length).toString(), color: '#c0392b', sub: 'Require review' },
           { label: 'Escalated Cases', value: (alerts.filter(a => a.status === 'escalated').length || 1).toString(), color: '#e67e22', sub: 'SIU referral' },
@@ -134,7 +154,7 @@ export default function FraudPage() {
               <option value="cleared">Cleared</option>
             </select>
           </div>
-          <table className="crm-table">
+          <div className="table-scroll"><table className="crm-table">
             <thead>
               <tr>
                 <th>Claim</th>
@@ -147,7 +167,7 @@ export default function FraudPage() {
             </thead>
             <tbody>
               {displayAlerts.map((alert: any) => (
-                <tr key={alert.id} style={{ cursor: 'pointer' }} onClick={() => setSelected(alert)}>
+                <tr key={alert.id} style={{ cursor: 'pointer' }} onClick={() => openAlert(alert)}>
                   <td style={{ fontFamily: 'Barlow Condensed', color: '#c9933a', fontSize: '0.8rem' }}>
                     {alert.claims?.claim_number || '—'}
                   </td>
@@ -199,7 +219,7 @@ export default function FraudPage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         </div>
 
         {/* Pattern Engine + Risk Claims */}
@@ -223,7 +243,7 @@ export default function FraudPage() {
             <div style={{ padding: '1rem 1.2rem', borderBottom: '1px solid rgba(201,147,58,0.1)' }}>
               <div className="section-eyebrow" style={{ marginBottom: '0.2rem' }}>Claims · Fraud Risk Status</div>
             </div>
-            <table className="crm-table">
+            <div className="table-scroll"><table className="crm-table">
               <thead><tr><th>Claim</th><th>Risk</th><th>Loss</th></tr></thead>
               <tbody>
                 {displayClaims.map((c: any) => (
@@ -237,69 +257,133 @@ export default function FraudPage() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
           </div>
         </div>
       </div>
 
       {/* Alert Detail Panel */}
       {selected && (
-        <div style={{ position: 'fixed', right: 0, top: 0, bottom: 0, width: '400px', background: '#111827', borderLeft: '1px solid rgba(201,147,58,0.2)', zIndex: 100, overflowY: 'auto', padding: '2rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
-            <div>
-              <div className="section-eyebrow" style={{ marginBottom: '0.4rem' }}>Fraud Alert Detail</div>
-              <h3 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.3rem', color: '#fff', margin: 0 }}>{selected.alert_type}</h3>
-            </div>
-            <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: '#8fa3b8', fontSize: '1.2rem', cursor: 'pointer' }}>✕</button>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div style={{ padding: '1rem', background: 'rgba(192,57,43,0.08)', border: '1px solid rgba(192,57,43,0.2)' }}>
-              <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#fc8181', marginBottom: '0.4rem' }}>Fraud Risk Score</div>
-              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '2.5rem', fontWeight: 900, color: '#c0392b' }}>{selected.risk_score}</div>
-              <div style={{ height: 6, background: 'rgba(46,64,96,0.5)', borderRadius: 3, marginTop: '0.5rem' }}>
-                <div style={{ height: '100%', width: `${selected.risk_score}%`, background: '#c0392b', borderRadius: 3 }} />
-              </div>
-            </div>
-
-            <div className="crm-card" style={{ padding: '1rem' }}>
-              <div className="section-eyebrow" style={{ marginBottom: '0.6rem' }}>Claim</div>
-              <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.9rem', color: '#c9933a' }}>{selected.claims?.claim_number}</div>
-              <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.8rem', color: '#8fa3b8', marginTop: '0.2rem' }}>
-                {formatCurrency(selected.claims?.reported_loss || 0, selected.claims?.currency || 'USD', true)} · {selected.claims?.coverage_type}
-              </div>
-            </div>
-
-            <div className="crm-card" style={{ padding: '1rem' }}>
-              <div className="section-eyebrow" style={{ marginBottom: '0.6rem' }}>Client</div>
-              <div style={{ fontFamily: 'Barlow', fontSize: '0.88rem', color: '#f5f0e8' }}>
-                {selected.clients?.company_name || `${selected.clients?.first_name} ${selected.clients?.last_name}`}
-              </div>
-              <div style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: '#8fa3b8', marginTop: '0.2rem' }}>{selected.clients?.email}</div>
-            </div>
-
-            <div className="crm-card" style={{ padding: '1rem' }}>
-              <div className="section-eyebrow" style={{ marginBottom: '0.6rem' }}>Triggered Flags</div>
-              {(selected.flags || selected.fraud_flags || []).map((flag: string, i: number) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', marginBottom: '0.4rem' }}>
-                  <span style={{ color: '#c0392b', fontSize: '0.7rem', marginTop: '0.15rem', flexShrink: 0 }}>⚠</span>
-                  <span style={{ fontFamily: 'Barlow', fontSize: '0.82rem', color: '#fc8181', lineHeight: 1.4 }}>{flag}</span>
+        <div className="modal-backdrop" onClick={() => setSelected(null)}>
+          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(192,57,43,0.35)', width: '100%', maxWidth: 660, maxHeight: '92vh', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+            {/* Header */}
+            <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(192,57,43,0.2)', background: 'rgba(192,57,43,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
+              <div>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.22em', textTransform: 'uppercase', color: '#fc8181', marginBottom: '0.3rem' }}>⚠ Fraud Alert</div>
+                <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>{selected.alert_type}</div>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: '#8fa3b8', marginTop: '0.2rem' }}>
+                  {selected.clients?.company_name || `${selected.clients?.first_name} ${selected.clients?.last_name}`} · {selected.claims?.claim_number}
                 </div>
+              </div>
+              <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: '#8fa3b8', fontSize: '1.2rem', cursor: 'pointer' }}>✕</button>
+            </div>
+            {/* Risk score bar */}
+            <div style={{ padding: '1rem 1.5rem', background: 'rgba(192,57,43,0.08)', borderBottom: '1px solid rgba(192,57,43,0.15)', display: 'flex', alignItems: 'center', gap: '1.5rem', flexShrink: 0 }}>
+              <div>
+                <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '2.2rem', fontWeight: 900, color: '#c0392b', lineHeight: 1 }}>{selected.risk_score}</div>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#fc8181', marginTop: '0.2rem' }}>Risk Score</div>
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ height: 8, background: 'rgba(46,64,96,0.5)', borderRadius: 4 }}>
+                  <div style={{ height: '100%', width: `${selected.risk_score}%`, background: selected.risk_score >= 80 ? '#c0392b' : '#e67e22', borderRadius: 4 }} />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.3rem' }}>
+                  <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', color: '#4a6080' }}>Reported: {formatDate(selected.created_at)}</span>
+                  <span className="badge" style={{ background: selected.status === 'open' ? 'rgba(192,57,43,0.2)' : selected.status === 'escalated' ? 'rgba(230,126,34,0.2)' : selected.status === 'cleared' ? 'rgba(39,174,96,0.15)' : 'rgba(241,196,15,0.15)', color: selected.status === 'open' ? '#fc8181' : selected.status === 'escalated' ? '#fb923c' : selected.status === 'cleared' ? '#4ade80' : '#fbbf24', borderColor: 'transparent' }}>{formatStatus(selected.status)}</span>
+                </div>
+              </div>
+            </div>
+            {/* Tabs */}
+            <div style={{ display: 'flex', borderBottom: '1px solid rgba(201,147,58,0.1)', flexShrink: 0 }}>
+              {[['detail','Alert Detail'], ['claim','Claim File'], ['history', `Client History (${clientHistory.length})`]].map(([id, label]) => (
+                <button key={id} onClick={() => setFraudTab(id as any)} style={{ padding: '0.8rem 1.2rem', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Barlow Condensed', fontSize: '0.72rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: fraudTab === id ? '#c9933a' : '#4a6080', borderBottom: fraudTab === id ? '2px solid #c9933a' : '2px solid transparent', marginBottom: '-1px' }}>{label}</button>
               ))}
             </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              {selected.status !== 'escalated' && (
-                <button onClick={() => updateAlertStatus(selected.id, 'escalated')} style={{ fontFamily: 'Barlow Condensed', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.8rem', background: 'rgba(192,57,43,0.15)', border: '1px solid rgba(192,57,43,0.4)', color: '#fc8181', cursor: 'pointer', fontSize: '0.78rem' }}>
-                  Escalate to SIU
-                </button>
-              )}
-              {selected.status !== 'cleared' && (
-                <button onClick={() => updateAlertStatus(selected.id, 'cleared')} style={{ fontFamily: 'Barlow Condensed', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.8rem', background: 'rgba(39,174,96,0.1)', border: '1px solid rgba(39,174,96,0.3)', color: '#4ade80', cursor: 'pointer', fontSize: '0.78rem' }}>
-                  Mark as Cleared
-                </button>
-              )}
-            </div>
+            {/* Alert Detail Tab */}
+            {fraudTab === 'detail' && (
+              <div style={{ padding: '1.5rem', flex: 1 }}>
+                <div style={{ marginBottom: '1.2rem' }}>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#c9933a', marginBottom: '0.6rem' }}>Triggered Flags</div>
+                  {(selected.flags || selected.fraud_flags || []).map((flag: string, i: number) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem', marginBottom: '0.5rem', padding: '0.6rem 0.8rem', background: 'rgba(192,57,43,0.06)', border: '1px solid rgba(192,57,43,0.15)' }}>
+                      <span style={{ color: '#c0392b', fontSize: '0.75rem', marginTop: '0.1rem', flexShrink: 0 }}>⚠</span>
+                      <span style={{ fontFamily: 'Barlow', fontSize: '0.82rem', color: '#fc8181', lineHeight: 1.5 }}>{flag}</span>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ marginBottom: '1.2rem' }}>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#c9933a', marginBottom: '0.6rem' }}>Client Profile</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem' }}>
+                    {[
+                      ['Name', selected.clients?.company_name || `${selected.clients?.first_name} ${selected.clients?.last_name}`],
+                      ['Email', selected.clients?.email || '—'],
+                      ['VIP Status', selected.clients?.is_vip ? '⭐ VIP Client' : 'Standard'],
+                      ['Segment', selected.clients?.segment ? formatStatus(selected.clients.segment) : '—'],
+                    ].map(([l, v], i) => (
+                      <div key={i}>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.2rem' }}>{l}</div>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.82rem', color: '#f5f0e8' }}>{v}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+                  {selected.status !== 'under_review' && selected.status !== 'escalated' && selected.status !== 'cleared' && (
+                    <button onClick={() => updateAlertStatus(selected.id, 'under_review')} className="btn-ghost" style={{ fontSize: '0.75rem' }}>Start Review</button>
+                  )}
+                  {selected.status !== 'escalated' && (
+                    <button onClick={() => updateAlertStatus(selected.id, 'escalated')} style={{ fontFamily: 'Barlow Condensed', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.65rem 1.2rem', background: 'rgba(192,57,43,0.15)', border: '1px solid rgba(192,57,43,0.4)', color: '#fc8181', cursor: 'pointer', fontSize: '0.75rem' }}>Escalate to SIU</button>
+                  )}
+                  {selected.status !== 'cleared' && (
+                    <button onClick={() => updateAlertStatus(selected.id, 'cleared')} style={{ fontFamily: 'Barlow Condensed', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.65rem 1.2rem', background: 'rgba(39,174,96,0.1)', border: '1px solid rgba(39,174,96,0.3)', color: '#4ade80', cursor: 'pointer', fontSize: '0.75rem' }}>Mark Cleared</button>
+                  )}
+                </div>
+              </div>
+            )}
+            {/* Claim File Tab */}
+            {fraudTab === 'claim' && (
+              <div style={{ padding: '1.5rem', flex: 1 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                  {[
+                    ['Claim Number', selected.claims?.claim_number || '—'],
+                    ['Coverage Type', selected.claims?.coverage_type ? formatStatus(selected.claims.coverage_type) : '—'],
+                    ['Reported Loss', formatCurrency(selected.claims?.reported_loss || 0, selected.claims?.currency || 'USD')],
+                    ['Island', selected.claims?.island ? `${getIslandFlag(selected.claims.island as any)} ${getIslandLabel(selected.claims.island as any)}` : '—'],
+                    ['Incident Date', formatDate(selected.claims?.incident_date)],
+                    ['Fraud Risk', selected.claims?.fraud_risk ? formatStatus(selected.claims.fraud_risk) : '—'],
+                  ].map(([l, v], i) => (
+                    <div key={i}>
+                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>{l}</div>
+                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.85rem', color: '#f5f0e8' }}>{v}</div>
+                    </div>
+                  ))}
+                </div>
+                <a href="/claims" className="btn-ghost" style={{ textDecoration: 'none', fontSize: '0.72rem', padding: '0.5rem 1rem' }}>Open Full Claims Register →</a>
+              </div>
+            )}
+            {/* Client History Tab */}
+            {fraudTab === 'history' && (
+              <div style={{ flex: 1 }}>
+                {historyLoading ? <div style={{ padding: '2rem', textAlign: 'center', color: '#8fa3b8' }}>Loading…</div> :
+                clientHistory.length === 0 ? (
+                  <div style={{ padding: '2rem', textAlign: 'center', color: '#4a6080', fontFamily: 'Barlow Condensed', letterSpacing: '0.1em' }}>
+                    <div style={{ marginBottom: '0.5rem' }}>No historical claims data available from DB.</div>
+                    <div style={{ fontSize: '0.75rem' }}>Seed data required — run antillia-seed.sql in Supabase.</div>
+                  </div>
+                ) : clientHistory.map((c, i) => (
+                  <div key={c.id} style={{ padding: '1rem 1.5rem', borderBottom: '1px solid rgba(201,147,58,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div>
+                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.82rem', color: '#c9933a', fontWeight: 600 }}>{c.claim_number}</div>
+                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.68rem', color: '#8fa3b8', marginTop: '0.2rem' }}>{getIslandFlag(c.island as any)} {getIslandLabel(c.island as any)} · {formatDate(c.incident_date)}</div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 600, color: c.fraud_risk !== 'clear' ? '#fc8181' : '#4ade80', fontSize: '0.75rem' }}>{formatStatus(c.fraud_risk || 'clear')}</div>
+                      <div style={{ fontFamily: 'Barlow Condensed', color: '#8fa3b8', fontSize: '0.78rem' }}>{formatCurrency(c.reported_loss, c.currency, true)}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}

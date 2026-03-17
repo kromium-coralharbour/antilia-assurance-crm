@@ -370,3 +370,90 @@ INSERT INTO hurricane_exposure_cache (island, total_policies, total_exposure, cu
   ('cayman_islands', 0, 0, 'USD', 0, 0, 0, 0, 0, 0),
   ('trinidad_tobago', 0, 0, 'USD', 0, 0, 0, 0, 0, 0),
   ('bahamas', 0, 0, 'USD', 0, 0, 0, 0, 0, 0);
+
+-- Endorsements additive migration (safe to re-run)
+CREATE TABLE IF NOT EXISTS policy_endorsements (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now(),
+  policy_id uuid REFERENCES policies(id) ON DELETE CASCADE,
+  endorsement_number text NOT NULL,
+  type text NOT NULL CHECK (type IN ('coverage_extension','coverage_reduction','premium_adjustment','address_change','name_change','deductible_change','wind_zone_change','other')),
+  description text NOT NULL,
+  effective_date date NOT NULL,
+  additional_premium numeric(12,2) DEFAULT 0,
+  currency text DEFAULT 'USD',
+  status text DEFAULT 'active' CHECK (status IN ('active','voided')),
+  issued_by text,
+  notes text
+);
+
+ALTER TABLE policy_endorsements ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "endorsements_all" ON policy_endorsements;
+CREATE POLICY "endorsements_all" ON policy_endorsements FOR ALL USING (auth.role() = 'authenticated');
+
+-- Cat surge events table
+CREATE TABLE IF NOT EXISTS cat_surge_events (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now(),
+  name text NOT NULL,
+  event_type text NOT NULL,
+  status text DEFAULT 'active' CHECK (status IN ('active','monitoring','closed')),
+  islands text[] DEFAULT '{}',
+  activated_at timestamptz DEFAULT now(),
+  closed_at timestamptz,
+  notes text,
+  expected_claims int DEFAULT 0,
+  activated_by text DEFAULT 'AAG Staff'
+);
+
+ALTER TABLE cat_surge_events ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "surge_all" ON cat_surge_events;
+CREATE POLICY "surge_all" ON cat_surge_events FOR ALL USING (auth.role() = 'authenticated');
+
+-- FX rates table (upsertable)
+CREATE TABLE IF NOT EXISTS fx_rates (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  updated_at timestamptz DEFAULT now(),
+  from_currency text NOT NULL,
+  to_currency text DEFAULT 'USD',
+  rate numeric(12,6) NOT NULL,
+  source text DEFAULT 'Manual',
+  UNIQUE(from_currency, to_currency)
+);
+
+ALTER TABLE fx_rates ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "fx_all" ON fx_rates;
+CREATE POLICY "fx_all" ON fx_rates FOR ALL USING (auth.role() = 'authenticated');
+
+-- Seed FX rates
+INSERT INTO fx_rates (from_currency, to_currency, rate, source) VALUES
+  ('BBD','USD',0.5000,'Central Bank of Barbados'),
+  ('JMD','USD',0.006390,'Bank of Jamaica'),
+  ('KYD','USD',1.2195,'Cayman Islands Monetary Authority'),
+  ('TTD','USD',0.1473,'Central Bank of T&T'),
+  ('BSD','USD',1.0000,'Central Bank of Bahamas'),
+  ('GBP','USD',1.2658,'Bank of England'),
+  ('EUR','USD',1.0850,'European Central Bank')
+ON CONFLICT (from_currency, to_currency) DO NOTHING;
+
+-- Seed cat surge events
+INSERT INTO cat_surge_events (name, event_type, status, islands, notes, expected_claims, activated_by) VALUES
+  ('Hurricane Beryl', 'hurricane', 'closed', ARRAY['jamaica','barbados','trinidad_tobago'], 'Category 4 at peak. Closed after 45-day claims window.', 127, 'AAG Staff'),
+  ('Tropical Storm Kirk', 'tropical_storm', 'closed', ARRAY['barbados','trinidad_tobago'], 'Minor surge, 12 claims filed.', 12, 'AAG Staff')
+ON CONFLICT DO NOTHING;
+
+-- Seed endorsements
+INSERT INTO policy_endorsements (policy_id, endorsement_number, type, description, effective_date, additional_premium, currency, issued_by)
+SELECT 
+  p.id,
+  'END-' || p.policy_number || '-001',
+  'coverage_extension',
+  'Extended hurricane debris removal coverage added. Limit increased to $50,000.',
+  p.start_date + interval '30 days',
+  1200,
+  p.premium_currency,
+  'Senior Underwriter'
+FROM policies p
+LIMIT 5;

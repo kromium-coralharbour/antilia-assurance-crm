@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { formatCurrency, formatDate, formatStatus, getIslandLabel, getIslandFlag, getRiskColor, getRiskLabel, RISK_BG } from '@/lib/utils'
+import { formatCurrency, formatDate, formatStatus, getIslandLabel, getIslandFlag, getRiskColor, getRiskLabel, RISK_BG, POLICY_STATUS_STYLES, CLAIM_STATUS_STYLES, daysUntil } from '@/lib/utils'
 import { Island, ClientSegment, Currency, ISLAND_LABELS } from '@/types'
 
 const SEGMENT_LABELS: Record<ClientSegment, string> = {
@@ -31,6 +31,10 @@ export default function ClientsPage() {
   const [form, setForm] = useState(EMPTY)
   const [saving, setSaving] = useState(false)
   const [selected, setSelected] = useState<any>(null)
+  const [clientTab, setClientTab] = useState<'profile'|'policies'|'claims'>('profile')
+  const [clientPolicies, setClientPolicies] = useState<any[]>([])
+  const [clientClaims, setClientClaims] = useState<any[]>([])
+  const [clientDataLoading, setClientDataLoading] = useState(false)
 
   async function load() {
     const [clientRes, brokerRes] = await Promise.all([
@@ -47,6 +51,19 @@ export default function ClientsPage() {
     const matchSearch = !search || `${c.first_name} ${c.last_name} ${c.company_name || ''} ${c.email}`.toLowerCase().includes(search.toLowerCase())
     return matchSearch && (!filterSegment || c.segment === filterSegment) && (!filterIsland || c.island === filterIsland)
   })
+
+  async function openClient(c: any) {
+    setSelected(c)
+    setClientTab('profile')
+    setClientDataLoading(true)
+    const [polRes, claimRes] = await Promise.all([
+      supabase.from('policies').select('id, policy_number, coverage_type, status, annual_premium, insured_value, currency, premium_currency, renewal_date, island').eq('client_id', c.id).order('created_at', { ascending: false }),
+      supabase.from('claims').select('id, claim_number, status, reported_loss, currency, incident_date, island, fraud_risk, catastrophe_event, storm_name').eq('client_id', c.id).order('created_at', { ascending: false }),
+    ])
+    setClientPolicies(polRes.data || [])
+    setClientClaims(claimRes.data || [])
+    setClientDataLoading(false)
+  }
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault()
@@ -67,7 +84,7 @@ export default function ClientsPage() {
       </div>
 
       {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', marginBottom: '1.5rem', background: 'rgba(201,147,58,0.08)' }}>
+      <div className="stats-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', marginBottom: '1.5rem', background: 'rgba(201,147,58,0.08)' }}>
         {[
           { label: 'Total Clients', value: filtered.length },
           { label: 'VIP', value: filtered.filter(c => c.is_vip).length },
@@ -96,7 +113,7 @@ export default function ClientsPage() {
 
       {/* Table */}
       <div style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.12)', overflow: 'auto' }}>
-        <table className="crm-table">
+        <div className="table-scroll"><table className="crm-table">
           <thead>
             <tr>
               <th>Client</th>
@@ -117,7 +134,7 @@ export default function ClientsPage() {
               const totalPrem = activePolicies.reduce((s: number, p: any) => s + (p.annual_premium || 0), 0)
               const risk = getRiskLabel(c.risk_score || 50)
               return (
-                <tr key={c.id} style={{ cursor: 'pointer' }} onClick={() => setSelected(c)}>
+                <tr key={c.id} style={{ cursor: 'pointer' }} onClick={() => openClient(c)}>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                       <div style={{ width: 32, height: 32, borderRadius: '50%', background: `${getRiskColor(c.risk_score || 50)}22`, border: `1px solid ${getRiskColor(c.risk_score || 50)}44`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: getRiskColor(c.risk_score || 50), flexShrink: 0 }}>
@@ -142,56 +159,103 @@ export default function ClientsPage() {
               )
             })}
           </tbody>
-        </table>
+        </table></div>
       </div>
 
       {/* Client Detail */}
       {selected && (
         <div className="modal-backdrop" onClick={() => setSelected(null)}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 580, maxHeight: '88vh', overflowY: 'auto' }}>
-            <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 680, maxHeight: '92vh', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+            {/* Header */}
+            <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
               <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                <div style={{ width: 44, height: 44, borderRadius: '50%', background: `${getRiskColor(selected.risk_score || 50)}22`, border: `1px solid ${getRiskColor(selected.risk_score || 50)}44`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Playfair Display', fontSize: '1rem', color: getRiskColor(selected.risk_score || 50) }}>
+                <div style={{ width: 44, height: 44, borderRadius: '50%', background: `${getRiskColor(selected.risk_score || 50)}22`, border: `1px solid ${getRiskColor(selected.risk_score || 50)}44`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Playfair Display', fontSize: '1rem', color: getRiskColor(selected.risk_score || 50), flexShrink: 0 }}>
                   {selected.first_name?.[0]}{selected.last_name?.[0]}
                 </div>
                 <div>
                   <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>{selected.first_name} {selected.last_name}</div>
-                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', color: '#8fa3b8' }}>{selected.company_name || SEGMENT_LABELS[selected.segment as ClientSegment]}</div>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', color: '#8fa3b8' }}>{selected.company_name || SEGMENT_LABELS[selected.segment as ClientSegment]} {selected.is_vip && <span style={{ color: '#e8b04a', marginLeft: '0.4rem' }}>⭐ VIP</span>}</div>
                 </div>
               </div>
               <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: '#8fa3b8', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
             </div>
-            <div style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-              {[
-                ['Email', selected.email],
-                ['Phone', selected.phone || '—'],
-                ['Island', `${getIslandFlag(selected.island)} ${getIslandLabel(selected.island)}`],
-                ['Segment', SEGMENT_LABELS[selected.segment as ClientSegment] || selected.segment],
-                ['Preferred Currency', selected.preferred_currency],
-                ['VIP Status', selected.is_vip ? '⭐ VIP Client' : 'Standard'],
-                ['Risk Score', `${selected.risk_score || 50}/100`],
-                ['Broker', selected.brokers?.name || 'Direct'],
-              ].map(([label, value], i) => (
-                <div key={i}>
-                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>{label}</div>
-                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.88rem', color: '#f5f0e8' }}>{value}</div>
-                </div>
+            {/* Tabs */}
+            <div style={{ display: 'flex', borderBottom: '1px solid rgba(201,147,58,0.1)', flexShrink: 0 }}>
+              {[['profile','Profile'], ['policies', `Policies (${clientPolicies.length})`], ['claims', `Claims (${clientClaims.length})`]].map(([id, label]) => (
+                <button key={id} onClick={() => setClientTab(id as any)} style={{ padding: '0.8rem 1.2rem', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Barlow Condensed', fontSize: '0.72rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: clientTab === id ? '#c9933a' : '#4a6080', borderBottom: clientTab === id ? '2px solid #c9933a' : '2px solid transparent', marginBottom: '-1px' }}>{label}</button>
               ))}
-              <div style={{ gridColumn: '1 / -1' }}>
-                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>Address</div>
-                <div style={{ fontFamily: 'Barlow', fontSize: '0.85rem', color: '#f5f0e8' }}>{selected.address}</div>
-              </div>
-              {selected.notes && (
+            </div>
+            {/* Profile Tab */}
+            {clientTab === 'profile' && (
+              <div style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                {[
+                  ['Email', selected.email], ['Phone', selected.phone || '—'],
+                  ['Island', `${getIslandFlag(selected.island)} ${getIslandLabel(selected.island)}`],
+                  ['Segment', SEGMENT_LABELS[selected.segment as ClientSegment] || selected.segment],
+                  ['Preferred Currency', selected.preferred_currency],
+                  ['Risk Score', `${selected.risk_score || 50}/100`],
+                  ['Broker', selected.brokers?.name || 'Direct'],
+                  ['Client Since', formatDate(selected.created_at)],
+                ].map(([label, value], i) => (
+                  <div key={i}>
+                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>{label}</div>
+                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.88rem', color: '#f5f0e8' }}>{value}</div>
+                  </div>
+                ))}
                 <div style={{ gridColumn: '1 / -1' }}>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>Address</div>
+                  <div style={{ fontFamily: 'Barlow', fontSize: '0.85rem', color: '#f5f0e8' }}>{selected.address}</div>
+                </div>
+                {selected.notes && <div style={{ gridColumn: '1 / -1' }}>
                   <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>Notes</div>
                   <div style={{ fontFamily: 'Barlow', fontSize: '0.85rem', color: '#8fa3b8', lineHeight: 1.6 }}>{selected.notes}</div>
-                </div>
-              )}
-            </div>
-            <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid rgba(201,147,58,0.1)', display: 'flex', gap: '0.8rem' }}>
-              <a href={`/policies?client=${selected.id}`} className="btn-gold" style={{ textDecoration: 'none' }}>View Policies</a>
-              <a href={`/claims?client=${selected.id}`} className="btn-ghost" style={{ textDecoration: 'none' }}>View Claims</a>
-            </div>
+                </div>}
+              </div>
+            )}
+            {/* Policies Tab */}
+            {clientTab === 'policies' && (
+              <div style={{ flex: 1 }}>
+                {clientDataLoading ? <div style={{ padding: '2rem', textAlign: 'center', color: '#8fa3b8' }}>Loading…</div> :
+                clientPolicies.length === 0 ? <div style={{ padding: '2rem', textAlign: 'center', color: '#4a6080', fontFamily: 'Barlow Condensed', letterSpacing: '0.1em' }}>No policies on record</div> :
+                clientPolicies.map(p => {
+                  const days = p.renewal_date ? daysUntil(p.renewal_date) : 999
+                  return (
+                    <div key={p.id} style={{ padding: '1rem 1.5rem', borderBottom: '1px solid rgba(201,147,58,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <div>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.82rem', color: '#c9933a', fontWeight: 600 }}>{p.policy_number}</div>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: '#8fa3b8', marginTop: '0.2rem' }}>{p.coverage_type} · {getIslandFlag(p.island)} {getIslandLabel(p.island)}</div>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', color: days <= 30 ? '#fc8181' : '#4a6080', marginTop: '0.2rem' }}>Renewal: {formatDate(p.renewal_date)}{days <= 30 ? ` ⚠ ${days}d` : ''}</div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <span className={`badge ${POLICY_STATUS_STYLES[p.status] || ''}`}>{formatStatus(p.status)}</span>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: '#e8b04a', marginTop: '0.3rem' }}>{formatCurrency(p.annual_premium, p.premium_currency, true)}</div>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: '#4a6080' }}>Insured: {formatCurrency(p.insured_value, p.currency, true)}</div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+            {/* Claims Tab */}
+            {clientTab === 'claims' && (
+              <div style={{ flex: 1 }}>
+                {clientDataLoading ? <div style={{ padding: '2rem', textAlign: 'center', color: '#8fa3b8' }}>Loading…</div> :
+                clientClaims.length === 0 ? <div style={{ padding: '2rem', textAlign: 'center', color: '#4a6080', fontFamily: 'Barlow Condensed', letterSpacing: '0.1em' }}>No claims on record</div> :
+                clientClaims.map(c => (
+                  <div key={c.id} style={{ padding: '1rem 1.5rem', borderBottom: '1px solid rgba(201,147,58,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div>
+                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.82rem', color: '#c9933a', fontWeight: 600 }}>{c.claim_number}</div>
+                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: '#8fa3b8', marginTop: '0.2rem' }}>{getIslandFlag(c.island)} {getIslandLabel(c.island)} · {formatDate(c.incident_date)}</div>
+                      {c.catastrophe_event && <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: '#e8b04a', marginTop: '0.2rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{c.catastrophe_event}{c.storm_name ? ` — ${c.storm_name}` : ''}</div>}
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <span className={`badge ${CLAIM_STATUS_STYLES[c.status] || ''}`}>{formatStatus(c.status)}</span>
+                      <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 600, color: '#fc8181', marginTop: '0.3rem' }}>{formatCurrency(c.reported_loss, c.currency, true)}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}

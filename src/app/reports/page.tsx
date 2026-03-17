@@ -59,6 +59,7 @@ export default function ReportsPage() {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'executive' | 'regulatory' | 'reports'>('executive')
   const [generating, setGenerating] = useState<string | null>(null)
+  const [selectedFiling, setSelectedFiling] = useState<any>(null)
 
   useEffect(() => {
     async function load() {
@@ -81,9 +82,44 @@ export default function ReportsPage() {
   const lossRatio = totalGWP > 0 ? (totalClaimsLoss / totalGWP) * 100 : 40.2
   const combinedRatio = lossRatio + 25.8
 
-  function handleGenerate(name: string) {
+  async function handleGenerate(name: string) {
     setGenerating(name)
-    setTimeout(() => setGenerating(null), 2000)
+    try {
+      let rows: string[][] = []
+      let filename = ''
+
+      if (name === 'Portfolio Exposure Summary') {
+        filename = 'portfolio-exposure.csv'
+        rows = [['Policy #', 'Coverage Type', 'Island', 'Status', 'Insured Value', 'Annual Premium', 'Currency']]
+        policies.forEach(p => rows.push([p.policy_number || '', p.coverage_type || '', p.island || '', p.status || '', String(p.insured_value || 0), String(p.annual_premium || 0), p.currency || 'USD']))
+      } else if (name === 'Claims Experience Report') {
+        filename = 'claims-experience.csv'
+        rows = [['Claim #', 'Status', 'Island', 'Coverage Type', 'Reported Loss', 'Settlement', 'Currency', 'Incident Date']]
+        claims.forEach(c => rows.push([c.claim_number || '', c.status || '', c.island || '', c.coverage_type || '', String(c.reported_loss || 0), String(c.settlement_amount || 0), c.currency || 'USD', c.incident_date || '']))
+      } else if (name === 'Broker Commission Statement') {
+        filename = 'broker-commissions.csv'
+        rows = [['Broker', 'Company', 'YTD Premium Volume', 'Commission Earned', 'Commission Rate %', 'Policy Count']]
+        brokers.forEach(b => rows.push([b.name || '', b.company || '', String(b.ytd_premium_volume || 0), String(b.ytd_commission_earned || 0), String(b.commission_rate || 0), String(b.policy_count || 0)]))
+      } else if (name === 'Multi-Currency FX Exposure') {
+        filename = 'fx-exposure.csv'
+        rows = [['Coverage Type', 'Island', 'Status', 'Reported Loss', 'Currency', 'Incident Date']]
+        claims.filter(c => c.status !== 'settled').forEach(c => rows.push([c.coverage_type || '', c.island || '', c.status || '', String(c.reported_loss || 0), c.currency || 'USD', c.incident_date || '']))
+      } else {
+        // Generic export with policy data
+        filename = `${name.toLowerCase().replace(/\s+/g,'-')}.csv`
+        rows = [['Policy #', 'Island', 'Status', 'Annual Premium', 'Insured Value']]
+        policies.forEach(p => rows.push([p.policy_number || '', p.island || '', p.status || '', String(p.annual_premium || 0), String(p.insured_value || 0)]))
+      }
+
+      const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n')
+      const blob = new Blob([csv], { type: 'text/csv' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url; a.download = filename; a.click()
+      URL.revokeObjectURL(url)
+    } finally {
+      setGenerating(null)
+    }
   }
 
   const TABS = [
@@ -197,7 +233,7 @@ export default function ReportsPage() {
               <div className="section-eyebrow" style={{ marginBottom: '0.2rem' }}>Regulatory Filing Calendar · 5 Jurisdictions</div>
               <p style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: '#8fa3b8', margin: 0 }}>Compliance obligations across all operating markets</p>
             </div>
-            <table className="crm-table">
+            <div className="table-scroll"><table className="crm-table">
               <thead>
                 <tr>
                   <th>Jurisdiction</th>
@@ -209,7 +245,7 @@ export default function ReportsPage() {
               </thead>
               <tbody>
                 {REGULATORY_ITEMS.map((item, i) => (
-                  <tr key={i}>
+                  <tr key={i} style={{ cursor: 'pointer' }} onClick={() => setSelectedFiling(item)}>
                     <td style={{ fontFamily: 'Barlow Condensed', fontWeight: 600, color: '#f5f0e8', fontSize: '0.85rem' }}>{item.jurisdiction}</td>
                     <td style={{ fontFamily: 'Barlow', fontSize: '0.8rem', color: '#8fa3b8' }}>{item.regulator}</td>
                     <td style={{ fontFamily: 'Barlow', fontSize: '0.82rem', color: '#f5f0e8' }}>{item.filing}</td>
@@ -226,11 +262,11 @@ export default function ReportsPage() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
           </div>
 
           {/* Compliance summary */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+          <div className="stats-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
             {[
               { island: 'barbados' as const, regulator: 'FSC Barbados', status: 'Compliant', lastFiled: '2024-10-15', color: '#27ae60' },
               { island: 'jamaica' as const, regulator: 'FSC Jamaica', status: 'Compliant', lastFiled: '2024-10-22', color: '#27ae60' },
@@ -279,6 +315,45 @@ export default function ReportsPage() {
               </button>
             </div>
           ))}
+        </div>
+      )}
+      {/* Filing detail modal */}
+      {selectedFiling && (
+        <div className="modal-backdrop" onClick={() => setSelectedFiling(null)}>
+          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 500, maxHeight: '80vh', overflowY: 'auto' }}>
+            <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)', display: 'flex', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#c9933a', marginBottom: '0.3rem' }}>Regulatory Filing</div>
+                <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>{selectedFiling.filing}</div>
+              </div>
+              <button onClick={() => setSelectedFiling(null)} style={{ background: 'none', border: 'none', color: '#8fa3b8', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
+            </div>
+            <div style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              {[
+                ['Jurisdiction', selectedFiling.jurisdiction],
+                ['Regulator', selectedFiling.regulator],
+                ['Due Date', new Date(selectedFiling.due).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' })],
+                ['Status', selectedFiling.status.replace(/_/g,' ').replace(/\b\w/g, (c: string) => c.toUpperCase())],
+              ].map(([l, v], i) => (
+                <div key={i}>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>{l}</div>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.88rem', color: '#f5f0e8' }}>{v}</div>
+                </div>
+              ))}
+              <div style={{ gridColumn: '1 / -1' }}>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.6rem' }}>Required Documents</div>
+                {['Signed actuarial certification', 'Trial balance / financial statements', 'Claims run-off schedule', 'Reinsurance treaty schedule', 'Board resolution (if applicable)'].map((doc, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
+                    <span style={{ color: selectedFiling.status === 'submitted' ? '#4ade80' : '#4a6080', fontSize: '0.75rem' }}>{selectedFiling.status === 'submitted' ? '✓' : '○'}</span>
+                    <span style={{ fontFamily: 'Barlow', fontSize: '0.8rem', color: selectedFiling.status === 'submitted' ? '#8fa3b8' : '#f5f0e8' }}>{doc}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid rgba(201,147,58,0.1)', display: 'flex', gap: '0.8rem' }}>
+              <button onClick={() => { handleGenerate('Portfolio Exposure Summary'); setSelectedFiling(null) }} className="btn-gold" style={{ fontSize: '0.72rem' }}>Export Supporting Data →</button>
+            </div>
+          </div>
         </div>
       )}
     </div>
