@@ -104,7 +104,7 @@ export default function Sidebar() {
               <circle cx="19" cy="19" r="3" fill="#c9933a"/>
             </svg>
             <div>
-              <div style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700, fontSize: '0.95rem', color: '#f5f0e8', lineHeight: 1 }}>
+              <div style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700, fontSize: '0.95rem', color: 'var(--sidebar-text)', lineHeight: 1 }}>
                 Antillia
               </div>
               <div style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: '0.58rem', letterSpacing: '0.22em', textTransform: 'uppercase', color: '#c9933a', marginTop: '2px' }}>
@@ -141,7 +141,7 @@ export default function Sidebar() {
                   fontSize: '0.58rem',
                   letterSpacing: '0.2em',
                   textTransform: 'uppercase',
-                  color: active ? '#c9933a' : '#4a6080',
+                  color: active ? '#c9933a' : 'var(--sidebar-dim)',
                   marginBottom: '1px',
                 }}>
                   {item.eyebrow}
@@ -150,7 +150,7 @@ export default function Sidebar() {
                   fontFamily: 'Barlow Condensed, sans-serif',
                   fontSize: '0.85rem',
                   letterSpacing: '0.04em',
-                  color: active ? '#f5f0e8' : '#8fa3b8',
+                  color: active ? 'var(--sidebar-text)' : 'var(--sidebar-mist)',
                   fontWeight: active ? 600 : 400,
                 }}>
                   {item.label}
@@ -168,7 +168,7 @@ export default function Sidebar() {
               Hurricane Season Active
             </span>
           </div>
-          <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', color: '#8fa3b8' }}>
+          <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', color: 'var(--sidebar-mist)' }}>
             June 1 – Nov 30 · Enhanced monitoring
           </div>
         </div>
@@ -181,7 +181,7 @@ export default function Sidebar() {
           flexShrink: 0,
         }}>
           <div>
-            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: '#f5f0e8', letterSpacing: '0.06em' }}>Underwriter</div>
+            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: 'var(--sidebar-text)', letterSpacing: '0.06em' }}>Underwriter</div>
             <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.58rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#c9933a' }}>AAG Staff</div>
           </div>
           <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
@@ -195,7 +195,7 @@ export default function Sidebar() {
             </button>
             <button
               onClick={handleLogout}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#4a6080', fontSize: '0.75rem', fontFamily: 'Barlow Condensed', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.3rem 0.5rem' }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--sidebar-dim)', fontSize: '0.75rem', fontFamily: 'Barlow Condensed', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.3rem 0.5rem' }}
             >
               Out
             </button>

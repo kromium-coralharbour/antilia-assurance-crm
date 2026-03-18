@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { Toast, useToast } from '@/components/Toast'
 import { formatCurrency, formatDate, formatStatus, getIslandLabel, getIslandFlag, getRiskColor, formatPct } from '@/lib/utils'
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from 'recharts'
 
@@ -21,7 +22,7 @@ const PREMIUM_TREND = [
 
 const ISLAND_EXPOSURE = [
   { island: 'Bahamas', exposure: 23800000, color: '#c9933a' },
-  { island: 'Cayman Is.', exposure: 22700000, color: '#e8b04a' },
+  { island: 'Cayman Is.', exposure: 22700000, color: 'var(--text-amber)' },
   { island: 'Barbados', exposure: 17500000, color: '#a87530' },
   { island: 'Jamaica', exposure: 14950000, color: '#c9933a' },
   { island: 'T&T', exposure: 6380000, color: 'var(--text-mist)' },
@@ -29,9 +30,9 @@ const ISLAND_EXPOSURE = [
 
 const COVERAGE_MIX = [
   { name: 'Commercial', value: 32, color: '#c9933a' },
-  { name: 'Residential', value: 26, color: '#e8b04a' },
+  { name: 'Residential', value: 26, color: 'var(--text-amber)' },
   { name: 'Hospitality', value: 20, color: '#a87530' },
-  { name: 'Real Estate', value: 12, color: '#2e4060' },
+  { name: 'Real Estate', value: 12, color: 'var(--steel)' },
   { name: 'Construction', value: 6, color: 'var(--bg-raised)' },
   { name: 'Marine', value: 4, color: 'var(--text-mist)' },
 ]
@@ -60,6 +61,7 @@ export default function DashboardPage() {
   const [recentClaims, setRecentClaims] = useState<any[]>([])
   const [hurricaneExposure, setHurricaneExposure] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const { toast, show: showToast, hide: hideToast } = useToast()
   const [selectedClaim, setSelectedClaim] = useState<any>(null)
 
   useEffect(() => {
@@ -247,7 +249,7 @@ export default function DashboardPage() {
               {recentClaims.length > 0 ? recentClaims.slice(0, 5).map((c: any) => (
                 <tr key={c.id} style={{ cursor: 'pointer' }} onClick={() => setSelectedClaim(c)}>
                   <td style={{ fontFamily: 'Barlow Condensed', color: '#c9933a', fontSize: '0.8rem', fontWeight: 600 }}>{c.claim_number}</td>
-                  <td><span className="badge" style={{ background: 'rgba(201,147,58,0.1)', borderColor: 'rgba(201,147,58,0.3)', color: '#e8b04a' }}>{formatStatus(c.status)}</span></td>
+                  <td><span className="badge" style={{ background: 'rgba(201,147,58,0.1)', borderColor: 'rgba(201,147,58,0.3)', color: 'var(--text-amber)' }}>{formatStatus(c.status)}</span></td>
                   <td style={{ fontFamily: 'Barlow Condensed', color: 'var(--text-primary)' }}>{formatCurrency(c.reported_loss, c.currency, true)}</td>
                   <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: 'var(--text-mist)' }}>{getIslandFlag(c.island)} {getIslandLabel(c.island)}</td>
                 </tr>
@@ -294,7 +296,7 @@ export default function DashboardPage() {
             { island: '🇹🇹 T&T', cat5: '$1.3M', cat34: '$2.9M', policies: 29, compliance: 68 },
             { island: '🇧🇸 Bahamas', cat5: '$4.8M', cat34: '$10.7M', policies: 41, compliance: 77 },
           ].map((row, i) => (
-            <div key={i} style={{ background: 'var(--bg-sidebar)', padding: '1rem' }}>
+            <div key={i} style={{ background: 'var(--bg-deep)', padding: '1rem' }}>
               <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: 'var(--text-primary)', marginBottom: '0.6rem', fontWeight: 600 }}>{row.island}</div>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-mist)', marginBottom: '0.3rem' }}>
                 <span style={{ color: '#c0392b' }}>Cat 5:</span> {row.cat5}
@@ -351,6 +353,7 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+      {toast && <Toast message={toast.message} type={toast.type} onDone={hideToast} />}
     </div>
   )
 }

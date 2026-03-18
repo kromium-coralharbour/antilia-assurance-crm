@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { Toast, useToast } from '@/components/Toast'
 import { formatCurrency, formatDate, formatStatus, getIslandLabel, getIslandFlag, FRAUD_RISK_STYLES } from '@/lib/utils'
 
 const FRAUD_PATTERNS = [
@@ -21,6 +22,7 @@ export default function FraudPage() {
   const [alerts, setAlerts] = useState<any[]>([])
   const [claims, setClaims] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const { toast, show: showToast, hide: hideToast } = useToast()
   const [filterStatus, setFilterStatus] = useState('')
   const [selected, setSelected] = useState<any>(null)
   const [fraudTab, setFraudTab] = useState<'detail'|'claim'|'history'>('detail')
@@ -105,7 +107,7 @@ export default function FraudPage() {
   }
 
   return (
-    <div style={{ padding: '2rem', background: 'var(--bg-page)', minHeight: '100vh' }}>
+    <div className="page-enter" style={{ padding: '2rem', background: 'var(--bg-page)', minHeight: '100vh' }}>
       {/* Header */}
       <div style={{ marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
         <div className="section-eyebrow" style={{ marginBottom: '0.4rem' }}>Intelligence Layer</div>
@@ -387,6 +389,7 @@ export default function FraudPage() {
           </div>
         </div>
       )}
+      {toast && <Toast message={toast.message} type={toast.type} onDone={hideToast} />}
     </div>
   )
 }

@@ -1,6 +1,8 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { Toast, useToast } from '@/components/Toast'
+import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { formatCurrency, formatDate, formatStatus, getIslandLabel, getIslandFlag, getRiskColor, getRiskLabel, RISK_BG, POLICY_STATUS_STYLES, CLAIM_STATUS_STYLES, daysUntil } from '@/lib/utils'
 import { Island, ClientSegment, Currency, ISLAND_LABELS } from '@/types'
 
@@ -30,6 +32,8 @@ export default function ClientsPage() {
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState(EMPTY)
   const [saving, setSaving] = useState(false)
+  const { toast, show: showToast, hide: hideToast } = useToast()
+  const [confirmDelete, setConfirmDelete] = useState<any>(null)
   const [showEditForm, setShowEditForm] = useState(false)
   const [editForm, setEditForm] = useState<any>(null)
   const [selected, setSelected] = useState<any>(null)
@@ -71,7 +75,7 @@ export default function ClientsPage() {
     e.preventDefault()
     setSaving(true)
     const { error } = await supabase.from('clients').insert({ ...form, risk_score: 50, total_insured_value: 0, total_insured_value_currency: 'USD' })
-    if (!error) { setShowForm(false); setForm(EMPTY); load() }
+    if (!error) { setShowForm(false); setForm(EMPTY); load(); showToast('Client added.', 'success') } else { showToast('Save failed.', 'error') }
     setSaving(false)
   }
 
@@ -97,8 +101,21 @@ export default function ClientsPage() {
       setEditForm(null)
       setSelected(null)
       load()
-    }
+      showToast('Client updated.', 'success')
+    } else { showToast('Update failed.', 'error') }
     setSaving(false)
+  }
+
+  async function handleDelete(client: any) {
+    const { error } = await supabase.from('clients').delete().eq('id', client.id)
+    if (error) {
+      showToast(error.message.includes('restrict') ? 'Cannot delete — client has active claims.' : 'Delete failed.', 'error')
+    } else {
+      showToast(`${client.first_name} ${client.last_name} removed.`, 'success')
+      setSelected(null)
+      load()
+    }
+    setConfirmDelete(null)
   }
 
   return (
@@ -183,9 +200,11 @@ export default function ClientsPage() {
       setEditForm(null)
       setSelected(null)
       load()
-    }
+      showToast('Client updated.', 'success')
+    } else { showToast('Update failed.', 'error') }
     setSaving(false)
   }
+
 
   return (
                 <tr key={c.id} style={{ cursor: 'pointer' }} onClick={() => openClient(c)}>
@@ -207,7 +226,7 @@ export default function ClientsPage() {
                   <td>
                     <span className={`badge ${RISK_BG[risk]}`}>{risk}</span>
                   </td>
-                  <td>{c.is_vip && <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.15em', color: '#e8b04a', background: 'rgba(201,147,58,0.12)', border: '1px solid rgba(201,147,58,0.3)', padding: '0.15rem 0.5rem' }}>VIP</span>}</td>
+                  <td>{c.is_vip && <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.15em', color: 'var(--text-amber)', background: 'rgba(201,147,58,0.12)', border: '1px solid rgba(201,147,58,0.3)', padding: '0.15rem 0.5rem' }}>VIP</span>}</td>
                   <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: 'var(--text-mist)' }}>{c.brokers?.name || '—'}</td>
                 </tr>
               )
@@ -228,7 +247,7 @@ export default function ClientsPage() {
                 </div>
                 <div>
                   <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>{selected.first_name} {selected.last_name}</div>
-                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', color: 'var(--text-mist)' }}>{selected.company_name || SEGMENT_LABELS[selected.segment as ClientSegment]} {selected.is_vip && <span style={{ color: '#e8b04a', marginLeft: '0.4rem' }}>⭐ VIP</span>}</div>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', color: 'var(--text-mist)' }}>{selected.company_name || SEGMENT_LABELS[selected.segment as ClientSegment]} {selected.is_vip && <span style={{ color: 'var(--text-amber)', marginLeft: '0.4rem' }}>⭐ VIP</span>}</div>
                 </div>
               </div>
               <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: 'var(--text-mist)', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
@@ -262,6 +281,7 @@ export default function ClientsPage() {
                 </div>
                 <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '0.8rem', paddingTop: '0.5rem' }}>
                   <button className="btn-ghost" style={{ fontSize: '0.75rem' }} onClick={() => { setEditForm({ ...selected }); setShowEditForm(true) }}>Edit Client</button>
+                  <button className="btn-danger" style={{ fontSize: '0.75rem' }} onClick={() => setConfirmDelete(selected)}>Delete</button>
                 </div>
                 {selected.notes && <div style={{ gridColumn: '1 / -1' }}>
                   <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: '0.3rem' }}>Notes</div>
@@ -298,11 +318,13 @@ export default function ClientsPage() {
       setEditForm(null)
       setSelected(null)
       load()
-    }
+      showToast('Client updated.', 'success')
+    } else { showToast('Update failed.', 'error') }
     setSaving(false)
   }
 
-  return (
+
+                  return (
                     <div key={p.id} style={{ padding: '1rem 1.5rem', borderBottom: '1px solid rgba(201,147,58,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                       <div>
                         <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.82rem', color: '#c9933a', fontWeight: 600 }}>{p.policy_number}</div>
@@ -311,7 +333,7 @@ export default function ClientsPage() {
                       </div>
                       <div style={{ textAlign: 'right' }}>
                         <span className={`badge ${POLICY_STATUS_STYLES[p.status] || ''}`}>{formatStatus(p.status)}</span>
-                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: '#e8b04a', marginTop: '0.3rem' }}>{formatCurrency(p.annual_premium, p.premium_currency, true)}</div>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: 'var(--text-amber)', marginTop: '0.3rem' }}>{formatCurrency(p.annual_premium, p.premium_currency, true)}</div>
                         <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: 'var(--text-dim)' }}>Insured: {formatCurrency(p.insured_value, p.currency, true)}</div>
                       </div>
                     </div>
@@ -329,7 +351,7 @@ export default function ClientsPage() {
                     <div>
                       <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.82rem', color: '#c9933a', fontWeight: 600 }}>{c.claim_number}</div>
                       <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: 'var(--text-mist)', marginTop: '0.2rem' }}>{getIslandFlag(c.island)} {getIslandLabel(c.island)} · {formatDate(c.incident_date)}</div>
-                      {c.catastrophe_event && <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: '#e8b04a', marginTop: '0.2rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{c.catastrophe_event}{c.storm_name ? ` — ${c.storm_name}` : ''}</div>}
+                      {c.catastrophe_event && <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: 'var(--text-amber)', marginTop: '0.2rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{c.catastrophe_event}{c.storm_name ? ` — ${c.storm_name}` : ''}</div>}
                     </div>
                     <div style={{ textAlign: 'right' }}>
                       <span className={`badge ${CLAIM_STATUS_STYLES[c.status] || ''}`}>{formatStatus(c.status)}</span>
@@ -433,6 +455,16 @@ export default function ClientsPage() {
           </div>
         </div>
       )}
+      {confirmDelete && (
+        <ConfirmDialog
+          title="Remove Client"
+          message={`Remove ${confirmDelete.first_name} ${confirmDelete.last_name} from the system? Clients with active claims cannot be removed.`}
+          confirmLabel="Remove Client"
+          onConfirm={() => handleDelete(confirmDelete)}
+          onCancel={() => setConfirmDelete(null)}
+        />
+      )}
+      {toast && <Toast message={toast.message} type={toast.type} onDone={hideToast} />}
     </div>
   )
 }

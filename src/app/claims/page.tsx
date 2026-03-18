@@ -1,6 +1,8 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { Toast, useToast } from '@/components/Toast'
+import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { formatCurrency, formatDate, formatStatus, getIslandLabel, getIslandFlag, CLAIM_STATUS_STYLES, FRAUD_RISK_STYLES } from '@/lib/utils'
 import { Island, CoverageType, CatastropheEvent, COVERAGE_LABELS, ISLAND_LABELS } from '@/types'
 
@@ -35,12 +37,16 @@ export default function ClaimsPage() {
   const [filterStatus, setFilterStatus] = useState('')
   const [filterIsland, setFilterIsland] = useState('')
   const [filterSurge, setFilterSurge] = useState('')
+  const [sortBy, setSortBy] = useState<string>('created_at')
+  const [sortDir, setSortDir] = useState<'asc'|'desc'>('desc')
   const [activeTab, setActiveTab] = useState<'claims' | 'surge'>('claims')
   const [showForm, setShowForm] = useState(false)
   const [showSurgeForm, setShowSurgeForm] = useState(false)
   const [form, setForm] = useState(EMPTY_FORM)
   const [surgeForm, setSurgeForm] = useState(EMPTY_SURGE)
   const [saving, setSaving] = useState(false)
+  const { toast, show: showToast, hide: hideToast } = useToast()
+  const [confirmDelete, setConfirmDelete] = useState<any>(null)
   const [surgeSaving, setSurgeSaving] = useState(false)
   const [selected, setSelected] = useState<any>(null)
   const [editAmounts, setEditAmounts] = useState(false)
@@ -61,12 +67,27 @@ export default function ClaimsPage() {
   }
   useEffect(() => { load() }, [])
 
+  function toggleSort(col: string) {
+    if (sortBy === col) setSortDir(d => d === 'asc' ? 'desc' : 'asc')
+    else { setSortBy(col); setSortDir('desc') }
+  }
+  const sortIcon = (col: string) => sortBy === col ? (sortDir === 'asc' ? ' ↑' : ' ↓') : ' ⇅'
+
   const filtered = claims.filter(c => {
     const clientName = c.clients ? `${c.clients.first_name} ${c.clients.last_name}`.toLowerCase() : ''
     return (!search || c.claim_number?.toLowerCase().includes(search.toLowerCase()) || clientName.includes(search.toLowerCase()) || c.storm_name?.toLowerCase().includes(search.toLowerCase()))
       && (!filterStatus || c.status === filterStatus)
       && (!filterIsland || c.island === filterIsland)
       && (!filterSurge || c.storm_name?.toLowerCase().includes(filterSurge.toLowerCase()) || c.catastrophe_event === filterSurge)
+  }).sort((a, b) => {
+    let av: any, bv: any
+    if (sortBy === 'reported_loss') { av = a.reported_loss || 0; bv = b.reported_loss || 0 }
+    else if (sortBy === 'incident_date') { av = a.incident_date || ''; bv = b.incident_date || '' }
+    else if (sortBy === 'status') { av = a.status || ''; bv = b.status || '' }
+    else { av = a.created_at || ''; bv = b.created_at || '' }
+    if (av < bv) return sortDir === 'asc' ? -1 : 1
+    if (av > bv) return sortDir === 'asc' ? 1 : -1
+    return 0
   })
 
   async function handleSave(e: React.FormEvent) {
@@ -87,7 +108,7 @@ export default function ClaimsPage() {
       fraud_risk: 'clear',
       catastrophe_event: form.catastrophe_event || undefined,
     })
-    if (!error) { setShowForm(false); setForm(EMPTY_FORM); load() }
+    if (!error) { setShowForm(false); setForm(EMPTY_FORM); load(); showToast('Claim filed successfully.', 'success') } else { showToast('FNOL submission failed.', 'error') }
     setSaving(false)
   }
 
@@ -158,6 +179,18 @@ export default function ClaimsPage() {
     activeClaims: claims.filter(c => c.adjuster_id === a.id && !['settled','rejected'].includes(c.status)).length,
   }))
 
+  async function handleDelete(claim: any) {
+    const { error } = await supabase.from('claims').delete().eq('id', claim.id)
+    if (error) {
+      showToast('Delete failed.', 'error')
+    } else {
+      showToast(`Claim ${claim.claim_number} deleted.`, 'success')
+      setSelected(null)
+      load()
+    }
+    setConfirmDelete(null)
+  }
+
   return (
     <div className="page-enter" style={{ padding: '2rem', minHeight: '100vh', background: 'var(--bg-page)' }}>
       {/* Header */}
@@ -194,7 +227,7 @@ export default function ClaimsPage() {
       {/* KPIs */}
       <div className="stats-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', marginBottom: '1.5rem', background: 'rgba(201,147,58,0.08)' }}>
         {[
-          { label: 'Open Claims', value: openClaims.length.toString(), color: '#e8b04a' },
+          { label: 'Open Claims', value: openClaims.length.toString(), color: 'var(--text-amber)' },
           { label: 'Total Reported Loss', value: formatCurrency(totalReported, 'USD', true), color: '#fc8181' },
           { label: 'Fraud Flags', value: fraudFlags.toString(), color: fraudFlags > 0 ? '#fc8181' : '#4ade80' },
           { label: 'Active Surge Events', value: activeSurge.length.toString(), color: activeSurge.length > 0 ? '#fc8181' : 'var(--text-dim)' },
@@ -238,9 +271,9 @@ export default function ClaimsPage() {
             <div className="table-scroll"><table className="crm-table">
               <thead>
                 <tr>
-                  <th>Claim #</th><th>Client</th><th>Policy</th><th>Event</th>
-                  <th>Reported Loss</th><th>Status</th><th>Fraud Risk</th>
-                  <th>Island</th><th>Date</th><th>Action</th>
+                  <th style={{ cursor: 'pointer', userSelect: 'none' }} onClick={() => toggleSort('created_at')}>Claim #{sortIcon('created_at')}</th><th>Client</th><th>Policy</th><th>Event</th>
+                  <th style={{ cursor: 'pointer', userSelect: 'none' }} onClick={() => toggleSort('reported_loss')}>Reported Loss{sortIcon('reported_loss')}</th><th style={{ cursor: 'pointer', userSelect: 'none' }} onClick={() => toggleSort('status')}>Status{sortIcon('status')}</th><th>Fraud Risk</th>
+                  <th>Island</th><th style={{ cursor: 'pointer', userSelect: 'none' }} onClick={() => toggleSort('incident_date')}>Date{sortIcon('incident_date')}</th><th>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -257,7 +290,7 @@ export default function ClaimsPage() {
                     </td>
                     <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: 'var(--text-mist)' }}>{c.policies?.policy_number || '—'}</td>
                     <td>
-                      {c.catastrophe_event && <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.68rem', color: '#e8b04a', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{c.catastrophe_event}</div>}
+                      {c.catastrophe_event && <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.68rem', color: 'var(--text-amber)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{c.catastrophe_event}</div>}
                       {c.storm_name && <div style={{ fontFamily: 'Barlow', fontSize: '0.72rem', color: 'var(--text-mist)' }}>{c.storm_name}</div>}
                     </td>
                     <td style={{ fontFamily: 'Barlow Condensed', fontWeight: 600, color: '#fc8181' }}>{formatCurrency(c.reported_loss, c.currency, true)}</td>
@@ -305,6 +338,7 @@ export default function ClaimsPage() {
                 const surgeSettled = surgeClaims.filter(c => c.status === 'settled').length
                 const surgeLoss = surgeClaims.reduce((s, c) => s + (c.reported_loss || 0), 0)
                 const pct = surge.expected_claims > 0 ? Math.round((surgeClaims.length / surge.expected_claims) * 100) : 0
+
                 return (
                   <div key={surge.id} style={{ background: 'var(--bg-card)', border: `1px solid ${surge.status === 'active' ? 'rgba(192,57,43,0.4)' : 'rgba(201,147,58,0.12)'}` }}>
                     <div style={{ padding: '1.2rem 1.5rem', borderBottom: `1px solid ${surge.status === 'active' ? 'rgba(192,57,43,0.2)' : 'rgba(201,147,58,0.08)'}`, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.8rem' }}>
@@ -617,6 +651,16 @@ export default function ClaimsPage() {
           </div>
         </div>
       )}
+      {confirmDelete && (
+        <ConfirmDialog
+          title="Delete Claim"
+          message={`Permanently delete claim ${confirmDelete.claim_number}? All associated documents and fraud alerts will also be removed.`}
+          confirmLabel="Delete Claim"
+          onConfirm={() => handleDelete(confirmDelete)}
+          onCancel={() => setConfirmDelete(null)}
+        />
+      )}
+      {toast && <Toast message={toast.message} type={toast.type} onDone={hideToast} />}
     </div>
   )
 }

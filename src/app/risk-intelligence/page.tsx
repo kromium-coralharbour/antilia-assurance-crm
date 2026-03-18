@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { Toast, useToast } from '@/components/Toast'
 import { formatCurrency, formatPct, getIslandLabel, getIslandFlag, getRiskColor } from '@/lib/utils'
 import { Island } from '@/types'
 import {
@@ -58,7 +59,7 @@ const ACTIVE_STORMS = [
 ]
 
 function HeatCell({ value }: { value: number }) {
-  const bg = value >= 80 ? '#c0392b' : value >= 65 ? '#e67e22' : value >= 45 ? '#f1c40f' : value >= 25 ? '#27ae60' : '#2e4060'
+  const bg = value >= 80 ? '#c0392b' : value >= 65 ? '#e67e22' : value >= 45 ? '#f1c40f' : value >= 25 ? '#27ae60' : 'var(--steel)'
   const opacity = 0.15 + (value / 100) * 0.75
   return (
     <td style={{
@@ -74,6 +75,7 @@ export default function RiskIntelligencePage() {
   const supabase = createClient()
   const [policies, setPolicies] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const { toast, show: showToast, hide: hideToast } = useToast()
   const [activeTab, setActiveTab] = useState<'heatmap' | 'construction' | 'fx' | 'loss'>('heatmap')
   const [fxRates, setFxRates] = useState<any[]>([])
   const [editingFx, setEditingFx] = useState<string | null>(null)
@@ -106,7 +108,7 @@ export default function RiskIntelligencePage() {
   ] as const
 
   return (
-    <div style={{ padding: '2rem', background: 'var(--bg-page)', minHeight: '100vh' }}>
+    <div className="page-enter" style={{ padding: '2rem', background: 'var(--bg-page)', minHeight: '100vh' }}>
       {/* Header */}
       <div style={{ marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
@@ -140,7 +142,7 @@ export default function RiskIntelligencePage() {
         {[
           { label: 'Total Portfolio Exposure', value: formatCurrency(totalExposure || 85330000, 'USD', true), sub: 'All islands · USD', color: '#c0392b' },
           { label: 'Portfolio Avg Risk Score', value: formatPct(avgRisk || 67), sub: `${highRiskPolicies || 42} high-risk policies`, color: getRiskColor(avgRisk || 67) },
-          { label: 'Avg Structural Compliance', value: formatPct(avgCompliance), sub: 'Weighted by insured value', color: '#e8b04a' },
+          { label: 'Avg Structural Compliance', value: formatPct(avgCompliance), sub: 'Weighted by insured value', color: 'var(--text-amber)' },
           { label: 'Max Cat 5 Net Retention', value: '$13.2M', sub: '1-in-250yr scenario', color: '#c0392b' },
         ].map((kpi, i) => (
           <div key={i} className="stat-card">
@@ -183,7 +185,7 @@ export default function RiskIntelligencePage() {
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr style={{ background: 'var(--bg-sidebar)' }}>
+                  <tr style={{ background: 'var(--bg-deep)' }}>
                     <th style={{ padding: '0.7rem 1rem', textAlign: 'left', fontFamily: 'Barlow Condensed', fontSize: '0.68rem', letterSpacing: '0.15em', color: 'var(--text-mist)', textTransform: 'uppercase', borderBottom: '1px solid rgba(201,147,58,0.1)', whiteSpace: 'nowrap' }}>Risk Zone</th>
                     {ISLANDS.map(island => (
                       <th key={island} style={{ padding: '0.7rem 1rem', textAlign: 'center', fontFamily: 'Barlow Condensed', fontSize: '0.68rem', letterSpacing: '0.12em', color: 'var(--text-mist)', textTransform: 'uppercase', borderBottom: '1px solid rgba(201,147,58,0.1)', whiteSpace: 'nowrap' }}>
@@ -210,7 +212,7 @@ export default function RiskIntelligencePage() {
               {[
                 { color: '#c0392b', label: 'Extreme (80–100)' }, { color: '#e67e22', label: 'High (65–79)' },
                 { color: '#f1c40f', label: 'Moderate (45–64)' }, { color: '#27ae60', label: 'Low (25–44)' },
-                { color: '#2e4060', label: 'Minimal (0–24)' },
+                { color: 'var(--steel)', label: 'Minimal (0–24)' },
               ].map((item, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                   <div style={{ width: 10, height: 10, background: item.color, borderRadius: 2 }} />
@@ -421,7 +423,7 @@ export default function RiskIntelligencePage() {
                     <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.82rem', color: 'var(--text-primary)' }}>{row.island}</td>
                     <td style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, color: '#c9933a' }}>{row.currency}</td>
                     <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.85rem', color: 'var(--text-primary)' }}>{row.currency === 'JMD' ? 'J$' : row.currency === 'TTD' ? 'TT$' : row.currency === 'BBD' ? 'BDS$' : row.currency === 'KYD' ? 'CI$' : 'B$'}{row.local.toLocaleString()}</td>
-                    <td style={{ fontFamily: 'Barlow Condensed', color: '#e8b04a' }}>${row.usd.toLocaleString()}</td>
+                    <td style={{ fontFamily: 'Barlow Condensed', color: 'var(--text-amber)' }}>${row.usd.toLocaleString()}</td>
                     <td>
                       <span className="badge" style={{
                         background: row.risk === 'minimal' ? 'var(--bg-raised)' : row.risk === 'low' ? 'rgba(39,174,96,0.15)' : 'rgba(241,196,15,0.15)',
@@ -443,7 +445,7 @@ export default function RiskIntelligencePage() {
                 ].map((item, i) => (
                   <div key={i} style={{ background: 'var(--bg-input)', padding: '0.6rem', textAlign: 'center', border: '1px solid rgba(201,147,58,0.08)' }}>
                     <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: 'var(--text-mist)', marginBottom: '0.2rem' }}>{item.island}</div>
-                    <div style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700, color: '#e8b04a', fontSize: '1rem' }}>{item.duty}</div>
+                    <div style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700, color: 'var(--text-amber)', fontSize: '1rem' }}>{item.duty}</div>
                   </div>
                 ))}
               </div>
@@ -619,6 +621,7 @@ export default function RiskIntelligencePage() {
           </div>
         </div>
       )}
+      {toast && <Toast message={toast.message} type={toast.type} onDone={hideToast} />}
     </div>
   )
 }

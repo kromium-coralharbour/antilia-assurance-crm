@@ -1,6 +1,8 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { Toast, useToast } from '@/components/Toast'
+import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { formatCurrency, formatDate, formatStatus, getIslandLabel, getIslandFlag, CLAIM_STATUS_STYLES } from '@/lib/utils'
 import { Island, ISLAND_LABELS } from '@/types'
 
@@ -28,6 +30,8 @@ export default function AdjustersPage() {
   const [form, setForm] = useState(EMPTY)
   const [editForm, setEditForm] = useState<any>(null)
   const [saving, setSaving] = useState(false)
+  const { toast, show: showToast, hide: hideToast } = useToast()
+  const [confirmDelete, setConfirmDelete] = useState<any>(null)
   const [selected, setSelected] = useState<any>(null)
   const [adjTab, setAdjTab] = useState<'profile'|'claims'>('profile')
   const [adjClaims, setAdjClaims] = useState<any[]>([])
@@ -62,7 +66,7 @@ export default function AdjustersPage() {
       daily_rate: form.daily_rate ? parseFloat(form.daily_rate) : null,
       is_available: true,
     })
-    if (!error) { setShowForm(false); setForm(EMPTY); load() }
+    if (!error) { setShowForm(false); setForm(EMPTY); load(); showToast('Adjuster added.', 'success') } else { showToast('Save failed.', 'error') }
     setSaving(false)
   }
 
@@ -77,7 +81,7 @@ export default function AdjustersPage() {
       daily_rate: editForm.daily_rate ? parseFloat(editForm.daily_rate) : null,
       currency: editForm.currency, notes: editForm.notes,
     }).eq('id', editForm.id)
-    if (!error) { setShowEditForm(false); setEditForm(null); setSelected(null); load() }
+    if (!error) { setShowEditForm(false); setEditForm(null); setSelected(null); load(); showToast('Adjuster updated.', 'success') } else { showToast('Update failed.', 'error') }
     setSaving(false)
   }
 
@@ -91,6 +95,18 @@ export default function AdjustersPage() {
 
   const getActiveClaims = (id: string) => claims.filter(c => c.adjuster_id === id && !['settled','rejected'].includes(c.status)).length
   const getTotalClaims = (id: string) => claims.filter(c => c.adjuster_id === id).length
+
+  async function handleDelete(item: any) {
+    const { error } = await supabase.from('adjusters').delete().eq('id', item.id)
+    if (error) {
+      showToast('Delete failed.', 'error')
+    } else {
+      showToast(`${item.name} deleted.`, 'success')
+      setSelected(null)
+      load()
+    }
+    setConfirmDelete(null)
+  }
 
   return (
     <div className="page-enter" style={{ padding: '2rem', minHeight: '100vh', background: 'var(--bg-page)' }}>
@@ -112,7 +128,7 @@ export default function AdjustersPage() {
           { label: 'Total Adjusters', value: adjusters.length.toString() },
           { label: 'Available', value: adjusters.filter(a => a.is_available).length.toString(), color: '#4ade80' },
           { label: 'Unavailable', value: adjusters.filter(a => !a.is_available).length.toString(), color: '#fc8181' },
-          { label: 'Active Assignments', value: claims.filter(c => !['settled','rejected'].includes(c.status)).length.toString(), color: '#e8b04a' },
+          { label: 'Active Assignments', value: claims.filter(c => !['settled','rejected'].includes(c.status)).length.toString(), color: 'var(--text-amber)' },
         ].map((k, i) => (
           <div key={i} style={{ background: 'var(--bg-card)', padding: '1rem 1.2rem' }}>
             <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-mist)' }}>{k.label}</div>
@@ -138,6 +154,7 @@ export default function AdjustersPage() {
           const active = getActiveClaims(a.id)
           const total = getTotalClaims(a.id)
           const load_pct = Math.min(100, active * 20) // 5 active = 100%
+
           return (
             <div key={a.id} className="crm-card" style={{ cursor: 'pointer', position: 'relative' }} onClick={() => openAdjuster(a)}>
               {/* Availability indicator */}
@@ -213,7 +230,7 @@ export default function AdjustersPage() {
                     { label: 'Total Handled', value: getTotalClaims(selected.id).toString(), color: '#c9933a' },
                     { label: 'Daily Rate', value: selected.daily_rate ? `${selected.currency} ${selected.daily_rate}` : '—', color: 'var(--text-primary)' },
                   ].map((k, i) => (
-                    <div key={i} style={{ background: 'var(--bg-sidebar)', padding: '1rem', textAlign: 'center' }}>
+                    <div key={i} style={{ background: 'var(--bg-deep)', padding: '1rem', textAlign: 'center' }}>
                       <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)' }}>{k.label}</div>
                       <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.3rem', fontWeight: 900, color: k.color, marginTop: '0.3rem' }}>{k.value}</div>
                     </div>
@@ -348,6 +365,16 @@ export default function AdjustersPage() {
           </div>
         </div>
       )}
+      {confirmDelete && (
+        <ConfirmDialog
+          title="Delete Adjuster"
+          message={`Delete ${confirmDelete.name}? This cannot be undone.`}
+          confirmLabel="Delete Adjuster"
+          onConfirm={() => handleDelete(confirmDelete)}
+          onCancel={() => setConfirmDelete(null)}
+        />
+      )}
+      {toast && <Toast message={toast.message} type={toast.type} onDone={hideToast} />}
     </div>
   )
 }

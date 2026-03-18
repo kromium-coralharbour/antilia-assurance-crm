@@ -1,6 +1,8 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { Toast, useToast } from '@/components/Toast'
+import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { formatCurrency, formatDate, formatStatus, getIslandLabel, getIslandFlag, CLAIM_STATUS_STYLES } from '@/lib/utils'
 import { Island, Currency, ISLAND_LABELS } from '@/types'
 
@@ -17,6 +19,8 @@ export default function ReinsurancePage() {
     cession_rate: '', attachment_point: '', notes: '',
   })
   const [saving, setSaving] = useState(false)
+  const { toast, show: showToast, hide: hideToast } = useToast()
+  const [confirmDelete, setConfirmDelete] = useState<any>(null)
   const [treatyTab, setTreatyTab] = useState<'detail'|'claims'|'financials'>('detail')
   const [treatyClaims, setTreatyClaims] = useState<any[]>([])
   const [treatyLoading, setTreatyLoading] = useState(false)
@@ -79,6 +83,18 @@ export default function ReinsurancePage() {
     catastrophe_xl: 'Catastrophe XL', facultative: 'Facultative',
   }
 
+  async function handleDelete(treaty: any) {
+    const { error } = await supabase.from('reinsurance_treaties').delete().eq('id', treaty.id)
+    if (error) {
+      showToast('Delete failed.', 'error')
+    } else {
+      showToast(`Treaty "${treaty.treaty_name}" removed.`, 'success')
+      setSelected(null)
+      load()
+    }
+    setConfirmDelete(null)
+  }
+
   return (
     <div className="page-enter" style={{ padding: '2rem', minHeight: '100vh', background: 'var(--bg-page)' }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
@@ -112,6 +128,7 @@ export default function ReinsurancePage() {
         ) : treaties.map(t => {
           const utilizationPct = t.limit_amount > 0 ? Math.min(100, (t.exposure_ceded / t.limit_amount) * 100) : 0
           const isExpiringSoon = t.expiry_date && new Date(t.expiry_date) < new Date(Date.now() + 90 * 86400000)
+
           return (
             <div key={t.id} className="crm-card" style={{ cursor: 'pointer' }} onClick={() => openTreaty(t)}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
@@ -120,7 +137,7 @@ export default function ReinsurancePage() {
                   <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: 'var(--text-mist)', letterSpacing: '0.06em' }}>{t.reinsurer_name}</div>
                 </div>
                 <div style={{ display: 'flex', gap: '0.4rem', flexDirection: 'column', alignItems: 'flex-end' }}>
-                  <span className="badge" style={{ background: 'rgba(201,147,58,0.1)', borderColor: 'rgba(201,147,58,0.3)', color: '#e8b04a' }}>
+                  <span className="badge" style={{ background: 'rgba(201,147,58,0.1)', borderColor: 'rgba(201,147,58,0.3)', color: 'var(--text-amber)' }}>
                     {TREATY_TYPE_LABELS[t.treaty_type] || t.treaty_type}
                   </span>
                   {isExpiringSoon && <span className="badge" style={{ background: 'rgba(231,76,60,0.15)', borderColor: 'rgba(231,76,60,0.3)', color: '#fc8181' }}>Expiring Soon</span>}
@@ -208,7 +225,7 @@ export default function ReinsurancePage() {
                   <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: '0.4rem' }}>Islands Covered</div>
                   <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                     {(selected.islands_covered || []).map((island: Island) => (
-                      <span key={island} style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', background: 'var(--bg-raised)', border: '1px solid rgba(201,147,58,0.15)', color: '#e8b04a', padding: '0.2rem 0.6rem' }}>
+                      <span key={island} style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', background: 'var(--bg-raised)', border: '1px solid rgba(201,147,58,0.15)', color: 'var(--text-amber)', padding: '0.2rem 0.6rem' }}>
                         {getIslandFlag(island)} {getIslandLabel(island)}
                       </span>
                     ))}
@@ -247,7 +264,7 @@ export default function ReinsurancePage() {
                       { label: 'Loss Recoverable', value: formatCurrency(selected.loss_recoverable || 0, selected.currency) },
                       { label: 'Net Cost (Prem - Loss Rec)', value: formatCurrency((selected.premium_ceded || 0) - (selected.loss_recoverable || 0), selected.currency) },
                     ].map((k, i) => (
-                      <div key={i} style={{ background: 'var(--bg-sidebar)', padding: '1rem' }}>
+                      <div key={i} style={{ background: 'var(--bg-deep)', padding: '1rem' }}>
                         <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)' }}>{k.label}</div>
                         <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.1rem', fontWeight: 900, color: '#c9933a', marginTop: '0.3rem' }}>{k.value}</div>
                       </div>
@@ -257,6 +274,7 @@ export default function ReinsurancePage() {
                 {/* Utilisation */}
                 {!editFinancials && (() => {
                   const pct = selected.limit_amount > 0 ? Math.min(100, ((selected.exposure_ceded || 0) / selected.limit_amount) * 100) : 0
+
                   return (
                     <div style={{ padding: '1rem', background: 'rgba(var(--raised-rgb),0.2)', border: '1px solid rgba(201,147,58,0.1)' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
@@ -342,6 +360,16 @@ export default function ReinsurancePage() {
           </div>
         </div>
       )}
+      {confirmDelete && (
+        <ConfirmDialog
+          title="Delete Treaty"
+          message={`Remove "${confirmDelete.treaty_name}"? Historical records will be lost.`}
+          confirmLabel="Delete Treaty"
+          onConfirm={() => handleDelete(confirmDelete)}
+          onCancel={() => setConfirmDelete(null)}
+        />
+      )}
+      {toast && <Toast message={toast.message} type={toast.type} onDone={hideToast} />}
     </div>
   )
 }

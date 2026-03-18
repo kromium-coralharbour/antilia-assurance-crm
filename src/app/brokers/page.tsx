@@ -1,6 +1,8 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { Toast, useToast } from '@/components/Toast'
+import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { formatCurrency, formatStatus, formatDate, getIslandLabel, getIslandFlag, POLICY_STATUS_STYLES, daysUntil } from '@/lib/utils'
 import { Island, Currency, ISLAND_LABELS } from '@/types'
 
@@ -17,10 +19,14 @@ export default function BrokersPage() {
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState(EMPTY)
   const [saving, setSaving] = useState(false)
+  const { toast, show: showToast, hide: hideToast } = useToast()
+  const [confirmDelete, setConfirmDelete] = useState<any>(null)
   const [showEditForm, setShowEditForm] = useState(false)
   const [editForm, setEditForm] = useState<any>(null)
   const [selected, setSelected] = useState<any>(null)
   const [search, setSearch] = useState('')
+  const [sortBy, setSortBy] = useState('ytd_premium_volume')
+  const [sortDir, setSortDir] = useState<'asc'|'desc'>('desc')
   const [brokerTab, setBrokerTab] = useState<'profile'|'policies'>('profile')
   const [brokerPolicies, setBrokerPolicies] = useState<any[]>([])
   const [brokerLoading, setBrokerLoading] = useState(false)
@@ -47,7 +53,7 @@ export default function BrokersPage() {
     e.preventDefault()
     setSaving(true)
     const { error } = await supabase.from('brokers').insert({ ...form, commission_rate: parseFloat(form.commission_rate), status: 'active' })
-    if (!error) { setShowForm(false); setForm(EMPTY); load() }
+    if (!error) { setShowForm(false); setForm(EMPTY); load(); showToast('Broker added.', 'success') } else { showToast('Save failed.', 'error') }
     setSaving(false)
   }
 
@@ -75,8 +81,20 @@ export default function BrokersPage() {
       currency: editForm.currency,
       notes: editForm.notes,
     }).eq('id', editForm.id)
-    if (!error) { setShowEditForm(false); setEditForm(null); setSelected(null); load() }
+    if (!error) { setShowEditForm(false); setEditForm(null); setSelected(null); load(); showToast('Broker updated.', 'success') } else { showToast('Update failed.', 'error') }
     setSaving(false)
+  }
+
+  async function handleDelete(item: any) {
+    const { error } = await supabase.from('brokers').delete().eq('id', item.id)
+    if (error) {
+      showToast('Cannot delete — broker has active policies.', 'error')
+    } else {
+      showToast(`${item.name} deleted.`, 'success')
+      setSelected(null)
+      load()
+    }
+    setConfirmDelete(null)
   }
 
   return (
@@ -109,7 +127,7 @@ export default function BrokersPage() {
       </div>
 
       {/* Broker Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(340px, 100%), 1fr))', gap: '1rem', marginBottom: '2rem' }}>
         {loading ? (
           <div style={{ color: 'var(--text-mist)', fontFamily: 'Barlow Condensed' }}>Loading…</div>
         ) : filtered.map(b => (
@@ -136,7 +154,7 @@ export default function BrokersPage() {
               </div>
               <div>
                 <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.58rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)' }}>Commission</div>
-                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.9rem', color: '#e8b04a', fontWeight: 600, marginTop: '0.2rem' }}>{formatCurrency(b.ytd_commission_earned, b.currency, true)}</div>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.9rem', color: 'var(--text-amber)', fontWeight: 600, marginTop: '0.2rem' }}>{formatCurrency(b.ytd_commission_earned, b.currency, true)}</div>
               </div>
               <div>
                 <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.58rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)' }}>Rate</div>
@@ -177,7 +195,7 @@ export default function BrokersPage() {
                     { label: 'Commission Earned', value: formatCurrency(selected.ytd_commission_earned, selected.currency, true) },
                     { label: 'Commission Rate', value: `${selected.commission_rate}%` },
                   ].map((k, i) => (
-                    <div key={i} style={{ background: 'var(--bg-sidebar)', padding: '1rem', textAlign: 'center' }}>
+                    <div key={i} style={{ background: 'var(--bg-deep)', padding: '1rem', textAlign: 'center' }}>
                       <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)' }}>{k.label}</div>
                       <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 900, color: '#c9933a', marginTop: '0.3rem' }}>{k.value}</div>
                     </div>
@@ -235,11 +253,12 @@ export default function BrokersPage() {
       currency: editForm.currency,
       notes: editForm.notes,
     }).eq('id', editForm.id)
-    if (!error) { setShowEditForm(false); setEditForm(null); setSelected(null); load() }
+    if (!error) { setShowEditForm(false); setEditForm(null); setSelected(null); load(); showToast('Broker updated.', 'success') } else { showToast('Update failed.', 'error') }
     setSaving(false)
   }
 
-  return (
+
+                  return (
                     <div key={p.id} style={{ padding: '1rem 1.5rem', borderBottom: '1px solid rgba(201,147,58,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                       <div>
                         <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.82rem', color: '#c9933a', fontWeight: 600 }}>{p.policy_number}</div>
@@ -249,7 +268,7 @@ export default function BrokersPage() {
                       </div>
                       <div style={{ textAlign: 'right' }}>
                         <span className={`badge ${POLICY_STATUS_STYLES[p.status] || ''}`}>{formatStatus(p.status)}</span>
-                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: '#e8b04a', marginTop: '0.3rem' }}>{formatCurrency(p.annual_premium, p.premium_currency, true)}</div>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: 'var(--text-amber)', marginTop: '0.3rem' }}>{formatCurrency(p.annual_premium, p.premium_currency, true)}</div>
                         <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', color: '#c9933a' }}>Est. comm: {formatCurrency(p.annual_premium * (selected.commission_rate / 100), p.premium_currency, true)}</div>
                       </div>
                     </div>
@@ -332,6 +351,16 @@ export default function BrokersPage() {
           </div>
         </div>
       )}
+      {confirmDelete && (
+        <ConfirmDialog
+          title="Delete Broker"
+          message={`Delete ${confirmDelete.name}? This cannot be undone.`}
+          confirmLabel="Delete Broker"
+          onConfirm={() => handleDelete(confirmDelete)}
+          onCancel={() => setConfirmDelete(null)}
+        />
+      )}
+      {toast && <Toast message={toast.message} type={toast.type} onDone={hideToast} />}
     </div>
   )
 }

@@ -1,6 +1,8 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { Toast, useToast } from '@/components/Toast'
+import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { formatCurrency, formatDate, formatStatus, getIslandLabel, getIslandFlag, POLICY_STATUS_STYLES, getRiskColor, daysUntil } from '@/lib/utils'
 import { Policy, CoverageType, Island, COVERAGE_LABELS, ISLAND_LABELS } from '@/types'
 
@@ -60,6 +62,8 @@ export default function PoliciesPage() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState('')
+  const [sortBy, setSortBy] = useState('created_at')
+  const [sortDir, setSortDir] = useState<'asc'|'desc'>('desc')
   const [filterIsland, setFilterIsland] = useState('')
   const [filterCoverage, setFilterCoverage] = useState('')
   const [showForm, setShowForm] = useState(false)
@@ -67,6 +71,8 @@ export default function PoliciesPage() {
   const [editForm, setEditForm] = useState<any>(null)
   const [form, setForm] = useState(EMPTY_FORM)
   const [saving, setSaving] = useState(false)
+  const { toast, show: showToast, hide: hideToast } = useToast()
+  const [confirmDelete, setConfirmDelete] = useState<any>(null)
   const [selected, setSelected] = useState<any>(null)
   const [selectedTab, setSelectedTab] = useState<'details' | 'endorsements'>('details')
   const [endorsements, setEndorsements] = useState<any[]>([])
@@ -101,12 +107,28 @@ export default function PoliciesPage() {
 
   useEffect(() => { setComputedRisk(calculateRiskScore(form)) }, [form])
 
+  function toggleSort(col: string) {
+    if (sortBy === col) setSortDir(d => d === 'asc' ? 'desc' : 'asc')
+    else { setSortBy(col); setSortDir('desc') }
+  }
+  const sortIcon = (col: string) => sortBy === col ? (sortDir === 'asc' ? ' ↑' : ' ↓') : ' ⇅'
+
   const filtered = policies.filter(p => {
     const clientName = p.clients ? `${p.clients.first_name} ${p.clients.last_name} ${p.clients.company_name || ''}`.toLowerCase() : ''
     return (!search || p.policy_number?.toLowerCase().includes(search.toLowerCase()) || clientName.includes(search.toLowerCase()) || p.property_address?.toLowerCase().includes(search.toLowerCase()))
       && (!filterStatus || p.status === filterStatus)
       && (!filterIsland || p.island === filterIsland)
       && (!filterCoverage || p.coverage_type === filterCoverage)
+  }).sort((a, b) => {
+    let av: any, bv: any
+    if (sortBy === 'annual_premium') { av = a.annual_premium || 0; bv = b.annual_premium || 0 }
+    else if (sortBy === 'renewal_date') { av = a.renewal_date || ''; bv = b.renewal_date || '' }
+    else if (sortBy === 'risk_score') { av = a.risk_score || 0; bv = b.risk_score || 0 }
+    else if (sortBy === 'insured_value') { av = a.insured_value || 0; bv = b.insured_value || 0 }
+    else { av = a.policy_number || ''; bv = b.policy_number || '' }
+    if (av < bv) return sortDir === 'asc' ? -1 : 1
+    if (av > bv) return sortDir === 'asc' ? 1 : -1
+    return 0
   })
 
   async function handleSave(e: React.FormEvent) {
@@ -161,8 +183,21 @@ export default function PoliciesPage() {
       setShowEditForm(false)
       setEditForm(null)
       load()
-    }
+      showToast('Policy updated.', 'success')
+    } else { showToast('Update failed.', 'error') }
     setSaving(false)
+  }
+
+  async function handleDelete(policy: any) {
+    const { error } = await supabase.from('policies').delete().eq('id', policy.id)
+    if (error) {
+      showToast(error.message.includes('restrict') ? 'Cannot delete — policy has active claims.' : 'Delete failed.', 'error')
+    } else {
+      showToast(`Policy ${policy.policy_number} deleted.`, 'success')
+      setSelected(null)
+      load()
+    }
+    setConfirmDelete(null)
   }
 
   async function updateStatus(id: string, status: string) {
@@ -248,9 +283,9 @@ export default function PoliciesPage() {
         <div className="table-scroll"><table className="crm-table">
           <thead>
             <tr>
-              <th>Policy #</th><th>Client</th><th>Coverage</th><th>Island</th>
-              <th>Insured Value</th><th>Annual Premium</th><th>Status</th>
-              <th>Renewal</th><th>Risk Score</th><th>Actions</th>
+              <th style={{ cursor:'pointer', userSelect:'none' }} onClick={() => toggleSort('policy_number')}>Policy #{sortIcon('policy_number')}</th><th>Client</th><th>Coverage</th><th>Island</th>
+              <th style={{ cursor:'pointer', userSelect:'none' }} onClick={() => toggleSort('insured_value')}>Insured Value{sortIcon('insured_value')}</th><th>Annual Premium</th><th>Status</th>
+              <th style={{ cursor:'pointer', userSelect:'none' }} onClick={() => toggleSort('renewal_date')}>Renewal{sortIcon('renewal_date')}</th><th>Risk Score</th><th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -379,7 +414,8 @@ export default function PoliciesPage() {
                   {selected.status === 'quoted' && <button className="btn-gold" onClick={() => updateStatus(selected.id, 'active')}>Bind Policy</button>}
                   {selected.status === 'active' && <button className="btn-ghost" onClick={() => updateStatus(selected.id, 'renewal_due')}>Flag for Renewal</button>}
                   {selected.status === 'renewal_due' && <button className="btn-gold" onClick={() => updateStatus(selected.id, 'active')}>Renew Policy</button>}
-                  <button className="btn-ghost" onClick={() => { setEditForm({ ...selected, insured_value: String(selected.insured_value), annual_premium: String(selected.annual_premium), structural_compliance_rating: String(selected.structural_compliance_rating || ''), construction_year: String(selected.construction_year || ''), hurricane_deductible_pct: String(selected.hurricane_deductible_pct || 5), hull_value: String(selected.hull_value || ''), vessel_year: String(selected.vessel_year || '') }); setShowEditForm(true) }}>Edit Policy</button>
+                  <button className="btn-danger" style={{ fontSize: '0.75rem' }} onClick={() => setConfirmDelete(selected)}>Delete</button>
+              <button className="btn-ghost" onClick={() => { setEditForm({ ...selected, insured_value: String(selected.insured_value), annual_premium: String(selected.annual_premium), structural_compliance_rating: String(selected.structural_compliance_rating || ''), construction_year: String(selected.construction_year || ''), hurricane_deductible_pct: String(selected.hurricane_deductible_pct || 5), hull_value: String(selected.hull_value || ''), vessel_year: String(selected.vessel_year || '') }); setShowEditForm(true) }}>Edit Policy</button>
               {selected.status === 'active' && <button className="btn-ghost" onClick={() => { setSelectedTab('endorsements'); setShowEndorseForm(true) }}>+ Add Endorsement</button>}
                   {selected.status !== 'cancelled' && <button className="btn-danger" onClick={() => updateStatus(selected.id, 'cancelled')}>Cancel Policy</button>}
                 </div>
@@ -410,7 +446,7 @@ export default function PoliciesPage() {
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.6rem' }}>
                           <div>
                             <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', letterSpacing: '0.15em', color: '#c9933a' }}>{e.endorsement_number}</span>
-                            <span style={{ marginLeft: '0.8rem' }}><span className="badge" style={{ background: 'rgba(201,147,58,0.08)', borderColor: 'rgba(201,147,58,0.2)', color: '#e8b04a' }}>{ENDORSEMENT_TYPES[e.type] || e.type}</span></span>
+                            <span style={{ marginLeft: '0.8rem' }}><span className="badge" style={{ background: 'rgba(201,147,58,0.08)', borderColor: 'rgba(201,147,58,0.2)', color: 'var(--text-amber)' }}>{ENDORSEMENT_TYPES[e.type] || e.type}</span></span>
                           </div>
                           <div style={{ textAlign: 'right' }}>
                             <div style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700, color: e.additional_premium > 0 ? '#c9933a' : e.additional_premium < 0 ? '#4ade80' : 'var(--text-mist)' }}>
@@ -713,6 +749,16 @@ export default function PoliciesPage() {
           </div>
         </div>
       )}
+      {confirmDelete && (
+        <ConfirmDialog
+          title="Delete Policy"
+          message={`Permanently delete ${confirmDelete.policy_number}? This cannot be undone. Policies with active claims cannot be deleted.`}
+          confirmLabel="Delete Policy"
+          onConfirm={() => handleDelete(confirmDelete)}
+          onCancel={() => setConfirmDelete(null)}
+        />
+      )}
+      {toast && <Toast message={toast.message} type={toast.type} onDone={hideToast} />}
     </div>
   )
 }

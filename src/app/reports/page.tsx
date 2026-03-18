@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { Toast, useToast } from '@/components/Toast'
 import { formatCurrency, formatDate, formatPct, getIslandLabel, getIslandFlag } from '@/lib/utils'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
@@ -25,7 +26,7 @@ const LOSS_RATIO_TREND = [
 
 const PREMIUM_BY_ISLAND = [
   { island: '🇧🇸 Bahamas', gwp: 9800000, claims: 3200000, color: '#c9933a' },
-  { island: '🇰🇾 Cayman', gwp: 8400000, claims: 2100000, color: '#e8b04a' },
+  { island: '🇰🇾 Cayman', gwp: 8400000, claims: 2100000, color: 'var(--text-amber)' },
   { island: '🇧🇧 Barbados', gwp: 6200000, claims: 2800000, color: '#a87530' },
   { island: '🇯🇲 Jamaica', gwp: 4900000, claims: 1900000, color: '#c9933a' },
   { island: '🇹🇹 T&T', gwp: 2600000, claims: 890000, color: 'var(--text-mist)' },
@@ -57,6 +58,7 @@ export default function ReportsPage() {
   const [claims, setClaims] = useState<any[]>([])
   const [brokers, setBrokers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const { toast, show: showToast, hide: hideToast } = useToast()
   const [activeTab, setActiveTab] = useState<'executive' | 'regulatory' | 'reports'>('executive')
   const [generating, setGenerating] = useState<string | null>(null)
   const [selectedFiling, setSelectedFiling] = useState<any>(null)
@@ -129,7 +131,7 @@ export default function ReportsPage() {
   ] as const
 
   return (
-    <div style={{ padding: '2rem', background: 'var(--bg-page)', minHeight: '100vh' }}>
+    <div className="page-enter" style={{ padding: '2rem', background: 'var(--bg-page)', minHeight: '100vh' }}>
       {/* Header */}
       <div style={{ marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
         <div className="section-eyebrow" style={{ marginBottom: '0.4rem' }}>Regulatory & Compliance</div>
@@ -142,10 +144,10 @@ export default function ReportsPage() {
       </div>
 
       {/* KPIs */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '1px', marginBottom: '2rem', background: 'rgba(201,147,58,0.08)' }}>
+      <div className="five-col-kpi" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '1px', marginBottom: '2rem', background: 'rgba(201,147,58,0.08)' }}>
         {[
           { label: 'Gross Written Premium', value: formatCurrency(totalGWP, 'USD', true), sub: 'YTD 2024', color: '#c9933a' },
-          { label: 'Total Insured Value', value: formatCurrency(totalExposure, 'USD', true), sub: 'Portfolio', color: '#e8b04a' },
+          { label: 'Total Insured Value', value: formatCurrency(totalExposure, 'USD', true), sub: 'Portfolio', color: 'var(--text-amber)' },
           { label: 'Loss Ratio', value: formatPct(lossRatio), sub: 'Incl. Beryl', color: lossRatio > 80 ? '#c0392b' : lossRatio > 60 ? '#e67e22' : '#27ae60' },
           { label: 'Combined Ratio', value: formatPct(combinedRatio), sub: `Exp. 25.8%`, color: combinedRatio < 100 ? '#27ae60' : '#c0392b' },
           { label: 'Solvency Margin', value: '256%', sub: 'Min required: 150%', color: '#27ae60' },
@@ -356,6 +358,7 @@ export default function ReportsPage() {
           </div>
         </div>
       )}
+      {toast && <Toast message={toast.message} type={toast.type} onDone={hideToast} />}
     </div>
   )
 }
