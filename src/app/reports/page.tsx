@@ -175,7 +175,7 @@ export default function ReportsPage() {
       {/* ── EXECUTIVE TAB ── */}
       {activeTab === 'executive' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '1.5rem' }}>
+          <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '1.5rem' }}>
             {/* Solvency Trend */}
             <div className="crm-card">
               <div className="section-eyebrow" style={{ marginBottom: '0.4rem' }}>Solvency Capital Ratio · Quarterly</div>
@@ -289,7 +289,7 @@ export default function ReportsPage() {
 
       {/* ── REPORTS TAB ── */}
       {activeTab === 'reports' && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+        <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
           {REPORTS_AVAILABLE.map((report, i) => (
             <div key={i} className="crm-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem' }}>
               <div style={{ flex: 1 }}>
@@ -328,7 +328,7 @@ export default function ReportsPage() {
               </div>
               <button onClick={() => setSelectedFiling(null)} style={{ background: 'none', border: 'none', color: '#8fa3b8', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
             </div>
-            <div style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="two-col-grid" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               {[
                 ['Jurisdiction', selectedFiling.jurisdiction],
                 ['Regulator', selectedFiling.regulator],

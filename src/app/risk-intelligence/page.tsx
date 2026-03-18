@@ -256,7 +256,7 @@ export default function RiskIntelligencePage() {
 
       {/* ── CONSTRUCTION RISK TAB ── */}
       {activeTab === 'construction' && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+        <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
           <div className="crm-card">
             <div className="section-eyebrow" style={{ marginBottom: '0.4rem' }}>Structural Type Analysis</div>
             <p style={{ fontFamily: 'Barlow', fontSize: '0.82rem', color: '#8fa3b8', marginBottom: '1.5rem' }}>
@@ -454,7 +454,7 @@ export default function RiskIntelligencePage() {
 
       {/* ── LOSS MODELLING TAB ── */}
       {activeTab === 'loss' && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+        <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
           <div className="crm-card">
             <div className="section-eyebrow" style={{ marginBottom: '0.4rem' }}>Probable Maximum Loss · Scenarios</div>
             <p style={{ fontFamily: 'Barlow', fontSize: '0.82rem', color: '#8fa3b8', marginBottom: '1.5rem' }}>
@@ -587,7 +587,7 @@ export default function RiskIntelligencePage() {
               </div>
               <button onClick={() => setSelectedPolicy(null)} style={{ background: 'none', border: 'none', color: '#8fa3b8', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
             </div>
-            <div style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="two-col-grid" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               {[
                 ['Coverage Type', selectedPolicy.coverage_type],
                 ['Island', `${getIslandFlag(selectedPolicy.island)} ${getIslandLabel(selectedPolicy.island)}`],

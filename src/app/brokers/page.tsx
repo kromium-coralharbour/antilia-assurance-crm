@@ -183,7 +183,7 @@ export default function BrokersPage() {
                     </div>
                   ))}
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.2rem' }}>
+                <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.2rem' }}>
                   {[
                     ['Email', selected.email], ['Phone', selected.phone || '—'],
                     ['Island', `${getIslandFlag(selected.island)} ${getIslandLabel(selected.island)}`],
@@ -269,7 +269,7 @@ export default function BrokersPage() {
               <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>Edit Broker</div>
               <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>{editForm.name}</div>
             </div>
-            <form onSubmit={handleEditBroker} style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <form onSubmit={handleEditBroker} className="two-col-grid" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div><label className="crm-label">Full Name *</label><input className="crm-input" value={editForm.name} onChange={e => setEditForm((f: any) => ({ ...f, name: e.target.value }))} required /></div>
               <div><label className="crm-label">Company *</label><input className="crm-input" value={editForm.company} onChange={e => setEditForm((f: any) => ({ ...f, company: e.target.value }))} required /></div>
               <div><label className="crm-label">Email *</label><input className="crm-input" type="email" value={editForm.email} onChange={e => setEditForm((f: any) => ({ ...f, email: e.target.value }))} required /></div>
@@ -304,7 +304,7 @@ export default function BrokersPage() {
               <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>Distribution</div>
               <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>Add New Broker</div>
             </div>
-            <form onSubmit={handleSave} style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <form onSubmit={handleSave} className="two-col-grid" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div><label className="crm-label">Full Name *</label><input className="crm-input" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required /></div>
               <div><label className="crm-label">Company *</label><input className="crm-input" value={form.company} onChange={e => setForm(f => ({ ...f, company: e.target.value }))} required /></div>
               <div><label className="crm-label">Email *</label><input className="crm-input" type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} required /></div>

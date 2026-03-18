@@ -106,7 +106,7 @@ export default function ReinsurancePage() {
       </div>
 
       {/* Treaty Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(420px, 1fr))', gap: '1rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(420px, 100%), 1fr))', gap: '1rem' }}>
         {loading ? (
           <div style={{ color: '#8fa3b8' }}>Loading treaties…</div>
         ) : treaties.map(t => {
@@ -188,7 +188,7 @@ export default function ReinsurancePage() {
             </div>
             {/* Detail tab */}
             {treatyTab === 'detail' && (
-              <div style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="two-col-grid" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 {[
                   ['Treaty Limit', formatCurrency(selected.limit_amount, selected.currency)],
                   ['Retention', formatCurrency(selected.retention, selected.currency)],
@@ -224,7 +224,7 @@ export default function ReinsurancePage() {
                   <button onClick={() => setEditFinancials(!editFinancials)} className="btn-ghost" style={{ fontSize: '0.7rem', padding: '0.4rem 0.8rem' }}>{editFinancials ? 'Cancel' : 'Edit Figures'}</button>
                 </div>
                 {editFinancials ? (
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     {[
                       ['Premium Ceded', 'premium_ceded'],
                       ['Exposure Ceded', 'exposure_ceded'],
@@ -306,7 +306,7 @@ export default function ReinsurancePage() {
               <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>Reinsurance</div>
               <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>New Treaty</div>
             </div>
-            <form onSubmit={handleSave} style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <form onSubmit={handleSave} className="two-col-grid" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div style={{ gridColumn: '1 / -1' }}><label className="crm-label">Treaty Name *</label><input className="crm-input" value={form.treaty_name} onChange={e => setForm(f => ({ ...f, treaty_name: e.target.value }))} required /></div>
               <div><label className="crm-label">Reinsurer *</label><input className="crm-input" value={form.reinsurer_name} onChange={e => setForm(f => ({ ...f, reinsurer_name: e.target.value }))} required /></div>
               <div>

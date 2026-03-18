@@ -330,7 +330,7 @@ export default function DashboardPage() {
               </div>
               <button onClick={() => setSelectedClaim(null)} style={{ background: 'none', border: 'none', color: '#8fa3b8', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
             </div>
-            <div style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="two-col-grid" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               {[
                 ['Status', selectedClaim.status ? selectedClaim.status.replace(/_/g,' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) : '—'],
                 ['Fraud Risk', selectedClaim.fraud_risk || '—'],

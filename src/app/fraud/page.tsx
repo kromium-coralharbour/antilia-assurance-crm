@@ -343,7 +343,7 @@ export default function FraudPage() {
             {/* Claim File Tab */}
             {fraudTab === 'claim' && (
               <div style={{ padding: '1.5rem', flex: 1 }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
                   {[
                     ['Claim Number', selected.claims?.claim_number || '—'],
                     ['Coverage Type', selected.claims?.coverage_type ? formatStatus(selected.claims.coverage_type) : '—'],

@@ -420,7 +420,7 @@ export default function ClaimsPage() {
                   {selected.fraud_flags?.length > 0 && <div style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: '#8fa3b8', marginTop: '0.2rem' }}>{selected.fraud_flags.join(' · ')}</div>}
                 </div>
               )}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.2rem' }}>
+              <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.2rem' }}>
                 {[
                   ['Status', <span key="s" className={`badge ${CLAIM_STATUS_STYLES[selected.status] || ''}`}>{formatStatus(selected.status)}</span>],
                   ['Fraud Risk', <span key="f" className={`badge ${FRAUD_RISK_STYLES[selected.fraud_risk] || ''}`}>{formatStatus(selected.fraud_risk)}</span>],
@@ -519,7 +519,7 @@ export default function ClaimsPage() {
               <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>First Notice of Loss</div>
               <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>File New Claim</div>
             </div>
-            <form onSubmit={handleSave} style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <form onSubmit={handleSave} className="two-col-grid" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div style={{ gridColumn: '1 / -1' }}>
                 <label className="crm-label">Policy *</label>
                 <select className="crm-select" value={form.policy_id} onChange={e => setForm(f => ({ ...f, policy_id: e.target.value }))} required>
@@ -580,7 +580,7 @@ export default function ClaimsPage() {
                 This will activate all-hands surge protocols and alert the claims team.
               </div>
             </div>
-            <form onSubmit={handleSurge} style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <form onSubmit={handleSurge} className="two-col-grid" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div style={{ gridColumn: '1 / -1' }}>
                 <label className="crm-label">Event Name *</label>
                 <input className="crm-input" placeholder="e.g. Hurricane Milton" value={surgeForm.name} onChange={e => setSurgeForm(f => ({ ...f, name: e.target.value }))} required />

@@ -241,7 +241,7 @@ export default function ClientsPage() {
             </div>
             {/* Profile Tab */}
             {clientTab === 'profile' && (
-              <div style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="two-col-grid" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 {[
                   ['Email', selected.email], ['Phone', selected.phone || '—'],
                   ['Island', `${getIslandFlag(selected.island)} ${getIslandLabel(selected.island)}`],
@@ -351,7 +351,7 @@ export default function ClientsPage() {
               <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>Edit Client</div>
               <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>{editForm.first_name} {editForm.last_name}</div>
             </div>
-            <form onSubmit={handleEditClient} style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <form onSubmit={handleEditClient} className="two-col-grid" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div><label className="crm-label">First Name *</label><input className="crm-input" value={editForm.first_name} onChange={e => setEditForm((f: any) => ({ ...f, first_name: e.target.value }))} required /></div>
               <div><label className="crm-label">Last Name *</label><input className="crm-input" value={editForm.last_name} onChange={e => setEditForm((f: any) => ({ ...f, last_name: e.target.value }))} required /></div>
               <div style={{ gridColumn: '1 / -1' }}><label className="crm-label">Company Name</label><input className="crm-input" value={editForm.company_name || ''} onChange={e => setEditForm((f: any) => ({ ...f, company_name: e.target.value }))} /></div>
@@ -395,7 +395,7 @@ export default function ClientsPage() {
               <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>New Client</div>
               <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>Client Profile</div>
             </div>
-            <form onSubmit={handleSave} style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <form onSubmit={handleSave} className="two-col-grid" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div><label className="crm-label">First Name *</label><input className="crm-input" value={form.first_name} onChange={e => setForm(f => ({ ...f, first_name: e.target.value }))} required /></div>
               <div><label className="crm-label">Last Name *</label><input className="crm-input" value={form.last_name} onChange={e => setForm(f => ({ ...f, last_name: e.target.value }))} required /></div>
               <div style={{ gridColumn: '1 / -1' }}><label className="crm-label">Company Name</label><input className="crm-input" value={form.company_name} onChange={e => setForm(f => ({ ...f, company_name: e.target.value }))} /></div>

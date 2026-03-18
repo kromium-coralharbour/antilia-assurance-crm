@@ -510,7 +510,7 @@ export default function PoliciesPage() {
               </div>
             </div>
 
-            <form onSubmit={handleSave} style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <form onSubmit={handleSave} className="two-col-grid" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div style={{ gridColumn: '1 / -1' }}>
                 <label className="crm-label">Client *</label>
                 <select className="crm-select" value={form.client_id} onChange={e => setForm(f => ({ ...f, client_id: e.target.value }))} required>
@@ -661,7 +661,7 @@ export default function PoliciesPage() {
               <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>Edit Policy</div>
               <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>{editForm.policy_number}</div>
             </div>
-            <form onSubmit={handleEdit} style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <form onSubmit={handleEdit} className="two-col-grid" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div><label className="crm-label">Coverage Type</label>
                 <select className="crm-select" value={editForm.coverage_type} onChange={e => setEditForm((f: any) => ({ ...f, coverage_type: e.target.value }))}>
                   {Object.entries(COVERAGE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
