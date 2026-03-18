@@ -24,7 +24,7 @@ const ISLAND_EXPOSURE = [
   { island: 'Cayman Is.', exposure: 22700000, color: '#e8b04a' },
   { island: 'Barbados', exposure: 17500000, color: '#a87530' },
   { island: 'Jamaica', exposure: 14950000, color: '#c9933a' },
-  { island: 'T&T', exposure: 6380000, color: '#8fa3b8' },
+  { island: 'T&T', exposure: 6380000, color: 'var(--text-mist)' },
 ]
 
 const COVERAGE_MIX = [
@@ -32,15 +32,15 @@ const COVERAGE_MIX = [
   { name: 'Residential', value: 26, color: '#e8b04a' },
   { name: 'Hospitality', value: 20, color: '#a87530' },
   { name: 'Real Estate', value: 12, color: '#2e4060' },
-  { name: 'Construction', value: 6, color: '#1e2d45' },
-  { name: 'Marine', value: 4, color: '#8fa3b8' },
+  { name: 'Construction', value: 6, color: 'var(--bg-raised)' },
+  { name: 'Marine', value: 4, color: 'var(--text-mist)' },
 ]
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null
   return (
-    <div style={{ background: '#1e2d45', border: '1px solid rgba(201,147,58,0.3)', padding: '0.8rem 1rem', fontSize: '0.8rem' }}>
-      <div style={{ fontFamily: 'Barlow Condensed', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#8fa3b8', marginBottom: '0.4rem' }}>{label}</div>
+    <div style={{ background: 'var(--bg-raised)', border: '1px solid rgba(201,147,58,0.3)', padding: '0.8rem 1rem', fontSize: '0.8rem' }}>
+      <div style={{ fontFamily: 'Barlow Condensed', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-mist)', marginBottom: '0.4rem' }}>{label}</div>
       {payload.map((p: any) => (
         <div key={p.dataKey} style={{ color: p.color, fontFamily: 'Barlow Condensed', fontSize: '0.85rem' }}>
           {p.name}: {formatCurrency(p.value, 'USD', true)}
@@ -104,16 +104,16 @@ export default function DashboardPage() {
   ]
 
   return (
-    <div className="page-enter" style={{ padding: '2rem', background: '#0a0f1e', minHeight: '100vh' }}>
+    <div className="page-enter" style={{ padding: '2rem', background: 'var(--bg-page)', minHeight: '100vh' }}>
       {/* Header */}
       <div style={{ marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
             <div className="section-eyebrow" style={{ marginBottom: '0.4rem' }}>Executive Risk Command Center</div>
-            <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.8rem', fontWeight: 700, color: '#fff', margin: 0 }}>
+            <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.8rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
               Portfolio Overview
             </h1>
-            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', letterSpacing: '0.15em', color: '#8fa3b8', marginTop: '0.3rem' }}>
+            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', letterSpacing: '0.15em', color: 'var(--text-mist)', marginTop: '0.3rem' }}>
               As of {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
             </div>
           </div>
@@ -135,14 +135,14 @@ export default function DashboardPage() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1px', marginBottom: '2rem', background: 'rgba(201,147,58,0.08)' }}>
         {KPI_CARDS.map((card, i) => (
           <a key={i} href={card.href || '#'} className="stat-card" style={{ position: 'relative', textDecoration: 'none', display: 'block', cursor: 'pointer' }}>
-            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#8fa3b8', marginBottom: '0.5rem' }}>
+            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-mist)', marginBottom: '0.5rem' }}>
               {card.label}
             </div>
             <div className="kpi-value" style={{ fontFamily: 'Playfair Display, serif', fontSize: '2rem', fontWeight: 900, color: card.color, lineHeight: 1, marginBottom: '0.4rem' }}>
               {card.value}
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.3rem' }}>
-              <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: '#8fa3b8' }}>{card.sub}</span>
+              <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: 'var(--text-mist)' }}>{card.sub}</span>
               <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: card.color, letterSpacing: '0.08em' }}>{card.change}</span>
             </div>
           </a>
@@ -155,7 +155,7 @@ export default function DashboardPage() {
         <div className="crm-card">
           <div style={{ marginBottom: '1.2rem' }}>
             <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>Premium & Claims Trend</div>
-            <div style={{ fontFamily: 'Barlow', fontSize: '0.8rem', color: '#8fa3b8' }}>GWP vs Claims Paid — 2024 · Hurricane Beryl impact visible July</div>
+            <div style={{ fontFamily: 'Barlow', fontSize: '0.8rem', color: 'var(--text-mist)' }}>GWP vs Claims Paid — 2024 · Hurricane Beryl impact visible July</div>
           </div>
           <ResponsiveContainer width="100%" height={200}>
             <AreaChart data={PREMIUM_TREND} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
@@ -169,8 +169,8 @@ export default function DashboardPage() {
                   <stop offset="95%" stopColor="#c0392b" stopOpacity={0}/>
                 </linearGradient>
               </defs>
-              <XAxis dataKey="month" tick={{ fill: '#8fa3b8', fontSize: 10, fontFamily: 'Barlow Condensed' }} axisLine={false} tickLine={false}/>
-              <YAxis tick={{ fill: '#8fa3b8', fontSize: 10, fontFamily: 'Barlow Condensed' }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${(v/1000000).toFixed(1)}M`}/>
+              <XAxis dataKey="month" tick={{ fill: 'var(--text-mist)', fontSize: 10, fontFamily: 'Barlow Condensed' }} axisLine={false} tickLine={false}/>
+              <YAxis tick={{ fill: 'var(--text-mist)', fontSize: 10, fontFamily: 'Barlow Condensed' }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${(v/1000000).toFixed(1)}M`}/>
               <Tooltip content={<CustomTooltip />} />
               <Area type="monotone" dataKey="gwp" stroke="#c9933a" strokeWidth={2} fill="url(#gwpGrad)" name="GWP"/>
               <Area type="monotone" dataKey="claims" stroke="#c0392b" strokeWidth={2} fill="url(#claimsGrad)" name="Claims"/>
@@ -182,21 +182,21 @@ export default function DashboardPage() {
         <div className="crm-card">
           <div style={{ marginBottom: '1.2rem' }}>
             <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>Coverage Mix</div>
-            <div style={{ fontFamily: 'Barlow', fontSize: '0.8rem', color: '#8fa3b8' }}>Portfolio by line of business</div>
+            <div style={{ fontFamily: 'Barlow', fontSize: '0.8rem', color: 'var(--text-mist)' }}>Portfolio by line of business</div>
           </div>
           <ResponsiveContainer width="100%" height={130}>
             <PieChart>
               <Pie data={COVERAGE_MIX} cx="50%" cy="50%" innerRadius={35} outerRadius={60} dataKey="value" stroke="none">
                 {COVERAGE_MIX.map((entry, i) => <Cell key={i} fill={entry.color}/>)}
               </Pie>
-              <Tooltip formatter={(v: any) => `${v}%`} contentStyle={{ background: '#1e2d45', border: '1px solid rgba(201,147,58,0.3)', fontSize: 11, fontFamily: 'Barlow Condensed' }}/>
+              <Tooltip formatter={(v: any) => `${v}%`} contentStyle={{ background: 'var(--bg-raised)', border: '1px solid rgba(201,147,58,0.3)', fontSize: 11, fontFamily: 'Barlow Condensed' }}/>
             </PieChart>
           </ResponsiveContainer>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.3rem', marginTop: '0.5rem' }}>
             {COVERAGE_MIX.map((item, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                 <div style={{ width: 8, height: 8, background: item.color, flexShrink: 0 }}/>
-                <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: '#8fa3b8' }}>{item.name} {item.value}%</span>
+                <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: 'var(--text-mist)' }}>{item.name} {item.value}%</span>
               </div>
             ))}
           </div>
@@ -209,13 +209,13 @@ export default function DashboardPage() {
         <div className="crm-card">
           <div style={{ marginBottom: '1.2rem' }}>
             <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>Exposure by Island</div>
-            <div style={{ fontFamily: 'Barlow', fontSize: '0.8rem', color: '#8fa3b8' }}>Total insured value · USD</div>
+            <div style={{ fontFamily: 'Barlow', fontSize: '0.8rem', color: 'var(--text-mist)' }}>Total insured value · USD</div>
           </div>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={ISLAND_EXPOSURE} layout="vertical" margin={{ left: 10, right: 30, top: 0, bottom: 0 }}>
-              <XAxis type="number" tick={{ fill: '#8fa3b8', fontSize: 9, fontFamily: 'Barlow Condensed' }} axisLine={false} tickLine={false} tickFormatter={v => `$${(v/1000000).toFixed(0)}M`}/>
-              <YAxis type="category" dataKey="island" tick={{ fill: '#8fa3b8', fontSize: 10, fontFamily: 'Barlow Condensed' }} axisLine={false} tickLine={false} width={65}/>
-              <Tooltip formatter={(v: any) => formatCurrency(v, 'USD', true)} contentStyle={{ background: '#1e2d45', border: '1px solid rgba(201,147,58,0.3)', fontSize: 11, fontFamily: 'Barlow Condensed' }}/>
+              <XAxis type="number" tick={{ fill: 'var(--text-mist)', fontSize: 9, fontFamily: 'Barlow Condensed' }} axisLine={false} tickLine={false} tickFormatter={v => `$${(v/1000000).toFixed(0)}M`}/>
+              <YAxis type="category" dataKey="island" tick={{ fill: 'var(--text-mist)', fontSize: 10, fontFamily: 'Barlow Condensed' }} axisLine={false} tickLine={false} width={65}/>
+              <Tooltip formatter={(v: any) => formatCurrency(v, 'USD', true)} contentStyle={{ background: 'var(--bg-raised)', border: '1px solid rgba(201,147,58,0.3)', fontSize: 11, fontFamily: 'Barlow Condensed' }}/>
               <Bar dataKey="exposure" radius={[0, 2, 2, 0]}>
                 {ISLAND_EXPOSURE.map((entry, i) => <Cell key={i} fill={entry.color}/>)}
               </Bar>
@@ -228,7 +228,7 @@ export default function DashboardPage() {
           <div style={{ padding: '0 1.5rem', marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <div className="section-eyebrow" style={{ marginBottom: '0.2rem' }}>Recent Claims Activity</div>
-              <div style={{ fontFamily: 'Barlow', fontSize: '0.8rem', color: '#8fa3b8' }}>Latest FNOL & updates</div>
+              <div style={{ fontFamily: 'Barlow', fontSize: '0.8rem', color: 'var(--text-mist)' }}>Latest FNOL & updates</div>
             </div>
             <a href="/claims" style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#c9933a', textDecoration: 'none' }}>
               View All →
@@ -248,8 +248,8 @@ export default function DashboardPage() {
                 <tr key={c.id} style={{ cursor: 'pointer' }} onClick={() => setSelectedClaim(c)}>
                   <td style={{ fontFamily: 'Barlow Condensed', color: '#c9933a', fontSize: '0.8rem', fontWeight: 600 }}>{c.claim_number}</td>
                   <td><span className="badge" style={{ background: 'rgba(201,147,58,0.1)', borderColor: 'rgba(201,147,58,0.3)', color: '#e8b04a' }}>{formatStatus(c.status)}</span></td>
-                  <td style={{ fontFamily: 'Barlow Condensed', color: '#f5f0e8' }}>{formatCurrency(c.reported_loss, c.currency, true)}</td>
-                  <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: '#8fa3b8' }}>{getIslandFlag(c.island)} {getIslandLabel(c.island)}</td>
+                  <td style={{ fontFamily: 'Barlow Condensed', color: 'var(--text-primary)' }}>{formatCurrency(c.reported_loss, c.currency, true)}</td>
+                  <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: 'var(--text-mist)' }}>{getIslandFlag(c.island)} {getIslandLabel(c.island)}</td>
                 </tr>
               )) : (
                 // Fallback placeholder rows
@@ -263,8 +263,8 @@ export default function DashboardPage() {
                   <tr key={i} style={{ cursor: 'pointer' }} onClick={() => setSelectedClaim({ claim_number: row.claim, status: row.status?.toLowerCase().replace(/ /g,'_'), fraud_risk: row.alert ? 'flagged' : 'clear', coverage_type: 'commercial', island: 'barbados', incident_date: null, reported_loss: null })}>
                     <td style={{ fontFamily: 'Barlow Condensed', color: '#c9933a', fontSize: '0.8rem', fontWeight: 600 }}>{row.claim}</td>
                     <td><span className="badge" style={{ background: row.alert ? 'rgba(192,57,43,0.2)' : 'rgba(201,147,58,0.1)', borderColor: row.alert ? 'rgba(192,57,43,0.4)' : 'rgba(201,147,58,0.3)', color: row.alert ? '#fc8181' : '#e8b04a' }}>{row.status}</span></td>
-                    <td style={{ fontFamily: 'Barlow Condensed', color: '#f5f0e8' }}>{row.loss}</td>
-                    <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: '#8fa3b8' }}>{row.island}</td>
+                    <td style={{ fontFamily: 'Barlow Condensed', color: 'var(--text-primary)' }}>{row.loss}</td>
+                    <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: 'var(--text-mist)' }}>{row.island}</td>
                   </tr>
                 ))
               )}
@@ -278,7 +278,7 @@ export default function DashboardPage() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.2rem', flexWrap: 'wrap', gap: '0.8rem' }}>
           <div>
             <div className="section-eyebrow" style={{ color: '#fc8181', marginBottom: '0.3rem' }}>Hurricane Exposure Intelligence</div>
-            <div style={{ fontFamily: 'Barlow', fontSize: '0.85rem', color: '#8fa3b8' }}>
+            <div style={{ fontFamily: 'Barlow', fontSize: '0.85rem', color: 'var(--text-mist)' }}>
               Portfolio-wide cat exposure by island · Live monitoring active
             </div>
           </div>
@@ -294,25 +294,25 @@ export default function DashboardPage() {
             { island: '🇹🇹 T&T', cat5: '$1.3M', cat34: '$2.9M', policies: 29, compliance: 68 },
             { island: '🇧🇸 Bahamas', cat5: '$4.8M', cat34: '$10.7M', policies: 41, compliance: 77 },
           ].map((row, i) => (
-            <div key={i} style={{ background: '#0d1321', padding: '1rem' }}>
-              <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: '#f5f0e8', marginBottom: '0.6rem', fontWeight: 600 }}>{row.island}</div>
-              <div style={{ fontSize: '0.75rem', color: '#8fa3b8', marginBottom: '0.3rem' }}>
+            <div key={i} style={{ background: 'var(--bg-sidebar)', padding: '1rem' }}>
+              <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: 'var(--text-primary)', marginBottom: '0.6rem', fontWeight: 600 }}>{row.island}</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-mist)', marginBottom: '0.3rem' }}>
                 <span style={{ color: '#c0392b' }}>Cat 5:</span> {row.cat5}
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#8fa3b8', marginBottom: '0.3rem' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-mist)', marginBottom: '0.3rem' }}>
                 <span style={{ color: '#e67e22' }}>Cat 3-4:</span> {row.cat34}
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#8fa3b8', marginBottom: '0.3rem' }}>
-                <span style={{ color: '#8fa3b8' }}>Policies:</span> {row.policies}
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-mist)', marginBottom: '0.3rem' }}>
+                <span style={{ color: 'var(--text-mist)' }}>Policies:</span> {row.policies}
               </div>
               <div style={{ marginTop: '0.6rem' }}>
-                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: '0.3rem' }}>
                   Structural Compliance
                 </div>
-                <div style={{ height: 4, background: 'rgba(46,64,96,0.5)', borderRadius: 2 }}>
+                <div style={{ height: 4, background: 'var(--bg-raised)', borderRadius: 2 }}>
                   <div style={{ height: '100%', width: `${row.compliance}%`, background: getRiskColor(100 - row.compliance), borderRadius: 2 }} />
                 </div>
-                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: '#8fa3b8', marginTop: '0.2rem' }}>{row.compliance}%</div>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: 'var(--text-mist)', marginTop: '0.2rem' }}>{row.compliance}%</div>
               </div>
             </div>
           ))}
@@ -322,13 +322,13 @@ export default function DashboardPage() {
       {/* Quick claim view from dashboard */}
       {selectedClaim && (
         <div className="modal-backdrop" onClick={() => setSelectedClaim(null)}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 520, maxHeight: '80vh', overflowY: 'auto' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-card)', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 520, maxHeight: '80vh', overflowY: 'auto' }}>
             <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)', display: 'flex', justifyContent: 'space-between' }}>
               <div>
                 <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#c9933a', marginBottom: '0.3rem' }}>Claim Summary</div>
-                <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>{selectedClaim.claim_number}</div>
+                <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)' }}>{selectedClaim.claim_number}</div>
               </div>
-              <button onClick={() => setSelectedClaim(null)} style={{ background: 'none', border: 'none', color: '#8fa3b8', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
+              <button onClick={() => setSelectedClaim(null)} style={{ background: 'none', border: 'none', color: 'var(--text-mist)', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
             </div>
             <div className="two-col-grid" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               {[
@@ -340,8 +340,8 @@ export default function DashboardPage() {
                 ['Reported Loss', selectedClaim.reported_loss ? `$${(selectedClaim.reported_loss/1000).toFixed(0)}K` : '—'],
               ].map(([label, value], i) => (
                 <div key={i}>
-                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>{label}</div>
-                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.85rem', color: '#f5f0e8' }}>{value}</div>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: '0.3rem' }}>{label}</div>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.85rem', color: 'var(--text-primary)' }}>{value}</div>
                 </div>
               ))}
             </div>

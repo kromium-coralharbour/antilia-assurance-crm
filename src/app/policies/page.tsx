@@ -198,13 +198,13 @@ export default function PoliciesPage() {
   const RISK_COLOR = getRiskColor(computedRisk)
 
   return (
-    <div className="page-enter" style={{ padding: '2rem', minHeight: '100vh', background: '#0a0f1e' }}>
+    <div className="page-enter" style={{ padding: '2rem', minHeight: '100vh', background: 'var(--bg-page)' }}>
       {/* Header */}
       <div className="page-header" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
         <div>
           <div className="section-eyebrow" style={{ marginBottom: '0.4rem' }}>Underwriting</div>
-          <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.8rem', fontWeight: 700, color: '#fff', margin: 0 }}>Policy Lifecycle</h1>
-          <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', letterSpacing: '0.12em', color: '#8fa3b8', marginTop: '0.3rem' }}>
+          <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.8rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>Policy Lifecycle</h1>
+          <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', letterSpacing: '0.12em', color: 'var(--text-mist)', marginTop: '0.3rem' }}>
             Quote · Bind · Endorse · Renew · Cancel
           </div>
         </div>
@@ -219,8 +219,8 @@ export default function PoliciesPage() {
           { label: 'GWP (Filtered)', value: formatCurrency(totalGWP, 'USD', true) },
           { label: 'Total Exposure', value: formatCurrency(totalExposure, 'USD', true) },
         ].map((k, i) => (
-          <div key={i} style={{ background: '#111827', padding: '1rem 1.2rem' }}>
-            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#8fa3b8' }}>{k.label}</div>
+          <div key={i} style={{ background: 'var(--bg-card)', padding: '1rem 1.2rem' }}>
+            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-mist)' }}>{k.label}</div>
             <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.6rem', fontWeight: 900, color: '#c9933a', marginTop: '0.2rem' }}>{k.value}</div>
           </div>
         ))}
@@ -244,7 +244,7 @@ export default function PoliciesPage() {
       </div>
 
       {/* Table */}
-      <div style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.12)' }}>
+      <div style={{ background: 'var(--bg-card)', border: '1px solid rgba(201,147,58,0.12)' }}>
         <div className="table-scroll"><table className="crm-table">
           <thead>
             <tr>
@@ -255,9 +255,9 @@ export default function PoliciesPage() {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={10} style={{ textAlign: 'center', padding: '2rem', color: '#8fa3b8' }}>Loading policies…</td></tr>
+              <tr><td colSpan={10} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-mist)' }}>Loading policies…</td></tr>
             ) : filtered.length === 0 ? (
-              <tr><td colSpan={10} style={{ textAlign: 'center', padding: '2rem', color: '#8fa3b8' }}>No policies found</td></tr>
+              <tr><td colSpan={10} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-mist)' }}>No policies found</td></tr>
             ) : filtered.map(p => {
               const days = p.renewal_date ? daysUntil(p.renewal_date) : 999
               const renewalUrgent = days <= 30
@@ -266,21 +266,21 @@ export default function PoliciesPage() {
                 <tr key={p.id} style={{ cursor: 'pointer' }} onClick={() => openPolicy(p)}>
                   <td style={{ fontFamily: 'Barlow Condensed', color: '#c9933a', fontSize: '0.82rem', fontWeight: 600 }}>{p.policy_number}</td>
                   <td>
-                    <div style={{ fontFamily: 'Barlow', fontSize: '0.85rem', color: '#f5f0e8' }}>{p.clients ? `${p.clients.first_name} ${p.clients.last_name}` : '—'}</div>
-                    {p.clients?.company_name && <div style={{ fontSize: '0.75rem', color: '#8fa3b8' }}>{p.clients.company_name}</div>}
+                    <div style={{ fontFamily: 'Barlow', fontSize: '0.85rem', color: 'var(--text-primary)' }}>{p.clients ? `${p.clients.first_name} ${p.clients.last_name}` : '—'}</div>
+                    {p.clients?.company_name && <div style={{ fontSize: '0.75rem', color: 'var(--text-mist)' }}>{p.clients.company_name}</div>}
                   </td>
-                  <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: '#8fa3b8' }}>{COVERAGE_LABELS[p.coverage_type as CoverageType] || p.coverage_type}</td>
+                  <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: 'var(--text-mist)' }}>{COVERAGE_LABELS[p.coverage_type as CoverageType] || p.coverage_type}</td>
                   <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.8rem' }}>{getIslandFlag(p.island)} {getIslandLabel(p.island)}</td>
-                  <td style={{ fontFamily: 'Barlow Condensed', fontWeight: 600, color: '#f5f0e8' }}>{formatCurrency(p.insured_value, p.currency, true)}</td>
+                  <td style={{ fontFamily: 'Barlow Condensed', fontWeight: 600, color: 'var(--text-primary)' }}>{formatCurrency(p.insured_value, p.currency, true)}</td>
                   <td style={{ fontFamily: 'Barlow Condensed', color: '#c9933a' }}>{formatCurrency(p.annual_premium, p.premium_currency, true)}</td>
                   <td><span className={`badge ${POLICY_STATUS_STYLES[p.status] || ''}`}>{formatStatus(p.status)}</span></td>
-                  <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: renewalUrgent ? '#fc8181' : renewalSoon ? '#e8b04a' : '#8fa3b8', whiteSpace: 'nowrap' }}>
+                  <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: renewalUrgent ? '#fc8181' : renewalSoon ? '#e8b04a' : 'var(--text-mist)', whiteSpace: 'nowrap' }}>
                     {formatDate(p.renewal_date)}
                     {renewalUrgent && <div style={{ fontSize: '0.65rem', color: '#fc8181' }}>⚠ {days}d</div>}
                   </td>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <div style={{ width: 40, height: 4, background: 'rgba(46,64,96,0.5)', borderRadius: 2 }}>
+                      <div style={{ width: 40, height: 4, background: 'var(--bg-raised)', borderRadius: 2 }}>
                         <div style={{ height: '100%', width: `${p.risk_score || 50}%`, background: getRiskColor(p.risk_score || 50), borderRadius: 2 }} />
                       </div>
                       <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: getRiskColor(p.risk_score || 50), fontWeight: 700 }}>{p.risk_score || 50}</span>
@@ -303,17 +303,17 @@ export default function PoliciesPage() {
       {/* ── POLICY DETAIL PANEL ── */}
       {selected && (
         <div className="modal-backdrop" onClick={() => setSelected(null)}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 680, maxHeight: '92vh', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-card)', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 680, maxHeight: '92vh', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
             {/* Header */}
             <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
               <div>
                 <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>Policy Detail</div>
-                <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>{selected.policy_number}</div>
-                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', color: '#8fa3b8', marginTop: '0.2rem' }}>
+                <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>{selected.policy_number}</div>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', color: 'var(--text-mist)', marginTop: '0.2rem' }}>
                   {selected.clients ? `${selected.clients.first_name} ${selected.clients.last_name}` : ''} · {COVERAGE_LABELS[selected.coverage_type as CoverageType] || selected.coverage_type}
                 </div>
               </div>
-              <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: '#8fa3b8', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
+              <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: 'var(--text-mist)', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
             </div>
 
             {/* Tabs */}
@@ -322,7 +322,7 @@ export default function PoliciesPage() {
                 <button key={id} onClick={() => setSelectedTab(id as any)} style={{
                   padding: '0.8rem 1.5rem', background: 'none', border: 'none', cursor: 'pointer',
                   fontFamily: 'Barlow Condensed', fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase',
-                  color: selectedTab === id ? '#c9933a' : '#4a6080',
+                  color: selectedTab === id ? '#c9933a' : 'var(--text-dim)',
                   borderBottom: selectedTab === id ? '2px solid #c9933a' : '2px solid transparent',
                   marginBottom: '-1px',
                 }}>{label}</button>
@@ -348,16 +348,16 @@ export default function PoliciesPage() {
                     ['Broker', selected.brokers?.name || '—'],
                   ].map(([label, value], i) => (
                     <div key={i}>
-                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>{label}</div>
-                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.88rem', color: '#f5f0e8' }}>{value as any}</div>
+                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: '0.3rem' }}>{label}</div>
+                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.88rem', color: 'var(--text-primary)' }}>{value as any}</div>
                     </div>
                   ))}
                 </div>
                 {/* Risk Score bar */}
                 <div style={{ padding: '0 1.5rem 1rem' }}>
-                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.5rem' }}>Risk Score</div>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Risk Score</div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <div style={{ flex: 1, height: 6, background: 'rgba(46,64,96,0.5)', borderRadius: 3 }}>
+                    <div style={{ flex: 1, height: 6, background: 'var(--bg-raised)', borderRadius: 3 }}>
                       <div style={{ height: '100%', width: `${selected.risk_score || 50}%`, background: getRiskColor(selected.risk_score || 50), borderRadius: 3 }} />
                     </div>
                     <span style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.4rem', fontWeight: 900, color: getRiskColor(selected.risk_score || 50), minWidth: 36 }}>{selected.risk_score || 50}</span>
@@ -365,14 +365,14 @@ export default function PoliciesPage() {
                 </div>
                 {selected.property_address && (
                   <div style={{ padding: '0 1.5rem 1rem' }}>
-                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>Property Address</div>
-                    <div style={{ fontFamily: 'Barlow', fontSize: '0.88rem', color: '#f5f0e8' }}>{selected.property_address}</div>
+                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: '0.3rem' }}>Property Address</div>
+                    <div style={{ fontFamily: 'Barlow', fontSize: '0.88rem', color: 'var(--text-primary)' }}>{selected.property_address}</div>
                   </div>
                 )}
                 {selected.notes && (
                   <div style={{ padding: '0 1.5rem 1rem' }}>
-                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>Notes</div>
-                    <div style={{ fontFamily: 'Barlow', fontSize: '0.85rem', color: '#8fa3b8', lineHeight: 1.6 }}>{selected.notes}</div>
+                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: '0.3rem' }}>Notes</div>
+                    <div style={{ fontFamily: 'Barlow', fontSize: '0.85rem', color: 'var(--text-mist)', lineHeight: 1.6 }}>{selected.notes}</div>
                   </div>
                 )}
                 <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid rgba(201,147,58,0.1)', display: 'flex', gap: '0.8rem', flexWrap: 'wrap', flexShrink: 0 }}>
@@ -391,8 +391,8 @@ export default function PoliciesPage() {
               <div style={{ flex: 1, overflowY: 'auto' }}>
                 <div style={{ padding: '1.2rem 1.5rem', borderBottom: '1px solid rgba(201,147,58,0.08)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
-                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.68rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#8fa3b8' }}>Mid-Term Policy Changes</div>
-                    <div style={{ fontFamily: 'Barlow', fontSize: '0.82rem', color: '#4a6080', marginTop: '0.2rem' }}>
+                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.68rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-mist)' }}>Mid-Term Policy Changes</div>
+                    <div style={{ fontFamily: 'Barlow', fontSize: '0.82rem', color: 'var(--text-dim)', marginTop: '0.2rem' }}>
                       Additional premium: {formatCurrency(endorsements.reduce((s, e) => s + (e.additional_premium || 0), 0), selected.premium_currency)}
                     </div>
                   </div>
@@ -400,32 +400,32 @@ export default function PoliciesPage() {
                 </div>
 
                 {endorsements.length === 0 ? (
-                  <div style={{ padding: '3rem', textAlign: 'center', color: '#4a6080', fontFamily: 'Barlow Condensed', letterSpacing: '0.1em' }}>
+                  <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-dim)', fontFamily: 'Barlow Condensed', letterSpacing: '0.1em' }}>
                     No endorsements on record for this policy.
                   </div>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: 'rgba(201,147,58,0.06)' }}>
                     {endorsements.map((e, i) => (
-                      <div key={e.id} style={{ background: '#111827', padding: '1.2rem 1.5rem' }}>
+                      <div key={e.id} style={{ background: 'var(--bg-card)', padding: '1.2rem 1.5rem' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.6rem' }}>
                           <div>
                             <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', letterSpacing: '0.15em', color: '#c9933a' }}>{e.endorsement_number}</span>
                             <span style={{ marginLeft: '0.8rem' }}><span className="badge" style={{ background: 'rgba(201,147,58,0.08)', borderColor: 'rgba(201,147,58,0.2)', color: '#e8b04a' }}>{ENDORSEMENT_TYPES[e.type] || e.type}</span></span>
                           </div>
                           <div style={{ textAlign: 'right' }}>
-                            <div style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700, color: e.additional_premium > 0 ? '#c9933a' : e.additional_premium < 0 ? '#4ade80' : '#8fa3b8' }}>
+                            <div style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700, color: e.additional_premium > 0 ? '#c9933a' : e.additional_premium < 0 ? '#4ade80' : 'var(--text-mist)' }}>
                               {e.additional_premium > 0 ? '+' : ''}{formatCurrency(e.additional_premium, e.currency)}
                             </div>
-                            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: '#4a6080' }}>additional premium</div>
+                            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: 'var(--text-dim)' }}>additional premium</div>
                           </div>
                         </div>
-                        <div style={{ fontFamily: 'Barlow', fontSize: '0.85rem', color: '#f5f0e8', marginBottom: '0.5rem', lineHeight: 1.5 }}>{e.description}</div>
+                        <div style={{ fontFamily: 'Barlow', fontSize: '0.85rem', color: 'var(--text-primary)', marginBottom: '0.5rem', lineHeight: 1.5 }}>{e.description}</div>
                         <div style={{ display: 'flex', gap: '1.5rem' }}>
-                          <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.68rem', color: '#4a6080' }}>Effective: <span style={{ color: '#8fa3b8' }}>{formatDate(e.effective_date)}</span></div>
-                          {e.issued_by && <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.68rem', color: '#4a6080' }}>Issued by: <span style={{ color: '#8fa3b8' }}>{e.issued_by}</span></div>}
-                          <span className="badge" style={{ background: e.status === 'active' ? 'rgba(39,174,96,0.1)' : 'rgba(46,64,96,0.3)', borderColor: e.status === 'active' ? 'rgba(39,174,96,0.3)' : 'rgba(46,64,96,0.4)', color: e.status === 'active' ? '#4ade80' : '#4a6080', fontSize: '0.6rem' }}>{e.status}</span>
+                          <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.68rem', color: 'var(--text-dim)' }}>Effective: <span style={{ color: 'var(--text-mist)' }}>{formatDate(e.effective_date)}</span></div>
+                          {e.issued_by && <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.68rem', color: 'var(--text-dim)' }}>Issued by: <span style={{ color: 'var(--text-mist)' }}>{e.issued_by}</span></div>}
+                          <span className="badge" style={{ background: e.status === 'active' ? 'rgba(39,174,96,0.1)' : 'var(--bg-raised)', borderColor: e.status === 'active' ? 'rgba(39,174,96,0.3)' : 'var(--bg-raised)', color: e.status === 'active' ? '#4ade80' : 'var(--text-dim)', fontSize: '0.6rem' }}>{e.status}</span>
                         </div>
-                        {e.notes && <div style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: '#4a6080', marginTop: '0.5rem', fontStyle: 'italic' }}>{e.notes}</div>}
+                        {e.notes && <div style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: 'var(--text-dim)', marginTop: '0.5rem', fontStyle: 'italic' }}>{e.notes}</div>}
                       </div>
                     ))}
                   </div>
@@ -484,11 +484,11 @@ export default function PoliciesPage() {
       {/* ── NEW POLICY FORM ── */}
       {showForm && (
         <div className="modal-backdrop" onClick={() => setShowForm(false)}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 720, maxHeight: '92vh', overflowY: 'auto' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-card)', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 720, maxHeight: '92vh', overflowY: 'auto' }}>
             <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
               <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>Underwriting Intelligence</div>
-              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>New Policy Quote</div>
-              <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: '#8fa3b8', marginTop: '0.2rem' }}>
+              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>New Policy Quote</div>
+              <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: 'var(--text-mist)', marginTop: '0.2rem' }}>
                 Risk score is calculated automatically from structural inputs
               </div>
             </div>
@@ -496,15 +496,15 @@ export default function PoliciesPage() {
             {/* Live Risk Score */}
             <div style={{ padding: '1rem 1.5rem', background: 'rgba(201,147,58,0.04)', borderBottom: '1px solid rgba(201,147,58,0.1)', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
               <div>
-                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>Calculated Risk Score</div>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: '0.3rem' }}>Calculated Risk Score</div>
                 <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '2rem', fontWeight: 900, color: RISK_COLOR, lineHeight: 1 }}>{computedRisk}</div>
                 <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: RISK_COLOR, letterSpacing: '0.15em', textTransform: 'uppercase', marginTop: '0.2rem' }}>{RISK_LABEL} Risk</div>
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ height: 8, background: 'rgba(46,64,96,0.5)', borderRadius: 4 }}>
+                <div style={{ height: 8, background: 'var(--bg-raised)', borderRadius: 4 }}>
                   <div style={{ height: '100%', width: `${computedRisk}%`, background: RISK_COLOR, borderRadius: 4, transition: 'all 0.3s ease' }} />
                 </div>
-                <div style={{ fontFamily: 'Barlow', fontSize: '0.72rem', color: '#4a6080', marginTop: '0.5rem', lineHeight: 1.5 }}>
+                <div style={{ fontFamily: 'Barlow', fontSize: '0.72rem', color: 'var(--text-dim)', marginTop: '0.5rem', lineHeight: 1.5 }}>
                   Score factors: construction year, structural compliance, wind zone, island, coverage type
                 </div>
               </div>
@@ -656,10 +656,10 @@ export default function PoliciesPage() {
       {/* Edit Policy Form */}
       {showEditForm && editForm && (
         <div className="modal-backdrop" onClick={() => setShowEditForm(false)}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 720, maxHeight: '92vh', overflowY: 'auto' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-card)', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 720, maxHeight: '92vh', overflowY: 'auto' }}>
             <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
               <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>Edit Policy</div>
-              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>{editForm.policy_number}</div>
+              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>{editForm.policy_number}</div>
             </div>
             <form onSubmit={handleEdit} className="two-col-grid" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div><label className="crm-label">Coverage Type</label>

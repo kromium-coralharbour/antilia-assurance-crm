@@ -35,7 +35,7 @@
 /* ─── LIGHT MODE TOKEN OVERRIDES ─────────────────────────────────────── */
 
 [data-theme="light"] {
-  /* Warm cream palette — readable, premium, not harsh */
+  /* Warm cream palette */
   --storm:      #fdf6ec;
   --deep:       #fffdf8;
   --slate-dark: #f2ead8;
@@ -45,20 +45,126 @@
   --pale:       #1c1408;
   --mist:       #6b5d4a;
 
-  --bg-page:    #fdf6ec;
-  --bg-card:    #fffdf8;
-  --bg-sidebar: #141f38;
-  --bg-raised:  #f5edda;
-  --bg-input:   #f9f4ea;
+  --bg-page:      #fdf6ec;
+  --bg-card:      #fffdf8;
+  --bg-sidebar:   #0d1321;   /* sidebar stays dark */
+  --bg-raised:    #f2ead8;
+  --bg-input:     #f9f4ea;
   --text-primary: #1c1408;
   --text-mist:    #6b5d4a;
   --text-dim:     #9a8e7c;
   --text-amber:   #8b5e1a;
   --border-gold:  rgba(139,94,26,0.2);
-  --border-card:  rgba(139,94,26,0.12);
-  --row-sep:      rgba(139,94,26,0.08);
-  --hover-row:    rgba(139,94,26,0.06);
+  --border-card:  rgba(139,94,26,0.14);
+  --row-sep:      rgba(139,94,26,0.1);
+  --hover-row:    rgba(139,94,26,0.07);
+  --raised-rgb:   242,234,216;
 }
+
+[data-theme="light"] html,
+[data-theme="light"] body {
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+}
+
+/* ── Sidebar always dark ── */
+[data-theme="light"] .crm-sidebar {
+  --bg-sidebar:   #0d1321;
+  --bg-card:      #0d1321;
+  --bg-raised:    #1e2d45;
+  --text-primary: #f5f0e8;
+  --text-mist:    #8fa3b8;
+  --text-dim:     #4a6080;
+  background: #0d1321 !important;
+}
+
+/* ── Mobile top bar always dark ── */
+[data-theme="light"] .mobile-top-bar {
+  background: #0d1321 !important;
+}
+
+/* ── Cards & stat cards ── */
+[data-theme="light"] .crm-card {
+  background: var(--bg-card);
+  border-color: var(--border-card);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+[data-theme="light"] .crm-card:hover {
+  border-color: rgba(139,94,26,0.3) !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+[data-theme="light"] .stat-card {
+  background: var(--bg-card);
+  border-color: var(--border-card);
+}
+[data-theme="light"] .stat-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+/* ── Tables ── */
+[data-theme="light"] .crm-table th {
+  background: var(--bg-raised);
+  color: var(--text-mist);
+  border-bottom-color: rgba(139,94,26,0.15);
+}
+[data-theme="light"] .crm-table td {
+  color: var(--text-primary);
+  border-bottom-color: var(--row-sep);
+}
+[data-theme="light"] .crm-table tr:hover td {
+  background: var(--hover-row) !important;
+}
+
+/* ── Inputs & selects ── */
+[data-theme="light"] .crm-input,
+[data-theme="light"] .crm-select {
+  background: var(--bg-input);
+  border-color: rgba(139,94,26,0.22);
+  color: var(--text-primary);
+}
+[data-theme="light"] .crm-input::placeholder { color: #b0a090; }
+[data-theme="light"] .crm-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b5d4a' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+}
+[data-theme="light"] .crm-select option { background: var(--bg-card); color: var(--text-primary); }
+
+/* ── Labels & eyebrows ── */
+[data-theme="light"] .crm-label { color: var(--text-mist); }
+[data-theme="light"] .section-eyebrow { color: var(--gold); }
+
+/* ── Buttons ── */
+[data-theme="light"] .btn-ghost {
+  border-color: rgba(139,94,26,0.22);
+  color: var(--text-mist);
+}
+[data-theme="light"] .btn-ghost:hover {
+  border-color: var(--gold);
+  color: var(--text-primary);
+}
+
+/* ── Modals ── */
+[data-theme="light"] .modal-backdrop { background: rgba(28,20,8,0.4); }
+[data-theme="light"] .modal-backdrop > div {
+  background: var(--bg-card) !important;
+  border-color: rgba(139,94,26,0.18) !important;
+  box-shadow: 0 8px 48px rgba(0,0,0,0.15) !important;
+}
+
+/* ── Scrollbars ── */
+[data-theme="light"] ::-webkit-scrollbar-track { background: var(--bg-raised); }
+[data-theme="light"] ::-webkit-scrollbar-thumb { background: var(--steel); }
+
+/* ── Recharts ── */
+[data-theme="light"] .recharts-cartesian-axis-tick text { fill: var(--text-mist) !important; }
+[data-theme="light"] .recharts-default-tooltip {
+  background: var(--bg-card) !important;
+  border-color: rgba(139,94,26,0.25) !important;
+  color: var(--text-primary) !important;
+}
+[data-theme="light"] .recharts-legend-item-text { color: var(--text-mist) !important; }
+
+/* ── Filter/select dropdowns that appear with dark bg ── */
+[data-theme="light"] select { background: var(--bg-input); color: var(--text-primary); }
 
 /* ─── BASE ────────────────────────────────────────────────────────────── */
 

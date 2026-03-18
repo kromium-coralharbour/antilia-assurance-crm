@@ -28,7 +28,7 @@ const PREMIUM_BY_ISLAND = [
   { island: '🇰🇾 Cayman', gwp: 8400000, claims: 2100000, color: '#e8b04a' },
   { island: '🇧🇧 Barbados', gwp: 6200000, claims: 2800000, color: '#a87530' },
   { island: '🇯🇲 Jamaica', gwp: 4900000, claims: 1900000, color: '#c9933a' },
-  { island: '🇹🇹 T&T', gwp: 2600000, claims: 890000, color: '#8fa3b8' },
+  { island: '🇹🇹 T&T', gwp: 2600000, claims: 890000, color: 'var(--text-mist)' },
 ]
 
 const REGULATORY_ITEMS = [
@@ -129,14 +129,14 @@ export default function ReportsPage() {
   ] as const
 
   return (
-    <div style={{ padding: '2rem', background: '#0a0f1e', minHeight: '100vh' }}>
+    <div style={{ padding: '2rem', background: 'var(--bg-page)', minHeight: '100vh' }}>
       {/* Header */}
       <div style={{ marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
         <div className="section-eyebrow" style={{ marginBottom: '0.4rem' }}>Regulatory & Compliance</div>
-        <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.8rem', fontWeight: 700, color: '#fff', margin: 0 }}>
+        <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.8rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
           Reports & Compliance
         </h1>
-        <p style={{ fontFamily: 'Barlow', fontSize: '0.82rem', color: '#8fa3b8', marginTop: '0.3rem' }}>
+        <p style={{ fontFamily: 'Barlow', fontSize: '0.82rem', color: 'var(--text-mist)', marginTop: '0.3rem' }}>
           Executive reporting · Regulatory filings across 5 jurisdictions · Portfolio analytics
         </p>
       </div>
@@ -151,9 +151,9 @@ export default function ReportsPage() {
           { label: 'Solvency Margin', value: '256%', sub: 'Min required: 150%', color: '#27ae60' },
         ].map((kpi, i) => (
           <div key={i} className="stat-card">
-            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#8fa3b8', marginBottom: '0.5rem' }}>{kpi.label}</div>
+            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-mist)', marginBottom: '0.5rem' }}>{kpi.label}</div>
             <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.8rem', fontWeight: 900, color: kpi.color, lineHeight: 1, marginBottom: '0.4rem' }}>{kpi.value}</div>
-            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', color: '#8fa3b8' }}>{kpi.sub}</div>
+            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', color: 'var(--text-mist)' }}>{kpi.sub}</div>
           </div>
         ))}
       </div>
@@ -165,7 +165,7 @@ export default function ReportsPage() {
             fontFamily: 'Barlow Condensed', fontSize: '0.78rem', letterSpacing: '0.15em', textTransform: 'uppercase',
             padding: '0.8rem 1.5rem', border: 'none', cursor: 'pointer',
             background: activeTab === tab.id ? 'rgba(201,147,58,0.1)' : 'transparent',
-            color: activeTab === tab.id ? '#c9933a' : '#8fa3b8',
+            color: activeTab === tab.id ? '#c9933a' : 'var(--text-mist)',
             borderBottom: activeTab === tab.id ? '2px solid #c9933a' : '2px solid transparent',
             transition: 'all 0.2s',
           }}>{tab.label}</button>
@@ -179,13 +179,13 @@ export default function ReportsPage() {
             {/* Solvency Trend */}
             <div className="crm-card">
               <div className="section-eyebrow" style={{ marginBottom: '0.4rem' }}>Solvency Capital Ratio · Quarterly</div>
-              <p style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: '#8fa3b8', marginBottom: '1rem' }}>SCR vs minimum 150% regulatory requirement</p>
+              <p style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: 'var(--text-mist)', marginBottom: '1rem' }}>SCR vs minimum 150% regulatory requirement</p>
               <ResponsiveContainer width="100%" height={200}>
                 <LineChart data={SOLVENCY_DATA}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(201,147,58,0.08)" />
-                  <XAxis dataKey="quarter" tick={{ fill: '#8fa3b8', fontSize: 10, fontFamily: 'Barlow Condensed' }} axisLine={false} tickLine={false} />
-                  <YAxis domain={[100, 300]} tick={{ fill: '#8fa3b8', fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => `${v}%`} />
-                  <Tooltip formatter={(v: any) => `${v}%`} contentStyle={{ background: '#1e2d45', border: '1px solid rgba(201,147,58,0.3)', fontSize: 11, fontFamily: 'Barlow Condensed' }} />
+                  <XAxis dataKey="quarter" tick={{ fill: 'var(--text-mist)', fontSize: 10, fontFamily: 'Barlow Condensed' }} axisLine={false} tickLine={false} />
+                  <YAxis domain={[100, 300]} tick={{ fill: 'var(--text-mist)', fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => `${v}%`} />
+                  <Tooltip formatter={(v: any) => `${v}%`} contentStyle={{ background: 'var(--bg-raised)', border: '1px solid rgba(201,147,58,0.3)', fontSize: 11, fontFamily: 'Barlow Condensed' }} />
                   <Line type="monotone" dataKey="ratio" stroke="#c9933a" strokeWidth={2.5} dot={{ fill: '#c9933a', r: 3 }} name="SCR %" />
                   <Line type="monotone" dataKey="min" stroke="#c0392b" strokeWidth={1} strokeDasharray="4 4" dot={false} name="Min 150%" />
                 </LineChart>
@@ -195,12 +195,12 @@ export default function ReportsPage() {
             {/* Loss Ratio by Month */}
             <div className="crm-card">
               <div className="section-eyebrow" style={{ marginBottom: '0.4rem' }}>Monthly Loss & Expense Ratio · 2024</div>
-              <p style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: '#8fa3b8', marginBottom: '1rem' }}>Hurricane Beryl spike visible in July</p>
+              <p style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: 'var(--text-mist)', marginBottom: '1rem' }}>Hurricane Beryl spike visible in July</p>
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={LOSS_RATIO_TREND}>
-                  <XAxis dataKey="month" tick={{ fill: '#8fa3b8', fontSize: 10, fontFamily: 'Barlow Condensed' }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fill: '#8fa3b8', fontSize: 9 }} axisLine={false} tickLine={false} tickFormatter={v => `${v}%`} />
-                  <Tooltip formatter={(v: any) => `${v}%`} contentStyle={{ background: '#1e2d45', border: '1px solid rgba(201,147,58,0.3)', fontSize: 11, fontFamily: 'Barlow Condensed' }} />
+                  <XAxis dataKey="month" tick={{ fill: 'var(--text-mist)', fontSize: 10, fontFamily: 'Barlow Condensed' }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fill: 'var(--text-mist)', fontSize: 9 }} axisLine={false} tickLine={false} tickFormatter={v => `${v}%`} />
+                  <Tooltip formatter={(v: any) => `${v}%`} contentStyle={{ background: 'var(--bg-raised)', border: '1px solid rgba(201,147,58,0.3)', fontSize: 11, fontFamily: 'Barlow Condensed' }} />
                   <Bar dataKey="loss" stackId="a" fill="#c0392b" fillOpacity={0.7} name="Loss Ratio" radius={[0,0,0,0]} />
                   <Bar dataKey="expense" stackId="a" fill="#2e4060" fillOpacity={0.8} name="Expense Ratio" radius={[2,2,0,0]} />
                 </BarChart>
@@ -211,12 +211,12 @@ export default function ReportsPage() {
           {/* Premium vs Claims by Island */}
           <div className="crm-card">
             <div className="section-eyebrow" style={{ marginBottom: '0.4rem' }}>GWP vs Claims by Island · YTD 2024</div>
-            <p style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: '#8fa3b8', marginBottom: '1rem' }}>Gross written premium versus total claims incurred per market</p>
+            <p style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: 'var(--text-mist)', marginBottom: '1rem' }}>Gross written premium versus total claims incurred per market</p>
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={PREMIUM_BY_ISLAND} margin={{ left: 20 }}>
-                <XAxis dataKey="island" tick={{ fill: '#8fa3b8', fontSize: 10, fontFamily: 'Barlow Condensed' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: '#8fa3b8', fontSize: 9 }} axisLine={false} tickLine={false} tickFormatter={v => `$${(v / 1000000).toFixed(1)}M`} />
-                <Tooltip formatter={(v: any) => formatCurrency(v, 'USD', true)} contentStyle={{ background: '#1e2d45', border: '1px solid rgba(201,147,58,0.3)', fontSize: 11, fontFamily: 'Barlow Condensed' }} />
+                <XAxis dataKey="island" tick={{ fill: 'var(--text-mist)', fontSize: 10, fontFamily: 'Barlow Condensed' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: 'var(--text-mist)', fontSize: 9 }} axisLine={false} tickLine={false} tickFormatter={v => `$${(v / 1000000).toFixed(1)}M`} />
+                <Tooltip formatter={(v: any) => formatCurrency(v, 'USD', true)} contentStyle={{ background: 'var(--bg-raised)', border: '1px solid rgba(201,147,58,0.3)', fontSize: 11, fontFamily: 'Barlow Condensed' }} />
                 <Bar dataKey="gwp" fill="#c9933a" fillOpacity={0.8} name="GWP" radius={[2, 2, 0, 0]} />
                 <Bar dataKey="claims" fill="#c0392b" fillOpacity={0.6} name="Claims" radius={[2, 2, 0, 0]} />
               </BarChart>
@@ -231,7 +231,7 @@ export default function ReportsPage() {
           <div className="crm-card" style={{ padding: 0, overflow: 'hidden', marginBottom: '1.5rem' }}>
             <div style={{ padding: '1.2rem 1.5rem', borderBottom: '1px solid rgba(201,147,58,0.1)' }}>
               <div className="section-eyebrow" style={{ marginBottom: '0.2rem' }}>Regulatory Filing Calendar · 5 Jurisdictions</div>
-              <p style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: '#8fa3b8', margin: 0 }}>Compliance obligations across all operating markets</p>
+              <p style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: 'var(--text-mist)', margin: 0 }}>Compliance obligations across all operating markets</p>
             </div>
             <div className="table-scroll"><table className="crm-table">
               <thead>
@@ -246,9 +246,9 @@ export default function ReportsPage() {
               <tbody>
                 {REGULATORY_ITEMS.map((item, i) => (
                   <tr key={i} style={{ cursor: 'pointer' }} onClick={() => setSelectedFiling(item)}>
-                    <td style={{ fontFamily: 'Barlow Condensed', fontWeight: 600, color: '#f5f0e8', fontSize: '0.85rem' }}>{item.jurisdiction}</td>
-                    <td style={{ fontFamily: 'Barlow', fontSize: '0.8rem', color: '#8fa3b8' }}>{item.regulator}</td>
-                    <td style={{ fontFamily: 'Barlow', fontSize: '0.82rem', color: '#f5f0e8' }}>{item.filing}</td>
+                    <td style={{ fontFamily: 'Barlow Condensed', fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.85rem' }}>{item.jurisdiction}</td>
+                    <td style={{ fontFamily: 'Barlow', fontSize: '0.8rem', color: 'var(--text-mist)' }}>{item.regulator}</td>
+                    <td style={{ fontFamily: 'Barlow', fontSize: '0.82rem', color: 'var(--text-primary)' }}>{item.filing}</td>
                     <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.82rem', color: '#c9933a' }}>{formatDate(item.due)}</td>
                     <td>
                       <span className="badge" style={{
@@ -275,12 +275,12 @@ export default function ReportsPage() {
               { island: 'bahamas' as const, regulator: 'ICB', status: 'Pending', lastFiled: '2024-07-15', color: '#e67e22' },
             ].map((item, i) => (
               <div key={i} className="crm-card" style={{ padding: '1.2rem', borderLeft: `3px solid ${item.color}` }}>
-                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '1rem', fontWeight: 700, color: '#f5f0e8', marginBottom: '0.2rem' }}>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.2rem' }}>
                   {getIslandFlag(item.island)} {getIslandLabel(item.island)}
                 </div>
-                <div style={{ fontFamily: 'Barlow', fontSize: '0.75rem', color: '#8fa3b8', marginBottom: '0.6rem' }}>{item.regulator}</div>
+                <div style={{ fontFamily: 'Barlow', fontSize: '0.75rem', color: 'var(--text-mist)', marginBottom: '0.6rem' }}>{item.regulator}</div>
                 <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: item.color }}>{item.status}</div>
-                <div style={{ fontFamily: 'Barlow', fontSize: '0.72rem', color: '#4a6080', marginTop: '0.2rem' }}>Last filed: {formatDate(item.lastFiled)}</div>
+                <div style={{ fontFamily: 'Barlow', fontSize: '0.72rem', color: 'var(--text-dim)', marginTop: '0.2rem' }}>Last filed: {formatDate(item.lastFiled)}</div>
               </div>
             ))}
           </div>
@@ -295,10 +295,10 @@ export default function ReportsPage() {
               <div style={{ flex: 1 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.4rem' }}>
                   <span className="badge" style={{ background: 'rgba(201,147,58,0.1)', color: '#c9933a', borderColor: 'rgba(201,147,58,0.2)' }}>{report.category}</span>
-                  <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: '#4a6080', letterSpacing: '0.1em' }}>{report.period}</span>
+                  <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: 'var(--text-dim)', letterSpacing: '0.1em' }}>{report.period}</span>
                 </div>
-                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.9rem', fontWeight: 700, color: '#f5f0e8', marginBottom: '0.3rem' }}>{report.name}</div>
-                <div style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: '#8fa3b8', lineHeight: 1.5 }}>{report.description}</div>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.3rem' }}>{report.name}</div>
+                <div style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: 'var(--text-mist)', lineHeight: 1.5 }}>{report.description}</div>
               </div>
               <button
                 onClick={() => handleGenerate(report.name)}
@@ -307,7 +307,7 @@ export default function ReportsPage() {
                   flexShrink: 0,
                   fontFamily: 'Barlow Condensed', fontSize: '0.7rem', letterSpacing: '0.12em', textTransform: 'uppercase',
                   padding: '0.5rem 1rem', background: generating === report.name ? 'rgba(201,147,58,0.05)' : 'rgba(201,147,58,0.1)',
-                  border: '1px solid rgba(201,147,58,0.3)', color: generating === report.name ? '#8fa3b8' : '#c9933a',
+                  border: '1px solid rgba(201,147,58,0.3)', color: generating === report.name ? 'var(--text-mist)' : '#c9933a',
                   cursor: generating === report.name ? 'default' : 'pointer', transition: 'all 0.2s', whiteSpace: 'nowrap',
                 }}
               >
@@ -320,13 +320,13 @@ export default function ReportsPage() {
       {/* Filing detail modal */}
       {selectedFiling && (
         <div className="modal-backdrop" onClick={() => setSelectedFiling(null)}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 500, maxHeight: '80vh', overflowY: 'auto' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-card)', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 500, maxHeight: '80vh', overflowY: 'auto' }}>
             <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)', display: 'flex', justifyContent: 'space-between' }}>
               <div>
                 <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#c9933a', marginBottom: '0.3rem' }}>Regulatory Filing</div>
-                <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>{selectedFiling.filing}</div>
+                <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)' }}>{selectedFiling.filing}</div>
               </div>
-              <button onClick={() => setSelectedFiling(null)} style={{ background: 'none', border: 'none', color: '#8fa3b8', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
+              <button onClick={() => setSelectedFiling(null)} style={{ background: 'none', border: 'none', color: 'var(--text-mist)', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
             </div>
             <div className="two-col-grid" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               {[
@@ -336,16 +336,16 @@ export default function ReportsPage() {
                 ['Status', selectedFiling.status.replace(/_/g,' ').replace(/\b\w/g, (c: string) => c.toUpperCase())],
               ].map(([l, v], i) => (
                 <div key={i}>
-                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>{l}</div>
-                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.88rem', color: '#f5f0e8' }}>{v}</div>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: '0.3rem' }}>{l}</div>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.88rem', color: 'var(--text-primary)' }}>{v}</div>
                 </div>
               ))}
               <div style={{ gridColumn: '1 / -1' }}>
-                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.6rem' }}>Required Documents</div>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: '0.6rem' }}>Required Documents</div>
                 {['Signed actuarial certification', 'Trial balance / financial statements', 'Claims run-off schedule', 'Reinsurance treaty schedule', 'Board resolution (if applicable)'].map((doc, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
-                    <span style={{ color: selectedFiling.status === 'submitted' ? '#4ade80' : '#4a6080', fontSize: '0.75rem' }}>{selectedFiling.status === 'submitted' ? '✓' : '○'}</span>
-                    <span style={{ fontFamily: 'Barlow', fontSize: '0.8rem', color: selectedFiling.status === 'submitted' ? '#8fa3b8' : '#f5f0e8' }}>{doc}</span>
+                    <span style={{ color: selectedFiling.status === 'submitted' ? '#4ade80' : 'var(--text-dim)', fontSize: '0.75rem' }}>{selectedFiling.status === 'submitted' ? '✓' : '○'}</span>
+                    <span style={{ fontFamily: 'Barlow', fontSize: '0.8rem', color: selectedFiling.status === 'submitted' ? 'var(--text-mist)' : 'var(--text-primary)' }}>{doc}</span>
                   </div>
                 ))}
               </div>

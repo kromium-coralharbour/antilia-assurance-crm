@@ -63,7 +63,7 @@ function HeatCell({ value }: { value: number }) {
   return (
     <td style={{
       background: bg, opacity, textAlign: 'center', padding: '0.5rem 0.8rem',
-      fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: '#fff', fontWeight: 600,
+      fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: 'var(--text-primary)', fontWeight: 600,
     }}>
       {value}
     </td>
@@ -106,16 +106,16 @@ export default function RiskIntelligencePage() {
   ] as const
 
   return (
-    <div style={{ padding: '2rem', background: '#0a0f1e', minHeight: '100vh' }}>
+    <div style={{ padding: '2rem', background: 'var(--bg-page)', minHeight: '100vh' }}>
       {/* Header */}
       <div style={{ marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
             <div className="section-eyebrow" style={{ marginBottom: '0.4rem' }}>Hurricane Exposure Intelligence Engine</div>
-            <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.8rem', fontWeight: 700, color: '#fff', margin: 0 }}>
+            <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.8rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
               Risk Intelligence
             </h1>
-            <p style={{ fontFamily: 'Barlow', fontSize: '0.82rem', color: '#8fa3b8', marginTop: '0.3rem' }}>
+            <p style={{ fontFamily: 'Barlow', fontSize: '0.82rem', color: 'var(--text-mist)', marginTop: '0.3rem' }}>
               Live portfolio heatmaps · Construction-linked scoring · Multi-currency FX exposure · Catastrophe loss modelling
             </p>
           </div>
@@ -126,7 +126,7 @@ export default function RiskIntelligencePage() {
                 Active Storm Monitoring
               </div>
               {ACTIVE_STORMS.map((s, i) => (
-                <div key={i} style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: '#f5f0e8' }}>
+                <div key={i} style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: 'var(--text-primary)' }}>
                   {s.name} · {s.location} · {s.track}
                 </div>
               ))}
@@ -144,9 +144,9 @@ export default function RiskIntelligencePage() {
           { label: 'Max Cat 5 Net Retention', value: '$13.2M', sub: '1-in-250yr scenario', color: '#c0392b' },
         ].map((kpi, i) => (
           <div key={i} className="stat-card">
-            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#8fa3b8', marginBottom: '0.5rem' }}>{kpi.label}</div>
+            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-mist)', marginBottom: '0.5rem' }}>{kpi.label}</div>
             <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '2rem', fontWeight: 900, color: kpi.color, lineHeight: 1, marginBottom: '0.4rem' }}>{kpi.value}</div>
-            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', color: '#8fa3b8' }}>{kpi.sub}</div>
+            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', color: 'var(--text-mist)' }}>{kpi.sub}</div>
           </div>
         ))}
       </div>
@@ -161,7 +161,7 @@ export default function RiskIntelligencePage() {
               fontFamily: 'Barlow Condensed', fontSize: '0.78rem', letterSpacing: '0.15em', textTransform: 'uppercase',
               padding: '0.8rem 1.5rem', border: 'none', cursor: 'pointer',
               background: activeTab === tab.id ? 'rgba(201,147,58,0.1)' : 'transparent',
-              color: activeTab === tab.id ? '#c9933a' : '#8fa3b8',
+              color: activeTab === tab.id ? '#c9933a' : 'var(--text-mist)',
               borderBottom: activeTab === tab.id ? '2px solid #c9933a' : '2px solid transparent',
               transition: 'all 0.2s',
             }}
@@ -178,15 +178,15 @@ export default function RiskIntelligencePage() {
           <div className="crm-card" style={{ padding: 0, overflow: 'hidden' }}>
             <div style={{ padding: '1.2rem 1.5rem', borderBottom: '1px solid rgba(201,147,58,0.1)' }}>
               <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>Portfolio Exposure Heatmap</div>
-              <div style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: '#8fa3b8' }}>Risk score by zone × island · Higher = greater exposure concentration</div>
+              <div style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: 'var(--text-mist)' }}>Risk score by zone × island · Higher = greater exposure concentration</div>
             </div>
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr style={{ background: '#0d1321' }}>
-                    <th style={{ padding: '0.7rem 1rem', textAlign: 'left', fontFamily: 'Barlow Condensed', fontSize: '0.68rem', letterSpacing: '0.15em', color: '#8fa3b8', textTransform: 'uppercase', borderBottom: '1px solid rgba(201,147,58,0.1)', whiteSpace: 'nowrap' }}>Risk Zone</th>
+                  <tr style={{ background: 'var(--bg-sidebar)' }}>
+                    <th style={{ padding: '0.7rem 1rem', textAlign: 'left', fontFamily: 'Barlow Condensed', fontSize: '0.68rem', letterSpacing: '0.15em', color: 'var(--text-mist)', textTransform: 'uppercase', borderBottom: '1px solid rgba(201,147,58,0.1)', whiteSpace: 'nowrap' }}>Risk Zone</th>
                     {ISLANDS.map(island => (
-                      <th key={island} style={{ padding: '0.7rem 1rem', textAlign: 'center', fontFamily: 'Barlow Condensed', fontSize: '0.68rem', letterSpacing: '0.12em', color: '#8fa3b8', textTransform: 'uppercase', borderBottom: '1px solid rgba(201,147,58,0.1)', whiteSpace: 'nowrap' }}>
+                      <th key={island} style={{ padding: '0.7rem 1rem', textAlign: 'center', fontFamily: 'Barlow Condensed', fontSize: '0.68rem', letterSpacing: '0.12em', color: 'var(--text-mist)', textTransform: 'uppercase', borderBottom: '1px solid rgba(201,147,58,0.1)', whiteSpace: 'nowrap' }}>
                         {getIslandFlag(island)} {getIslandLabel(island)}
                       </th>
                     ))}
@@ -195,7 +195,7 @@ export default function RiskIntelligencePage() {
                 <tbody>
                   {HEATMAP_DATA.map((row, i) => (
                     <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
-                      <td style={{ padding: '0.6rem 1rem', fontFamily: 'Barlow Condensed', fontSize: '0.8rem', color: '#f5f0e8', whiteSpace: 'nowrap' }}>{row.zone}</td>
+                      <td style={{ padding: '0.6rem 1rem', fontFamily: 'Barlow Condensed', fontSize: '0.8rem', color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{row.zone}</td>
                       <HeatCell value={row.barbados} />
                       <HeatCell value={row.jamaica} />
                       <HeatCell value={row.cayman_islands} />
@@ -214,7 +214,7 @@ export default function RiskIntelligencePage() {
               ].map((item, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                   <div style={{ width: 10, height: 10, background: item.color, borderRadius: 2 }} />
-                  <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: '#8fa3b8' }}>{item.label}</span>
+                  <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: 'var(--text-mist)' }}>{item.label}</span>
                 </div>
               ))}
             </div>
@@ -227,12 +227,12 @@ export default function RiskIntelligencePage() {
               <ResponsiveContainer width="100%" height={200}>
                 <RadarChart data={RADAR_DATA}>
                   <PolarGrid stroke="rgba(201,147,58,0.15)" />
-                  <PolarAngleAxis dataKey="subject" tick={{ fill: '#8fa3b8', fontSize: 10, fontFamily: 'Barlow Condensed' }} />
+                  <PolarAngleAxis dataKey="subject" tick={{ fill: 'var(--text-mist)', fontSize: 10, fontFamily: 'Barlow Condensed' }} />
                   <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
                   <Radar name="Bahamas" dataKey="Bahamas" stroke="#c9933a" fill="#c9933a" fillOpacity={0.15} strokeWidth={1.5} />
                   <Radar name="Barbados" dataKey="Barbados" stroke="#e8b04a" fill="#e8b04a" fillOpacity={0.1} strokeWidth={1} />
                   <Radar name="Cayman" dataKey="Cayman" stroke="#c0392b" fill="#c0392b" fillOpacity={0.1} strokeWidth={1} />
-                  <Tooltip contentStyle={{ background: '#1e2d45', border: '1px solid rgba(201,147,58,0.3)', fontSize: 11, fontFamily: 'Barlow Condensed' }} />
+                  <Tooltip contentStyle={{ background: 'var(--bg-raised)', border: '1px solid rgba(201,147,58,0.3)', fontSize: 11, fontFamily: 'Barlow Condensed' }} />
                 </RadarChart>
               </ResponsiveContainer>
             </div>
@@ -241,9 +241,9 @@ export default function RiskIntelligencePage() {
               <div className="section-eyebrow" style={{ marginBottom: '0.8rem' }}>Cat Exposure · Bahamas Portfolio</div>
               <ResponsiveContainer width="100%" height={150}>
                 <BarChart data={EXPOSURE_BY_CAT} margin={{ left: 0 }}>
-                  <XAxis dataKey="name" tick={{ fill: '#8fa3b8', fontSize: 10, fontFamily: 'Barlow Condensed' }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fill: '#8fa3b8', fontSize: 9 }} axisLine={false} tickLine={false} tickFormatter={v => `$${(v / 1000000).toFixed(0)}M`} />
-                  <Tooltip formatter={(v: any) => formatCurrency(v, 'USD', true)} contentStyle={{ background: '#1e2d45', border: '1px solid rgba(201,147,58,0.3)', fontSize: 11, fontFamily: 'Barlow Condensed' }} />
+                  <XAxis dataKey="name" tick={{ fill: 'var(--text-mist)', fontSize: 10, fontFamily: 'Barlow Condensed' }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fill: 'var(--text-mist)', fontSize: 9 }} axisLine={false} tickLine={false} tickFormatter={v => `$${(v / 1000000).toFixed(0)}M`} />
+                  <Tooltip formatter={(v: any) => formatCurrency(v, 'USD', true)} contentStyle={{ background: 'var(--bg-raised)', border: '1px solid rgba(201,147,58,0.3)', fontSize: 11, fontFamily: 'Barlow Condensed' }} />
                   <Bar dataKey="bahamas" fill="#c9933a" radius={[2, 2, 0, 0]} name="Bahamas" />
                   <Bar dataKey="cayman_islands" fill="#e8b04a" radius={[2, 2, 0, 0]} name="Cayman" />
                   <Bar dataKey="barbados" fill="#a87530" radius={[2, 2, 0, 0]} name="Barbados" />
@@ -259,23 +259,23 @@ export default function RiskIntelligencePage() {
         <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
           <div className="crm-card">
             <div className="section-eyebrow" style={{ marginBottom: '0.4rem' }}>Structural Type Analysis</div>
-            <p style={{ fontFamily: 'Barlow', fontSize: '0.82rem', color: '#8fa3b8', marginBottom: '1.5rem' }}>
+            <p style={{ fontFamily: 'Barlow', fontSize: '0.82rem', color: 'var(--text-mist)', marginBottom: '1.5rem' }}>
               Construction-linked risk scoring based on structural compliance with Caribbean building codes and wind-load standards.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
               {STRUCTURAL_DATA.map((item, i) => (
-                <div key={i} style={{ padding: '1rem', background: 'rgba(30,45,69,0.4)', border: '1px solid rgba(201,147,58,0.08)' }}>
+                <div key={i} style={{ padding: '1rem', background: 'var(--bg-input)', border: '1px solid rgba(201,147,58,0.08)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
                     <div>
-                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.85rem', color: '#f5f0e8', fontWeight: 600 }}>{item.name}</div>
-                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', color: '#8fa3b8', marginTop: '0.2rem' }}>{item.count} policies</div>
+                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.85rem', color: 'var(--text-primary)', fontWeight: 600 }}>{item.name}</div>
+                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', color: 'var(--text-mist)', marginTop: '0.2rem' }}>{item.count} policies</div>
                     </div>
                     <div style={{ textAlign: 'right' }}>
                       <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.4rem', fontWeight: 900, color: item.color, lineHeight: 1 }}>{item.compliance}%</div>
-                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#8fa3b8' }}>Compliance</div>
+                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-mist)' }}>Compliance</div>
                     </div>
                   </div>
-                  <div style={{ height: 5, background: 'rgba(46,64,96,0.5)', borderRadius: 3 }}>
+                  <div style={{ height: 5, background: 'var(--bg-raised)', borderRadius: 3 }}>
                     <div style={{ height: '100%', width: `${item.compliance}%`, background: item.color, borderRadius: 3, transition: 'width 1s ease' }} />
                   </div>
                 </div>
@@ -295,14 +295,14 @@ export default function RiskIntelligencePage() {
                   { island: 'trinidad_tobago' as Island, score: 68, policies: 29 },
                 ].map((item, i) => (
                   <div key={i} style={{ padding: '0.9rem 0', borderBottom: '1px solid rgba(201,147,58,0.08)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.8rem', color: '#f5f0e8', width: '130px', flexShrink: 0 }}>
+                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.8rem', color: 'var(--text-primary)', width: '130px', flexShrink: 0 }}>
                       {getIslandFlag(item.island)} {getIslandLabel(item.island)}
                     </div>
-                    <div style={{ flex: 1, height: 6, background: 'rgba(46,64,96,0.5)', borderRadius: 3 }}>
+                    <div style={{ flex: 1, height: 6, background: 'var(--bg-raised)', borderRadius: 3 }}>
                       <div style={{ height: '100%', width: `${item.score}%`, background: getRiskColor(100 - item.score), borderRadius: 3 }} />
                     </div>
                     <div style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700, fontSize: '1rem', color: getRiskColor(100 - item.score), width: '40px', textAlign: 'right' }}>{item.score}%</div>
-                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', color: '#8fa3b8', width: '60px', textAlign: 'right' }}>{item.policies} policies</div>
+                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', color: 'var(--text-mist)', width: '60px', textAlign: 'right' }}>{item.policies} policies</div>
                   </div>
                 ))}
               </div>
@@ -320,7 +320,7 @@ export default function RiskIntelligencePage() {
                     <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', color: '#c9933a' }}>{item.policy}</span>
                     <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', color: '#fc8181', background: 'rgba(192,57,43,0.15)', padding: '0.15rem 0.5rem', border: '1px solid rgba(192,57,43,0.3)' }}>Score: {item.score}</span>
                   </div>
-                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: '#f5f0e8', marginBottom: '0.2rem' }}>{item.type} · {item.island}</div>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: 'var(--text-primary)', marginBottom: '0.2rem' }}>{item.type} · {item.island}</div>
                   <div style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: '#fc8181' }}>{item.issue}</div>
                 </div>
               ))}
@@ -336,9 +336,9 @@ export default function RiskIntelligencePage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
               <div>
                 <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>FX Rates · vs USD</div>
-                <div style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: '#8fa3b8' }}>Click any rate to update</div>
+                <div style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: 'var(--text-mist)' }}>Click any rate to update</div>
               </div>
-              <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', color: '#4a6080', letterSpacing: '0.12em', textTransform: 'uppercase' }}>Live · Caribbean Central Banks</span>
+              <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', color: 'var(--text-dim)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>Live · Caribbean Central Banks</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
               {(fxRates.length > 0 ? fxRates : [
@@ -349,7 +349,7 @@ export default function RiskIntelligencePage() {
                 { id: '5', from_currency: 'BSD', rate: 1.0000, source: 'Central Bank of Bahamas' },
                 { id: '6', from_currency: 'GBP', rate: 1.2658, source: 'Bank of England' },
               ]).map((fx: any) => (
-                <div key={fx.id} style={{ padding: '0.8rem 1rem', background: 'rgba(30,45,69,0.4)', border: `1px solid ${editingFx === fx.id ? 'rgba(201,147,58,0.4)' : 'rgba(201,147,58,0.08)'}`, transition: 'border-color 0.2s' }}>
+                <div key={fx.id} style={{ padding: '0.8rem 1rem', background: 'var(--bg-input)', border: `1px solid ${editingFx === fx.id ? 'rgba(201,147,58,0.4)' : 'rgba(201,147,58,0.08)'}`, transition: 'border-color 0.2s' }}>
                   {editingFx === fx.id ? (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                       <span style={{ fontSize: '1rem' }}>{CURRENCY_FLAGS[fx.from_currency] || '🏦'}</span>
@@ -363,7 +363,7 @@ export default function RiskIntelligencePage() {
                         style={{ maxWidth: 100, padding: '0.3rem 0.5rem', fontSize: '0.85rem' }}
                         autoFocus
                       />
-                      <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: '#8fa3b8' }}>USD</span>
+                      <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: 'var(--text-mist)' }}>USD</span>
                       <button onClick={async () => {
                         setFxSaving(true)
                         await supabase.from('fx_rates').update({ rate: parseFloat(fxEdit), updated_at: new Date().toISOString() }).eq('id', fx.id)
@@ -371,34 +371,34 @@ export default function RiskIntelligencePage() {
                         setEditingFx(null)
                         setFxSaving(false)
                       }} className="btn-gold" style={{ padding: '0.25rem 0.6rem', fontSize: '0.65rem' }} disabled={fxSaving}>Save</button>
-                      <button onClick={() => setEditingFx(null)} style={{ background: 'none', border: 'none', color: '#8fa3b8', cursor: 'pointer', fontSize: '0.9rem' }}>✕</button>
+                      <button onClick={() => setEditingFx(null)} style={{ background: 'none', border: 'none', color: 'var(--text-mist)', cursor: 'pointer', fontSize: '0.9rem' }}>✕</button>
                     </div>
                   ) : (
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }} onClick={() => { setEditingFx(fx.id); setFxEdit(fx.rate.toString()) }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                         <span style={{ fontSize: '1rem' }}>{CURRENCY_FLAGS[fx.from_currency] || '🏦'}</span>
                         <div>
-                          <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.85rem', fontWeight: 700, color: '#f5f0e8' }}>{fx.from_currency}</div>
-                          <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', color: '#4a6080' }}>{fx.source}</div>
+                          <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)' }}>{fx.from_currency}</div>
+                          <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', color: 'var(--text-dim)' }}>{fx.source}</div>
                         </div>
                       </div>
                       <div style={{ textAlign: 'right' }}>
                         <div style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700, fontSize: '1.05rem', color: '#c9933a' }}>{fx.rate.toFixed(4)}</div>
-                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', color: '#4a6080' }}>per USD · click to edit</div>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', color: 'var(--text-dim)' }}>per USD · click to edit</div>
                       </div>
                     </div>
                   )}
                 </div>
               ))}
             </div>
-            <div style={{ marginTop: '1rem', padding: '0.7rem', background: 'rgba(201,147,58,0.06)', border: '1px solid rgba(201,147,58,0.15)', fontFamily: 'Barlow', fontSize: '0.75rem', color: '#8fa3b8', lineHeight: 1.6 }}>
+            <div style={{ marginTop: '1rem', padding: '0.7rem', background: 'rgba(201,147,58,0.06)', border: '1px solid rgba(201,147,58,0.15)', fontFamily: 'Barlow', fontSize: '0.75rem', color: 'var(--text-mist)', lineHeight: 1.6 }}>
               Rates stored in Supabase fx_rates table. Click any row to update. Claims settled at rate logged on settlement date.
             </div>
           </div>
 
           <div className="crm-card">
             <div className="section-eyebrow" style={{ marginBottom: '0.4rem' }}>FX Exposure by Island · Open Claims</div>
-            <p style={{ fontFamily: 'Barlow', fontSize: '0.82rem', color: '#8fa3b8', marginBottom: '1.5rem' }}>Currency breakdown of open claims exposure across all markets.</p>
+            <p style={{ fontFamily: 'Barlow', fontSize: '0.82rem', color: 'var(--text-mist)', marginBottom: '1.5rem' }}>Currency breakdown of open claims exposure across all markets.</p>
             <div className="table-scroll"><table className="crm-table">
               <thead>
                 <tr>
@@ -418,15 +418,15 @@ export default function RiskIntelligencePage() {
                   { island: '🇧🇸 Bahamas', currency: 'BSD', local: 2180000, usd: 2180000, risk: 'minimal' },
                 ].map((row, i) => (
                   <tr key={i}>
-                    <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.82rem', color: '#f5f0e8' }}>{row.island}</td>
+                    <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.82rem', color: 'var(--text-primary)' }}>{row.island}</td>
                     <td style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, color: '#c9933a' }}>{row.currency}</td>
-                    <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.85rem', color: '#f5f0e8' }}>{row.currency === 'JMD' ? 'J$' : row.currency === 'TTD' ? 'TT$' : row.currency === 'BBD' ? 'BDS$' : row.currency === 'KYD' ? 'CI$' : 'B$'}{row.local.toLocaleString()}</td>
+                    <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.85rem', color: 'var(--text-primary)' }}>{row.currency === 'JMD' ? 'J$' : row.currency === 'TTD' ? 'TT$' : row.currency === 'BBD' ? 'BDS$' : row.currency === 'KYD' ? 'CI$' : 'B$'}{row.local.toLocaleString()}</td>
                     <td style={{ fontFamily: 'Barlow Condensed', color: '#e8b04a' }}>${row.usd.toLocaleString()}</td>
                     <td>
                       <span className="badge" style={{
-                        background: row.risk === 'minimal' ? 'rgba(46,64,96,0.4)' : row.risk === 'low' ? 'rgba(39,174,96,0.15)' : 'rgba(241,196,15,0.15)',
-                        color: row.risk === 'minimal' ? '#8fa3b8' : row.risk === 'low' ? '#4ade80' : '#f1c40f',
-                        borderColor: row.risk === 'minimal' ? 'rgba(46,64,96,0.4)' : row.risk === 'low' ? 'rgba(39,174,96,0.3)' : 'rgba(241,196,15,0.3)',
+                        background: row.risk === 'minimal' ? 'var(--bg-raised)' : row.risk === 'low' ? 'rgba(39,174,96,0.15)' : 'rgba(241,196,15,0.15)',
+                        color: row.risk === 'minimal' ? 'var(--text-mist)' : row.risk === 'low' ? '#4ade80' : '#f1c40f',
+                        borderColor: row.risk === 'minimal' ? 'var(--bg-raised)' : row.risk === 'low' ? 'rgba(39,174,96,0.3)' : 'rgba(241,196,15,0.3)',
                       }}>
                         {row.risk}
                       </span>
@@ -441,8 +441,8 @@ export default function RiskIntelligencePage() {
                   { island: '🇧🇧 BBD', duty: '22%' }, { island: '🇯🇲 JMD', duty: '15%' },
                   { island: '🇰🇾 KYD', duty: '20%' }, { island: '🇹🇹 TTD', duty: '20%' }, { island: '🇧🇸 BSD', duty: '45%' },
                 ].map((item, i) => (
-                  <div key={i} style={{ background: 'rgba(30,45,69,0.4)', padding: '0.6rem', textAlign: 'center', border: '1px solid rgba(201,147,58,0.08)' }}>
-                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: '#8fa3b8', marginBottom: '0.2rem' }}>{item.island}</div>
+                  <div key={i} style={{ background: 'var(--bg-input)', padding: '0.6rem', textAlign: 'center', border: '1px solid rgba(201,147,58,0.08)' }}>
+                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: 'var(--text-mist)', marginBottom: '0.2rem' }}>{item.island}</div>
                     <div style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700, color: '#e8b04a', fontSize: '1rem' }}>{item.duty}</div>
                   </div>
                 ))}
@@ -457,18 +457,18 @@ export default function RiskIntelligencePage() {
         <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
           <div className="crm-card">
             <div className="section-eyebrow" style={{ marginBottom: '0.4rem' }}>Probable Maximum Loss · Scenarios</div>
-            <p style={{ fontFamily: 'Barlow', fontSize: '0.82rem', color: '#8fa3b8', marginBottom: '1.5rem' }}>
+            <p style={{ fontFamily: 'Barlow', fontSize: '0.82rem', color: 'var(--text-mist)', marginBottom: '1.5rem' }}>
               Catastrophe loss model with gross loss, reinsurance recovery, and net retention estimates. Based on current portfolio composition.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
               {LOSS_MODEL.map((row, i) => (
-                <div key={i} style={{ padding: '1rem', borderBottom: '1px solid rgba(201,147,58,0.08)', background: i % 2 === 0 ? 'rgba(30,45,69,0.2)' : 'transparent' }}>
+                <div key={i} style={{ padding: '1rem', borderBottom: '1px solid rgba(201,147,58,0.08)', background: i % 2 === 0 ? 'rgba(var(--raised-rgb),0.2)' : 'transparent' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.6rem' }}>
-                    <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.82rem', fontWeight: 600, color: '#f5f0e8' }}>{row.scenario}</span>
-                    <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', color: '#8fa3b8' }}>Gross: <span style={{ color: '#c0392b' }}>{formatCurrency(row.probable_loss, 'USD', true)}</span></span>
+                    <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)' }}>{row.scenario}</span>
+                    <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', color: 'var(--text-mist)' }}>Gross: <span style={{ color: '#c0392b' }}>{formatCurrency(row.probable_loss, 'USD', true)}</span></span>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
-                    <div style={{ height: 20, background: 'rgba(46,64,96,0.5)', borderRadius: 2, position: 'relative', overflow: 'hidden' }}>
+                    <div style={{ height: 20, background: 'var(--bg-raised)', borderRadius: 2, position: 'relative', overflow: 'hidden' }}>
                       <div style={{ position: 'absolute', inset: 0, width: `${(row.reinsured / row.probable_loss) * 100}%`, background: '#27ae60', opacity: 0.6 }} />
                       <span style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', paddingLeft: '0.4rem', fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: '#4ade80' }}>
                         Reinsured: {formatCurrency(row.reinsured, 'USD', true)}
@@ -491,9 +491,9 @@ export default function RiskIntelligencePage() {
               <div className="section-eyebrow" style={{ marginBottom: '0.8rem' }}>Loss Scenario Chart</div>
               <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={LOSS_MODEL} margin={{ left: 10, right: 10 }}>
-                  <XAxis dataKey="scenario" tick={{ fill: '#8fa3b8', fontSize: 9, fontFamily: 'Barlow Condensed' }} axisLine={false} tickLine={false} tickFormatter={s => s.replace('1-in-', '').replace('yr Storm', 'yr')} />
-                  <YAxis tick={{ fill: '#8fa3b8', fontSize: 9 }} axisLine={false} tickLine={false} tickFormatter={v => `$${(v / 1000000).toFixed(0)}M`} />
-                  <Tooltip formatter={(v: any) => formatCurrency(v, 'USD', true)} contentStyle={{ background: '#1e2d45', border: '1px solid rgba(201,147,58,0.3)', fontSize: 11, fontFamily: 'Barlow Condensed' }} />
+                  <XAxis dataKey="scenario" tick={{ fill: 'var(--text-mist)', fontSize: 9, fontFamily: 'Barlow Condensed' }} axisLine={false} tickLine={false} tickFormatter={s => s.replace('1-in-', '').replace('yr Storm', 'yr')} />
+                  <YAxis tick={{ fill: 'var(--text-mist)', fontSize: 9 }} axisLine={false} tickLine={false} tickFormatter={v => `$${(v / 1000000).toFixed(0)}M`} />
+                  <Tooltip formatter={(v: any) => formatCurrency(v, 'USD', true)} contentStyle={{ background: 'var(--bg-raised)', border: '1px solid rgba(201,147,58,0.3)', fontSize: 11, fontFamily: 'Barlow Condensed' }} />
                   <Bar dataKey="reinsured" stackId="a" fill="#27ae60" fillOpacity={0.7} name="Reinsured" radius={[0, 0, 0, 0]} />
                   <Bar dataKey="net_retention" stackId="a" fill="#c0392b" fillOpacity={0.7} name="Net Retention" radius={[2, 2, 0, 0]} />
                 </BarChart>
@@ -510,8 +510,8 @@ export default function RiskIntelligencePage() {
               ].map((layer, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.7rem 0', borderBottom: '1px solid rgba(201,147,58,0.08)' }}>
                   <div>
-                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.82rem', color: '#f5f0e8', fontWeight: 600 }}>{layer.layer}</div>
-                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', color: '#8fa3b8' }}>{layer.coverage} · {layer.reinsurer}</div>
+                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.82rem', color: 'var(--text-primary)', fontWeight: 600 }}>{layer.layer}</div>
+                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', color: 'var(--text-mist)' }}>{layer.coverage} · {layer.reinsurer}</div>
                   </div>
                   <span className="badge" style={{ background: 'rgba(39,174,96,0.15)', color: '#4ade80', borderColor: 'rgba(39,174,96,0.3)' }}>Active</span>
                 </div>
@@ -528,13 +528,13 @@ export default function RiskIntelligencePage() {
         const highRisk = islandPolicies.filter(p => (p.risk_score || 50) >= 65)
         return (
           <div className="modal-backdrop" onClick={() => setSelectedIsland(null)}>
-            <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(192,57,43,0.3)', width: '100%', maxWidth: 600, maxHeight: '88vh', overflowY: 'auto' }}>
+            <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-card)', border: '1px solid rgba(192,57,43,0.3)', width: '100%', maxWidth: 600, maxHeight: '88vh', overflowY: 'auto' }}>
               <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(192,57,43,0.15)', background: 'rgba(192,57,43,0.04)', display: 'flex', justifyContent: 'space-between' }}>
                 <div>
                   <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#fc8181', marginBottom: '0.3rem' }}>Island Exposure Drill-Down</div>
-                  <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>{getIslandFlag(selectedIsland)} {getIslandLabel(selectedIsland)}</div>
+                  <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>{getIslandFlag(selectedIsland)} {getIslandLabel(selectedIsland)}</div>
                 </div>
-                <button onClick={() => setSelectedIsland(null)} style={{ background: 'none', border: 'none', color: '#8fa3b8', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
+                <button onClick={() => setSelectedIsland(null)} style={{ background: 'none', border: 'none', color: 'var(--text-mist)', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1px', background: 'rgba(192,57,43,0.1)' }}>
                 {[
@@ -545,8 +545,8 @@ export default function RiskIntelligencePage() {
                   { label: 'Active', value: islandPolicies.filter(p => p.status === 'active').length.toString() },
                   { label: 'Avg Risk Score', value: islandPolicies.length > 0 ? Math.round(islandPolicies.reduce((s, p) => s + (p.risk_score || 50), 0) / islandPolicies.length).toString() : '—' },
                 ].map((k, i) => (
-                  <div key={i} style={{ background: '#111827', padding: '1rem' }}>
-                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#8fa3b8' }}>{k.label}</div>
+                  <div key={i} style={{ background: 'var(--bg-card)', padding: '1rem' }}>
+                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-mist)' }}>{k.label}</div>
                     <div style={{ fontFamily: 'Playfair Display, serif', fontWeight: 900, fontSize: '1.3rem', color: '#c9933a', marginTop: '0.2rem' }}>{k.value}</div>
                   </div>
                 ))}
@@ -558,18 +558,18 @@ export default function RiskIntelligencePage() {
                     <div key={p.id} style={{ padding: '0.8rem 1.5rem', borderBottom: '1px solid rgba(201,147,58,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }} onClick={() => { setSelectedIsland(null); setSelectedPolicy(p) }}>
                       <div>
                         <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.8rem', color: '#c9933a', fontWeight: 600 }}>{p.policy_number || '—'}</div>
-                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: '#8fa3b8', marginTop: '0.15rem' }}>{p.coverage_type} · {p.wind_zone || 'Zone ?'}</div>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: 'var(--text-mist)', marginTop: '0.15rem' }}>{p.coverage_type} · {p.wind_zone || 'Zone ?'}</div>
                       </div>
                       <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.8rem', color: '#f5f0e8' }}>{formatCurrency(p.insured_value, p.currency, true)}</div>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.8rem', color: 'var(--text-primary)' }}>{formatCurrency(p.insured_value, p.currency, true)}</div>
                         <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: getRiskColor(p.risk_score || 50) }}>Risk: {p.risk_score || 50}</div>
                       </div>
                     </div>
                   ))}
-                  {islandPolicies.length > 10 && <div style={{ padding: '0.8rem 1.5rem', fontFamily: 'Barlow Condensed', fontSize: '0.7rem', color: '#4a6080', textAlign: 'center' }}>+{islandPolicies.length - 10} more policies — view in Policies</div>}
+                  {islandPolicies.length > 10 && <div style={{ padding: '0.8rem 1.5rem', fontFamily: 'Barlow Condensed', fontSize: '0.7rem', color: 'var(--text-dim)', textAlign: 'center' }}>+{islandPolicies.length - 10} more policies — view in Policies</div>}
                 </div>
               ) : (
-                <div style={{ padding: '2rem', textAlign: 'center', color: '#4a6080', fontFamily: 'Barlow Condensed', letterSpacing: '0.1em' }}>No policy data loaded. Seed data required.</div>
+                <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-dim)', fontFamily: 'Barlow Condensed', letterSpacing: '0.1em' }}>No policy data loaded. Seed data required.</div>
               )}
             </div>
           </div>
@@ -579,13 +579,13 @@ export default function RiskIntelligencePage() {
       {/* Policy quick-view from Risk Intelligence */}
       {selectedPolicy && (
         <div className="modal-backdrop" onClick={() => setSelectedPolicy(null)}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 520, maxHeight: '80vh', overflowY: 'auto' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-card)', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 520, maxHeight: '80vh', overflowY: 'auto' }}>
             <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)', display: 'flex', justifyContent: 'space-between' }}>
               <div>
                 <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#c9933a', marginBottom: '0.3rem' }}>Policy Risk Profile</div>
-                <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>{selectedPolicy.policy_number || '—'}</div>
+                <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)' }}>{selectedPolicy.policy_number || '—'}</div>
               </div>
-              <button onClick={() => setSelectedPolicy(null)} style={{ background: 'none', border: 'none', color: '#8fa3b8', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
+              <button onClick={() => setSelectedPolicy(null)} style={{ background: 'none', border: 'none', color: 'var(--text-mist)', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
             </div>
             <div className="two-col-grid" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               {[
@@ -599,14 +599,14 @@ export default function RiskIntelligencePage() {
                 ['Risk Score', selectedPolicy.risk_score ? String(selectedPolicy.risk_score) : '—'],
               ].map(([label, value], i) => (
                 <div key={i}>
-                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>{label}</div>
-                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.85rem', color: '#f5f0e8' }}>{value || '—'}</div>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: '0.3rem' }}>{label}</div>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.85rem', color: 'var(--text-primary)' }}>{value || '—'}</div>
                 </div>
               ))}
               <div style={{ gridColumn: '1 / -1' }}>
-                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.5rem' }}>Risk Score</div>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>Risk Score</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <div style={{ flex: 1, height: 6, background: 'rgba(46,64,96,0.5)', borderRadius: 3 }}>
+                  <div style={{ flex: 1, height: 6, background: 'var(--bg-raised)', borderRadius: 3 }}>
                     <div style={{ height: '100%', width: `${selectedPolicy.risk_score || 50}%`, background: getRiskColor(selectedPolicy.risk_score || 50), borderRadius: 3 }} />
                   </div>
                   <span style={{ fontFamily: 'Playfair Display, serif', fontWeight: 900, fontSize: '1.3rem', color: getRiskColor(selectedPolicy.risk_score || 50) }}>{selectedPolicy.risk_score || 50}</span>

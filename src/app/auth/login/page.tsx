@@ -36,11 +36,11 @@ export default function LoginPage() {
   }
 
   if (checking) {
-    return <div style={{ minHeight: '100vh', background: '#0a0f1e' }} />
+    return <div style={{ minHeight: '100vh', background: 'var(--bg-page)' }} />
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0f1e', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-page)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
       {/* Background rings */}
       <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
         {[600, 450, 300, 160].map((size, i) => (
@@ -62,7 +62,7 @@ export default function LoginPage() {
             <circle cx="19" cy="19" r="3.5" fill="#c9933a"/>
             <path d="M19 4 Q26 14 19 19 Q12 24 19 34" stroke="#e8b04a" strokeWidth="1" fill="none" opacity="0.6"/>
           </svg>
-          <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.5rem', fontWeight: 700, color: '#fff' }}>
+          <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-primary)' }}>
             Antillia
           </div>
           <div style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: '0.65rem', letterSpacing: '0.28em', textTransform: 'uppercase', color: '#c9933a', marginTop: '2px' }}>
@@ -71,8 +71,8 @@ export default function LoginPage() {
         </div>
 
         {/* Card */}
-        <div style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', padding: '2.5rem' }}>
-          <div style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: '0.7rem', letterSpacing: '0.28em', textTransform: 'uppercase', color: '#8fa3b8', marginBottom: '1.8rem' }}>
+        <div style={{ background: 'var(--bg-card)', border: '1px solid rgba(201,147,58,0.2)', padding: '2.5rem' }}>
+          <div style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: '0.7rem', letterSpacing: '0.28em', textTransform: 'uppercase', color: 'var(--text-mist)', marginBottom: '1.8rem' }}>
             Sign in to your account
           </div>
 
@@ -111,7 +111,7 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(201,147,58,0.06)', border: '1px solid rgba(201,147,58,0.1)', fontSize: '0.78rem', color: '#8fa3b8', lineHeight: 1.6 }}>
+          <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(201,147,58,0.06)', border: '1px solid rgba(201,147,58,0.1)', fontSize: '0.78rem', color: 'var(--text-mist)', lineHeight: 1.6 }}>
             <strong style={{ color: '#c9933a', fontFamily: 'Barlow Condensed', letterSpacing: '0.1em' }}>SETUP:</strong><br />
             Create a user in your Supabase Auth dashboard, then sign in here.
           </div>

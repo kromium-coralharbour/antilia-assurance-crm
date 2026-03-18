@@ -80,11 +80,11 @@ export default function BrokersPage() {
   }
 
   return (
-    <div className="page-enter" style={{ padding: '2rem', minHeight: '100vh', background: '#0a0f1e' }}>
+    <div className="page-enter" style={{ padding: '2rem', minHeight: '100vh', background: 'var(--bg-page)' }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
         <div>
           <div className="section-eyebrow" style={{ marginBottom: '0.4rem' }}>Distribution</div>
-          <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.8rem', fontWeight: 700, color: '#fff', margin: 0 }}>Brokers & Commission</h1>
+          <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.8rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>Brokers & Commission</h1>
         </div>
         <button className="btn-gold" onClick={() => setShowForm(true)}>+ Add Broker</button>
       </div>
@@ -97,8 +97,8 @@ export default function BrokersPage() {
           { label: 'YTD Commissions Paid', value: formatCurrency(totalCommission, 'USD', true) },
           { label: 'Total Policies', value: filtered.reduce((s, b) => s + (b.policy_count || 0), 0).toString() },
         ].map((k, i) => (
-          <div key={i} style={{ background: '#111827', padding: '1rem 1.2rem' }}>
-            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#8fa3b8' }}>{k.label}</div>
+          <div key={i} style={{ background: 'var(--bg-card)', padding: '1rem 1.2rem' }}>
+            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-mist)' }}>{k.label}</div>
             <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.6rem', fontWeight: 900, color: '#c9933a', marginTop: '0.2rem' }}>{k.value}</div>
           </div>
         ))}
@@ -111,12 +111,12 @@ export default function BrokersPage() {
       {/* Broker Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
         {loading ? (
-          <div style={{ color: '#8fa3b8', fontFamily: 'Barlow Condensed' }}>Loading…</div>
+          <div style={{ color: 'var(--text-mist)', fontFamily: 'Barlow Condensed' }}>Loading…</div>
         ) : filtered.map(b => (
           <div key={b.id} className="crm-card" style={{ cursor: 'pointer', transition: 'border-color 0.2s', position: 'relative' }} onClick={() => openBroker(b)}>
             {b.status !== 'active' && (
               <div style={{ position: 'absolute', top: '0.8rem', right: '0.8rem' }}>
-                <span className="badge" style={{ background: 'rgba(100,100,100,0.2)', borderColor: '#4a5a6a', color: '#8fa3b8' }}>Inactive</span>
+                <span className="badge" style={{ background: 'rgba(100,100,100,0.2)', borderColor: '#4a5a6a', color: 'var(--text-mist)' }}>Inactive</span>
               </div>
             )}
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.8rem', marginBottom: '1rem' }}>
@@ -124,28 +124,28 @@ export default function BrokersPage() {
                 {b.name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
               </div>
               <div>
-                <div style={{ fontFamily: 'Barlow', fontSize: '0.95rem', color: '#f5f0e8', fontWeight: 500 }}>{b.name}</div>
-                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', color: '#8fa3b8', letterSpacing: '0.06em' }}>{b.company}</div>
+                <div style={{ fontFamily: 'Barlow', fontSize: '0.95rem', color: 'var(--text-primary)', fontWeight: 500 }}>{b.name}</div>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', color: 'var(--text-mist)', letterSpacing: '0.06em' }}>{b.company}</div>
                 <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', color: '#c9933a', marginTop: '2px' }}>{getIslandFlag(b.island)} {getIslandLabel(b.island)}</div>
               </div>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.8rem', paddingTop: '0.8rem', borderTop: '1px solid rgba(201,147,58,0.08)' }}>
               <div>
-                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.58rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080' }}>Premium Vol.</div>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.58rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)' }}>Premium Vol.</div>
                 <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.9rem', color: '#c9933a', fontWeight: 600, marginTop: '0.2rem' }}>{formatCurrency(b.ytd_premium_volume, b.currency, true)}</div>
               </div>
               <div>
-                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.58rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080' }}>Commission</div>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.58rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)' }}>Commission</div>
                 <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.9rem', color: '#e8b04a', fontWeight: 600, marginTop: '0.2rem' }}>{formatCurrency(b.ytd_commission_earned, b.currency, true)}</div>
               </div>
               <div>
-                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.58rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080' }}>Rate</div>
-                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.9rem', color: '#f5f0e8', fontWeight: 600, marginTop: '0.2rem' }}>{b.commission_rate}%</div>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.58rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)' }}>Rate</div>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 600, marginTop: '0.2rem' }}>{b.commission_rate}%</div>
               </div>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.8rem' }}>
-              <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', color: '#8fa3b8' }}>{b.policy_count} policies · {b.client_count} clients</span>
-              <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: '#4a6080', letterSpacing: '0.1em' }}>#{b.license_number}</span>
+              <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', color: 'var(--text-mist)' }}>{b.policy_count} policies · {b.client_count} clients</span>
+              <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: 'var(--text-dim)', letterSpacing: '0.1em' }}>#{b.license_number}</span>
             </div>
           </div>
         ))}
@@ -154,19 +154,19 @@ export default function BrokersPage() {
       {/* Broker Detail Modal */}
       {selected && (
         <div className="modal-backdrop" onClick={() => setSelected(null)}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 640, maxHeight: '92vh', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-card)', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 640, maxHeight: '92vh', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
             <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)', display: 'flex', justifyContent: 'space-between', flexShrink: 0 }}>
               <div>
                 <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>Broker Profile</div>
-                <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>{selected.name}</div>
-                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', color: '#8fa3b8', marginTop: '0.2rem' }}>{selected.company} · #{selected.license_number}</div>
+                <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>{selected.name}</div>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', color: 'var(--text-mist)', marginTop: '0.2rem' }}>{selected.company} · #{selected.license_number}</div>
               </div>
-              <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: '#8fa3b8', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
+              <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: 'var(--text-mist)', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
             </div>
             {/* Tabs */}
             <div style={{ display: 'flex', borderBottom: '1px solid rgba(201,147,58,0.1)', flexShrink: 0 }}>
               {[['profile','Profile'], ['policies', `Policies (${brokerPolicies.length})`]].map(([id, label]) => (
-                <button key={id} onClick={() => setBrokerTab(id as any)} style={{ padding: '0.8rem 1.2rem', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Barlow Condensed', fontSize: '0.72rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: brokerTab === id ? '#c9933a' : '#4a6080', borderBottom: brokerTab === id ? '2px solid #c9933a' : '2px solid transparent', marginBottom: '-1px' }}>{label}</button>
+                <button key={id} onClick={() => setBrokerTab(id as any)} style={{ padding: '0.8rem 1.2rem', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Barlow Condensed', fontSize: '0.72rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: brokerTab === id ? '#c9933a' : 'var(--text-dim)', borderBottom: brokerTab === id ? '2px solid #c9933a' : '2px solid transparent', marginBottom: '-1px' }}>{label}</button>
               ))}
             </div>
             {brokerTab === 'profile' && (
@@ -177,8 +177,8 @@ export default function BrokersPage() {
                     { label: 'Commission Earned', value: formatCurrency(selected.ytd_commission_earned, selected.currency, true) },
                     { label: 'Commission Rate', value: `${selected.commission_rate}%` },
                   ].map((k, i) => (
-                    <div key={i} style={{ background: '#0d1321', padding: '1rem', textAlign: 'center' }}>
-                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080' }}>{k.label}</div>
+                    <div key={i} style={{ background: 'var(--bg-sidebar)', padding: '1rem', textAlign: 'center' }}>
+                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)' }}>{k.label}</div>
                       <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 900, color: '#c9933a', marginTop: '0.3rem' }}>{k.value}</div>
                     </div>
                   ))}
@@ -191,17 +191,17 @@ export default function BrokersPage() {
                     ['Policies', `${selected.policy_count}`], ['Clients', `${selected.client_count}`],
                   ].map(([label, value], i) => (
                     <div key={i}>
-                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>{label}</div>
-                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.88rem', color: '#f5f0e8' }}>{value}</div>
+                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: '0.3rem' }}>{label}</div>
+                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.88rem', color: 'var(--text-primary)' }}>{value}</div>
                     </div>
                   ))}
                 </div>
-                <div style={{ padding: '1rem', background: 'rgba(46,64,96,0.2)', border: '1px solid rgba(201,147,58,0.1)', marginBottom: '1rem' }}>
+                <div style={{ padding: '1rem', background: 'rgba(var(--raised-rgb),0.2)', border: '1px solid rgba(201,147,58,0.1)', marginBottom: '1rem' }}>
                   <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#c9933a', marginBottom: '0.5rem' }}>Commission Progress vs Target</div>
-                  <div style={{ height: 6, background: 'rgba(46,64,96,0.5)', borderRadius: 3 }}>
+                  <div style={{ height: 6, background: 'var(--bg-raised)', borderRadius: 3 }}>
                     <div style={{ height: '100%', width: `${Math.min(100, (selected.ytd_commission_earned / (selected.ytd_premium_volume * 0.15)) * 100)}%`, background: '#c9933a', borderRadius: 3 }} />
                   </div>
-                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: '#8fa3b8', marginTop: '0.3rem' }}>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: 'var(--text-mist)', marginTop: '0.3rem' }}>
                     {((selected.ytd_commission_earned / Math.max(1, selected.ytd_premium_volume * 0.15)) * 100).toFixed(0)}% of annual target · Est. commission on {formatCurrency(selected.ytd_premium_volume * (selected.commission_rate / 100), selected.currency, true)}
                   </div>
                 </div>
@@ -215,8 +215,8 @@ export default function BrokersPage() {
             )}
             {brokerTab === 'policies' && (
               <div style={{ flex: 1 }}>
-                {brokerLoading ? <div style={{ padding: '2rem', textAlign: 'center', color: '#8fa3b8' }}>Loading…</div> :
-                brokerPolicies.length === 0 ? <div style={{ padding: '2rem', textAlign: 'center', color: '#4a6080', fontFamily: 'Barlow Condensed', letterSpacing: '0.1em' }}>No policies distributed through this broker</div> :
+                {brokerLoading ? <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-mist)' }}>Loading…</div> :
+                brokerPolicies.length === 0 ? <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-dim)', fontFamily: 'Barlow Condensed', letterSpacing: '0.1em' }}>No policies distributed through this broker</div> :
                 brokerPolicies.map(p => {
                   const days = p.renewal_date ? daysUntil(p.renewal_date) : 999
                   const client = p.clients
@@ -243,9 +243,9 @@ export default function BrokersPage() {
                     <div key={p.id} style={{ padding: '1rem 1.5rem', borderBottom: '1px solid rgba(201,147,58,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                       <div>
                         <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.82rem', color: '#c9933a', fontWeight: 600 }}>{p.policy_number}</div>
-                        <div style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: '#f5f0e8', marginTop: '0.15rem' }}>{client ? `${client.first_name} ${client.last_name}${client.company_name ? ` — ${client.company_name}` : ''}` : '—'}</div>
-                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.68rem', color: '#8fa3b8', marginTop: '0.15rem' }}>{p.coverage_type} · {getIslandFlag(p.island)} {getIslandLabel(p.island)}</div>
-                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: days <= 30 ? '#fc8181' : '#4a6080', marginTop: '0.15rem' }}>Renewal: {formatDate(p.renewal_date)}{days <= 30 ? ` ⚠ ${days}d` : ''}</div>
+                        <div style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: 'var(--text-primary)', marginTop: '0.15rem' }}>{client ? `${client.first_name} ${client.last_name}${client.company_name ? ` — ${client.company_name}` : ''}` : '—'}</div>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.68rem', color: 'var(--text-mist)', marginTop: '0.15rem' }}>{p.coverage_type} · {getIslandFlag(p.island)} {getIslandLabel(p.island)}</div>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: days <= 30 ? '#fc8181' : 'var(--text-dim)', marginTop: '0.15rem' }}>Renewal: {formatDate(p.renewal_date)}{days <= 30 ? ` ⚠ ${days}d` : ''}</div>
                       </div>
                       <div style={{ textAlign: 'right' }}>
                         <span className={`badge ${POLICY_STATUS_STYLES[p.status] || ''}`}>{formatStatus(p.status)}</span>
@@ -264,10 +264,10 @@ export default function BrokersPage() {
       {/* Edit Broker Form */}
       {showEditForm && editForm && (
         <div className="modal-backdrop" onClick={() => setShowEditForm(false)}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 580, maxHeight: '90vh', overflowY: 'auto' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-card)', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 580, maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
               <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>Edit Broker</div>
-              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>{editForm.name}</div>
+              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>{editForm.name}</div>
             </div>
             <form onSubmit={handleEditBroker} className="two-col-grid" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div><label className="crm-label">Full Name *</label><input className="crm-input" value={editForm.name} onChange={e => setEditForm((f: any) => ({ ...f, name: e.target.value }))} required /></div>
@@ -299,10 +299,10 @@ export default function BrokersPage() {
       {/* Add Broker Form */}
       {showForm && (
         <div className="modal-backdrop" onClick={() => setShowForm(false)}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 580, maxHeight: '90vh', overflowY: 'auto' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-card)', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 580, maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
               <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>Distribution</div>
-              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>Add New Broker</div>
+              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>Add New Broker</div>
             </div>
             <form onSubmit={handleSave} className="two-col-grid" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div><label className="crm-label">Full Name *</label><input className="crm-input" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required /></div>

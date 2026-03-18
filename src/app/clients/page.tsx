@@ -102,11 +102,11 @@ export default function ClientsPage() {
   }
 
   return (
-    <div className="page-enter" style={{ padding: '2rem', minHeight: '100vh', background: '#0a0f1e' }}>
+    <div className="page-enter" style={{ padding: '2rem', minHeight: '100vh', background: 'var(--bg-page)' }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
         <div>
           <div className="section-eyebrow" style={{ marginBottom: '0.4rem' }}>Relationships</div>
-          <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.8rem', fontWeight: 700, color: '#fff', margin: 0 }}>Clients</h1>
+          <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.8rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>Clients</h1>
         </div>
         <button className="btn-gold" onClick={() => setShowForm(true)}>+ New Client</button>
       </div>
@@ -119,8 +119,8 @@ export default function ClientsPage() {
           { label: 'Boutique Resorts', value: filtered.filter(c => c.segment === 'boutique_resort').length },
           { label: 'HV Homeowners', value: filtered.filter(c => c.segment === 'high_value_homeowner').length },
         ].map((k, i) => (
-          <div key={i} style={{ background: '#111827', padding: '1rem 1.2rem' }}>
-            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#8fa3b8' }}>{k.label}</div>
+          <div key={i} style={{ background: 'var(--bg-card)', padding: '1rem 1.2rem' }}>
+            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-mist)' }}>{k.label}</div>
             <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.6rem', fontWeight: 900, color: '#c9933a', marginTop: '0.2rem' }}>{k.value}</div>
           </div>
         ))}
@@ -140,7 +140,7 @@ export default function ClientsPage() {
       </div>
 
       {/* Table */}
-      <div style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.12)', overflow: 'auto' }}>
+      <div style={{ background: 'var(--bg-card)', border: '1px solid rgba(201,147,58,0.12)', overflow: 'auto' }}>
         <div className="table-scroll"><table className="crm-table">
           <thead>
             <tr>
@@ -156,7 +156,7 @@ export default function ClientsPage() {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={8} style={{ textAlign: 'center', padding: '2rem', color: '#8fa3b8' }}>Loading…</td></tr>
+              <tr><td colSpan={8} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-mist)' }}>Loading…</td></tr>
             ) : filtered.map(c => {
               const activePolicies = (c.policies || []).filter((p: any) => p.status === 'active')
               const totalPrem = activePolicies.reduce((s: number, p: any) => s + (p.annual_premium || 0), 0)
@@ -195,20 +195,20 @@ export default function ClientsPage() {
                         {c.first_name?.[0]}{c.last_name?.[0]}
                       </div>
                       <div>
-                        <div style={{ fontFamily: 'Barlow', fontSize: '0.88rem', color: '#f5f0e8' }}>{c.first_name} {c.last_name}</div>
-                        {c.company_name && <div style={{ fontSize: '0.75rem', color: '#8fa3b8' }}>{c.company_name}</div>}
+                        <div style={{ fontFamily: 'Barlow', fontSize: '0.88rem', color: 'var(--text-primary)' }}>{c.first_name} {c.last_name}</div>
+                        {c.company_name && <div style={{ fontSize: '0.75rem', color: 'var(--text-mist)' }}>{c.company_name}</div>}
                       </div>
                     </div>
                   </td>
                   <td><span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: '#c9933a' }}>{SEGMENT_LABELS[c.segment as ClientSegment] || c.segment}</span></td>
                   <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.8rem' }}>{getIslandFlag(c.island)} {getIslandLabel(c.island)}</td>
-                  <td style={{ fontFamily: 'Barlow Condensed', color: '#f5f0e8' }}>{activePolicies.length} active</td>
+                  <td style={{ fontFamily: 'Barlow Condensed', color: 'var(--text-primary)' }}>{activePolicies.length} active</td>
                   <td style={{ fontFamily: 'Barlow Condensed', color: '#c9933a' }}>{totalPrem > 0 ? formatCurrency(totalPrem, c.preferred_currency, true) : '—'}</td>
                   <td>
                     <span className={`badge ${RISK_BG[risk]}`}>{risk}</span>
                   </td>
                   <td>{c.is_vip && <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.15em', color: '#e8b04a', background: 'rgba(201,147,58,0.12)', border: '1px solid rgba(201,147,58,0.3)', padding: '0.15rem 0.5rem' }}>VIP</span>}</td>
-                  <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: '#8fa3b8' }}>{c.brokers?.name || '—'}</td>
+                  <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: 'var(--text-mist)' }}>{c.brokers?.name || '—'}</td>
                 </tr>
               )
             })}
@@ -219,7 +219,7 @@ export default function ClientsPage() {
       {/* Client Detail */}
       {selected && (
         <div className="modal-backdrop" onClick={() => setSelected(null)}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 680, maxHeight: '92vh', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-card)', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 680, maxHeight: '92vh', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
             {/* Header */}
             <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
               <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
@@ -227,16 +227,16 @@ export default function ClientsPage() {
                   {selected.first_name?.[0]}{selected.last_name?.[0]}
                 </div>
                 <div>
-                  <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>{selected.first_name} {selected.last_name}</div>
-                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', color: '#8fa3b8' }}>{selected.company_name || SEGMENT_LABELS[selected.segment as ClientSegment]} {selected.is_vip && <span style={{ color: '#e8b04a', marginLeft: '0.4rem' }}>⭐ VIP</span>}</div>
+                  <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>{selected.first_name} {selected.last_name}</div>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', color: 'var(--text-mist)' }}>{selected.company_name || SEGMENT_LABELS[selected.segment as ClientSegment]} {selected.is_vip && <span style={{ color: '#e8b04a', marginLeft: '0.4rem' }}>⭐ VIP</span>}</div>
                 </div>
               </div>
-              <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: '#8fa3b8', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
+              <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: 'var(--text-mist)', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
             </div>
             {/* Tabs */}
             <div style={{ display: 'flex', borderBottom: '1px solid rgba(201,147,58,0.1)', flexShrink: 0 }}>
               {[['profile','Profile'], ['policies', `Policies (${clientPolicies.length})`], ['claims', `Claims (${clientClaims.length})`]].map(([id, label]) => (
-                <button key={id} onClick={() => setClientTab(id as any)} style={{ padding: '0.8rem 1.2rem', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Barlow Condensed', fontSize: '0.72rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: clientTab === id ? '#c9933a' : '#4a6080', borderBottom: clientTab === id ? '2px solid #c9933a' : '2px solid transparent', marginBottom: '-1px' }}>{label}</button>
+                <button key={id} onClick={() => setClientTab(id as any)} style={{ padding: '0.8rem 1.2rem', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Barlow Condensed', fontSize: '0.72rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: clientTab === id ? '#c9933a' : 'var(--text-dim)', borderBottom: clientTab === id ? '2px solid #c9933a' : '2px solid transparent', marginBottom: '-1px' }}>{label}</button>
               ))}
             </div>
             {/* Profile Tab */}
@@ -252,28 +252,28 @@ export default function ClientsPage() {
                   ['Client Since', formatDate(selected.created_at)],
                 ].map(([label, value], i) => (
                   <div key={i}>
-                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>{label}</div>
-                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.88rem', color: '#f5f0e8' }}>{value}</div>
+                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: '0.3rem' }}>{label}</div>
+                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.88rem', color: 'var(--text-primary)' }}>{value}</div>
                   </div>
                 ))}
                 <div style={{ gridColumn: '1 / -1' }}>
-                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>Address</div>
-                  <div style={{ fontFamily: 'Barlow', fontSize: '0.85rem', color: '#f5f0e8' }}>{selected.address}</div>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: '0.3rem' }}>Address</div>
+                  <div style={{ fontFamily: 'Barlow', fontSize: '0.85rem', color: 'var(--text-primary)' }}>{selected.address}</div>
                 </div>
                 <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '0.8rem', paddingTop: '0.5rem' }}>
                   <button className="btn-ghost" style={{ fontSize: '0.75rem' }} onClick={() => { setEditForm({ ...selected }); setShowEditForm(true) }}>Edit Client</button>
                 </div>
                 {selected.notes && <div style={{ gridColumn: '1 / -1' }}>
-                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>Notes</div>
-                  <div style={{ fontFamily: 'Barlow', fontSize: '0.85rem', color: '#8fa3b8', lineHeight: 1.6 }}>{selected.notes}</div>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: '0.3rem' }}>Notes</div>
+                  <div style={{ fontFamily: 'Barlow', fontSize: '0.85rem', color: 'var(--text-mist)', lineHeight: 1.6 }}>{selected.notes}</div>
                 </div>}
               </div>
             )}
             {/* Policies Tab */}
             {clientTab === 'policies' && (
               <div style={{ flex: 1 }}>
-                {clientDataLoading ? <div style={{ padding: '2rem', textAlign: 'center', color: '#8fa3b8' }}>Loading…</div> :
-                clientPolicies.length === 0 ? <div style={{ padding: '2rem', textAlign: 'center', color: '#4a6080', fontFamily: 'Barlow Condensed', letterSpacing: '0.1em' }}>No policies on record</div> :
+                {clientDataLoading ? <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-mist)' }}>Loading…</div> :
+                clientPolicies.length === 0 ? <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-dim)', fontFamily: 'Barlow Condensed', letterSpacing: '0.1em' }}>No policies on record</div> :
                 clientPolicies.map(p => {
                   const days = p.renewal_date ? daysUntil(p.renewal_date) : 999
                   async function handleEditClient(e: React.FormEvent) {
@@ -306,13 +306,13 @@ export default function ClientsPage() {
                     <div key={p.id} style={{ padding: '1rem 1.5rem', borderBottom: '1px solid rgba(201,147,58,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                       <div>
                         <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.82rem', color: '#c9933a', fontWeight: 600 }}>{p.policy_number}</div>
-                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: '#8fa3b8', marginTop: '0.2rem' }}>{p.coverage_type} · {getIslandFlag(p.island)} {getIslandLabel(p.island)}</div>
-                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', color: days <= 30 ? '#fc8181' : '#4a6080', marginTop: '0.2rem' }}>Renewal: {formatDate(p.renewal_date)}{days <= 30 ? ` ⚠ ${days}d` : ''}</div>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: 'var(--text-mist)', marginTop: '0.2rem' }}>{p.coverage_type} · {getIslandFlag(p.island)} {getIslandLabel(p.island)}</div>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', color: days <= 30 ? '#fc8181' : 'var(--text-dim)', marginTop: '0.2rem' }}>Renewal: {formatDate(p.renewal_date)}{days <= 30 ? ` ⚠ ${days}d` : ''}</div>
                       </div>
                       <div style={{ textAlign: 'right' }}>
                         <span className={`badge ${POLICY_STATUS_STYLES[p.status] || ''}`}>{formatStatus(p.status)}</span>
                         <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: '#e8b04a', marginTop: '0.3rem' }}>{formatCurrency(p.annual_premium, p.premium_currency, true)}</div>
-                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: '#4a6080' }}>Insured: {formatCurrency(p.insured_value, p.currency, true)}</div>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: 'var(--text-dim)' }}>Insured: {formatCurrency(p.insured_value, p.currency, true)}</div>
                       </div>
                     </div>
                   )
@@ -322,13 +322,13 @@ export default function ClientsPage() {
             {/* Claims Tab */}
             {clientTab === 'claims' && (
               <div style={{ flex: 1 }}>
-                {clientDataLoading ? <div style={{ padding: '2rem', textAlign: 'center', color: '#8fa3b8' }}>Loading…</div> :
-                clientClaims.length === 0 ? <div style={{ padding: '2rem', textAlign: 'center', color: '#4a6080', fontFamily: 'Barlow Condensed', letterSpacing: '0.1em' }}>No claims on record</div> :
+                {clientDataLoading ? <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-mist)' }}>Loading…</div> :
+                clientClaims.length === 0 ? <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-dim)', fontFamily: 'Barlow Condensed', letterSpacing: '0.1em' }}>No claims on record</div> :
                 clientClaims.map(c => (
                   <div key={c.id} style={{ padding: '1rem 1.5rem', borderBottom: '1px solid rgba(201,147,58,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                     <div>
                       <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.82rem', color: '#c9933a', fontWeight: 600 }}>{c.claim_number}</div>
-                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: '#8fa3b8', marginTop: '0.2rem' }}>{getIslandFlag(c.island)} {getIslandLabel(c.island)} · {formatDate(c.incident_date)}</div>
+                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: 'var(--text-mist)', marginTop: '0.2rem' }}>{getIslandFlag(c.island)} {getIslandLabel(c.island)} · {formatDate(c.incident_date)}</div>
                       {c.catastrophe_event && <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: '#e8b04a', marginTop: '0.2rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{c.catastrophe_event}{c.storm_name ? ` — ${c.storm_name}` : ''}</div>}
                     </div>
                     <div style={{ textAlign: 'right' }}>
@@ -346,10 +346,10 @@ export default function ClientsPage() {
       {/* Edit Client Form */}
       {showEditForm && editForm && (
         <div className="modal-backdrop" onClick={() => setShowEditForm(false)}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 620, maxHeight: '92vh', overflowY: 'auto' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-card)', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 620, maxHeight: '92vh', overflowY: 'auto' }}>
             <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
               <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>Edit Client</div>
-              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>{editForm.first_name} {editForm.last_name}</div>
+              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>{editForm.first_name} {editForm.last_name}</div>
             </div>
             <form onSubmit={handleEditClient} className="two-col-grid" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div><label className="crm-label">First Name *</label><input className="crm-input" value={editForm.first_name} onChange={e => setEditForm((f: any) => ({ ...f, first_name: e.target.value }))} required /></div>
@@ -390,10 +390,10 @@ export default function ClientsPage() {
       {/* New Client Form */}
       {showForm && (
         <div className="modal-backdrop" onClick={() => setShowForm(false)}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 620, maxHeight: '90vh', overflowY: 'auto' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-card)', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 620, maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
               <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>New Client</div>
-              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>Client Profile</div>
+              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>Client Profile</div>
             </div>
             <form onSubmit={handleSave} className="two-col-grid" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div><label className="crm-label">First Name *</label><input className="crm-input" value={form.first_name} onChange={e => setForm(f => ({ ...f, first_name: e.target.value }))} required /></div>

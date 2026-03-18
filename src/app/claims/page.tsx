@@ -159,13 +159,13 @@ export default function ClaimsPage() {
   }))
 
   return (
-    <div className="page-enter" style={{ padding: '2rem', minHeight: '100vh', background: '#0a0f1e' }}>
+    <div className="page-enter" style={{ padding: '2rem', minHeight: '100vh', background: 'var(--bg-page)' }}>
       {/* Header */}
       <div className="page-header" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem', paddingBottom: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
         <div>
           <div className="section-eyebrow" style={{ marginBottom: '0.4rem' }}>FNOL · Adjuster Routing · Settlement</div>
-          <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.8rem', fontWeight: 700, color: '#fff', margin: 0 }}>Claims Management</h1>
-          <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', letterSpacing: '0.12em', color: '#8fa3b8', marginTop: '0.3rem' }}>
+          <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.8rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>Claims Management</h1>
+          <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', letterSpacing: '0.12em', color: 'var(--text-mist)', marginTop: '0.3rem' }}>
             Catastrophe Surge Workflow · 24hr FNOL Acknowledgement
           </div>
         </div>
@@ -182,7 +182,7 @@ export default function ClaimsPage() {
             <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#c0392b', display: 'inline-block', animation: 'pulse 1.2s infinite' }} />
             <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', letterSpacing: '0.22em', textTransform: 'uppercase', color: '#fc8181' }}>CAT SURGE ACTIVE</span>
           </div>
-          <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.85rem', color: '#f5f0e8', flex: 1 }}>
+          <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.85rem', color: 'var(--text-primary)', flex: 1 }}>
             {activeSurge.map(s => s.name).join(' · ')} — Enhanced triage mode · All adjusters on standby
           </div>
           <button onClick={() => setActiveTab('surge')} style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', background: 'rgba(192,57,43,0.2)', border: '1px solid rgba(192,57,43,0.4)', color: '#fc8181', padding: '0.4rem 0.8rem', cursor: 'pointer' }}>
@@ -197,10 +197,10 @@ export default function ClaimsPage() {
           { label: 'Open Claims', value: openClaims.length.toString(), color: '#e8b04a' },
           { label: 'Total Reported Loss', value: formatCurrency(totalReported, 'USD', true), color: '#fc8181' },
           { label: 'Fraud Flags', value: fraudFlags.toString(), color: fraudFlags > 0 ? '#fc8181' : '#4ade80' },
-          { label: 'Active Surge Events', value: activeSurge.length.toString(), color: activeSurge.length > 0 ? '#fc8181' : '#4a6080' },
+          { label: 'Active Surge Events', value: activeSurge.length.toString(), color: activeSurge.length > 0 ? '#fc8181' : 'var(--text-dim)' },
         ].map((k, i) => (
-          <div key={i} style={{ background: '#111827', padding: '1rem 1.2rem' }}>
-            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#8fa3b8' }}>{k.label}</div>
+          <div key={i} style={{ background: 'var(--bg-card)', padding: '1rem 1.2rem' }}>
+            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-mist)' }}>{k.label}</div>
             <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.6rem', fontWeight: 900, color: k.color, marginTop: '0.2rem' }}>{k.value}</div>
           </div>
         ))}
@@ -212,7 +212,7 @@ export default function ClaimsPage() {
           <button key={id} onClick={() => setActiveTab(id as any)} style={{
             padding: '0.8rem 1.5rem', background: 'none', border: 'none', cursor: 'pointer',
             fontFamily: 'Barlow Condensed', fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase',
-            color: activeTab === id ? (id === 'surge' && activeSurge.length > 0 ? '#fc8181' : '#c9933a') : '#4a6080',
+            color: activeTab === id ? (id === 'surge' && activeSurge.length > 0 ? '#fc8181' : '#c9933a') : 'var(--text-dim)',
             borderBottom: activeTab === id ? `2px solid ${id === 'surge' && activeSurge.length > 0 ? '#c0392b' : '#c9933a'}` : '2px solid transparent',
             marginBottom: '-1px',
           }}>{label}</button>
@@ -234,7 +234,7 @@ export default function ClaimsPage() {
             </select>
           </div>
 
-          <div style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.12)' }}>
+          <div style={{ background: 'var(--bg-card)', border: '1px solid rgba(201,147,58,0.12)' }}>
             <div className="table-scroll"><table className="crm-table">
               <thead>
                 <tr>
@@ -245,26 +245,26 @@ export default function ClaimsPage() {
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={10} style={{ textAlign: 'center', padding: '2rem', color: '#8fa3b8' }}>Loading claims…</td></tr>
+                  <tr><td colSpan={10} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-mist)' }}>Loading claims…</td></tr>
                 ) : filtered.length === 0 ? (
-                  <tr><td colSpan={10} style={{ textAlign: 'center', padding: '2rem', color: '#8fa3b8' }}>No claims found.</td></tr>
+                  <tr><td colSpan={10} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-mist)' }}>No claims found.</td></tr>
                 ) : filtered.map(c => (
                   <tr key={c.id} style={{ cursor: 'pointer' }} onClick={() => setSelected(c)}>
                     <td style={{ fontFamily: 'Barlow Condensed', color: '#c9933a', fontSize: '0.82rem', fontWeight: 600 }}>{c.claim_number}</td>
                     <td>
-                      <div style={{ fontFamily: 'Barlow', fontSize: '0.85rem', color: '#f5f0e8' }}>{c.clients ? `${c.clients.first_name} ${c.clients.last_name}` : '—'}</div>
-                      {c.clients?.company_name && <div style={{ fontSize: '0.72rem', color: '#8fa3b8' }}>{c.clients.company_name}</div>}
+                      <div style={{ fontFamily: 'Barlow', fontSize: '0.85rem', color: 'var(--text-primary)' }}>{c.clients ? `${c.clients.first_name} ${c.clients.last_name}` : '—'}</div>
+                      {c.clients?.company_name && <div style={{ fontSize: '0.72rem', color: 'var(--text-mist)' }}>{c.clients.company_name}</div>}
                     </td>
-                    <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: '#8fa3b8' }}>{c.policies?.policy_number || '—'}</td>
+                    <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem', color: 'var(--text-mist)' }}>{c.policies?.policy_number || '—'}</td>
                     <td>
                       {c.catastrophe_event && <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.68rem', color: '#e8b04a', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{c.catastrophe_event}</div>}
-                      {c.storm_name && <div style={{ fontFamily: 'Barlow', fontSize: '0.72rem', color: '#8fa3b8' }}>{c.storm_name}</div>}
+                      {c.storm_name && <div style={{ fontFamily: 'Barlow', fontSize: '0.72rem', color: 'var(--text-mist)' }}>{c.storm_name}</div>}
                     </td>
                     <td style={{ fontFamily: 'Barlow Condensed', fontWeight: 600, color: '#fc8181' }}>{formatCurrency(c.reported_loss, c.currency, true)}</td>
                     <td><span className={`badge ${CLAIM_STATUS_STYLES[c.status] || ''}`}>{formatStatus(c.status)}</span></td>
                     <td><span className={`badge ${FRAUD_RISK_STYLES[c.fraud_risk] || ''}`}>{formatStatus(c.fraud_risk)}</span></td>
                     <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.78rem' }}>{getIslandFlag(c.island)} {getIslandLabel(c.island)}</td>
-                    <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', color: '#8fa3b8' }}>{formatDate(c.incident_date)}</td>
+                    <td style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', color: 'var(--text-mist)' }}>{formatDate(c.incident_date)}</td>
                     <td onClick={e => e.stopPropagation()}>
                       {CLAIM_WORKFLOW[c.status] && (
                         <button className="btn-gold" style={{ padding: '0.3rem 0.6rem', fontSize: '0.62rem' }} onClick={() => advanceStatus(c.id, c.status)}>
@@ -286,14 +286,14 @@ export default function ClaimsPage() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.8rem' }}>
             <div>
               <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.68rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#fc8181', marginBottom: '0.3rem' }}>Catastrophe Response Operations</div>
-              <div style={{ fontFamily: 'Barlow', fontSize: '0.82rem', color: '#8fa3b8' }}>Activate surge mode when a named storm or cat event triggers mass claims intake</div>
+              <div style={{ fontFamily: 'Barlow', fontSize: '0.82rem', color: 'var(--text-mist)' }}>Activate surge mode when a named storm or cat event triggers mass claims intake</div>
             </div>
             <button className="btn-danger" onClick={() => setShowSurgeForm(true)}>⚡ Activate New Event</button>
           </div>
 
           {/* Surge Events */}
           {surgeEvents.length === 0 ? (
-            <div className="crm-card" style={{ textAlign: 'center', padding: '3rem', color: '#4a6080' }}>
+            <div className="crm-card" style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-dim)' }}>
               <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>⛈️</div>
               <div style={{ fontFamily: 'Barlow Condensed', letterSpacing: '0.15em', textTransform: 'uppercase', fontSize: '0.82rem' }}>No CAT surge events recorded</div>
             </div>
@@ -306,17 +306,17 @@ export default function ClaimsPage() {
                 const surgeLoss = surgeClaims.reduce((s, c) => s + (c.reported_loss || 0), 0)
                 const pct = surge.expected_claims > 0 ? Math.round((surgeClaims.length / surge.expected_claims) * 100) : 0
                 return (
-                  <div key={surge.id} style={{ background: '#111827', border: `1px solid ${surge.status === 'active' ? 'rgba(192,57,43,0.4)' : 'rgba(201,147,58,0.12)'}` }}>
+                  <div key={surge.id} style={{ background: 'var(--bg-card)', border: `1px solid ${surge.status === 'active' ? 'rgba(192,57,43,0.4)' : 'rgba(201,147,58,0.12)'}` }}>
                     <div style={{ padding: '1.2rem 1.5rem', borderBottom: `1px solid ${surge.status === 'active' ? 'rgba(192,57,43,0.2)' : 'rgba(201,147,58,0.08)'}`, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.8rem' }}>
                       <div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.3rem' }}>
                           {surge.status === 'active' && <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#c0392b', display: 'inline-block', animation: 'pulse 1.2s infinite' }} />}
-                          <span style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700, fontSize: '1.1rem', color: surge.status === 'active' ? '#fc8181' : '#f5f0e8' }}>{surge.name}</span>
-                          <span className="badge" style={{ background: surge.status === 'active' ? 'rgba(192,57,43,0.2)' : surge.status === 'monitoring' ? 'rgba(241,196,15,0.15)' : 'rgba(46,64,96,0.3)', borderColor: surge.status === 'active' ? 'rgba(192,57,43,0.4)' : surge.status === 'monitoring' ? 'rgba(241,196,15,0.3)' : 'rgba(46,64,96,0.4)', color: surge.status === 'active' ? '#fc8181' : surge.status === 'monitoring' ? '#f1c40f' : '#8fa3b8' }}>
+                          <span style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700, fontSize: '1.1rem', color: surge.status === 'active' ? '#fc8181' : 'var(--text-primary)' }}>{surge.name}</span>
+                          <span className="badge" style={{ background: surge.status === 'active' ? 'rgba(192,57,43,0.2)' : surge.status === 'monitoring' ? 'rgba(241,196,15,0.15)' : 'var(--bg-raised)', borderColor: surge.status === 'active' ? 'rgba(192,57,43,0.4)' : surge.status === 'monitoring' ? 'rgba(241,196,15,0.3)' : 'var(--bg-raised)', color: surge.status === 'active' ? '#fc8181' : surge.status === 'monitoring' ? '#f1c40f' : 'var(--text-mist)' }}>
                             {surge.status.toUpperCase()}
                           </span>
                         </div>
-                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: '#8fa3b8' }}>
+                        <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: 'var(--text-mist)' }}>
                           {formatStatus(surge.event_type)} · Activated {formatDate(surge.activated_at)} · By {surge.activated_by}
                         </div>
                         {surge.islands?.length > 0 && (
@@ -343,10 +343,10 @@ export default function ClaimsPage() {
                         { label: 'Settled', value: surgeSettled.toString(), sub: 'completed' },
                         { label: 'Total Reported Loss', value: formatCurrency(surgeLoss, 'USD', true), sub: 'reported' },
                       ].map((s, i) => (
-                        <div key={i} style={{ background: '#111827', padding: '0.8rem 1rem' }}>
-                          <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#8fa3b8' }}>{s.label}</div>
+                        <div key={i} style={{ background: 'var(--bg-card)', padding: '0.8rem 1rem' }}>
+                          <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-mist)' }}>{s.label}</div>
                           <div style={{ fontFamily: 'Playfair Display, serif', fontWeight: 900, fontSize: '1.4rem', color: '#fc8181' }}>{s.value}</div>
-                          <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: '#4a6080' }}>{s.sub}</div>
+                          <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: 'var(--text-dim)' }}>{s.sub}</div>
                         </div>
                       ))}
                     </div>
@@ -355,10 +355,10 @@ export default function ClaimsPage() {
                     {surge.expected_claims > 0 && (
                       <div style={{ padding: '0.8rem 1.5rem', borderTop: '1px solid rgba(192,57,43,0.1)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.3rem' }}>
-                          <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#8fa3b8' }}>Intake Progress</span>
+                          <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-mist)' }}>Intake Progress</span>
                           <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: '#fc8181', fontWeight: 700 }}>{pct}%</span>
                         </div>
-                        <div style={{ height: 4, background: 'rgba(46,64,96,0.5)', borderRadius: 2 }}>
+                        <div style={{ height: 4, background: 'var(--bg-raised)', borderRadius: 2 }}>
                           <div style={{ height: '100%', width: `${Math.min(100, pct)}%`, background: '#c0392b', borderRadius: 2, transition: 'width 0.5s ease' }} />
                         </div>
                       </div>
@@ -370,12 +370,12 @@ export default function ClaimsPage() {
                         <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#c9933a', marginBottom: '0.8rem' }}>Adjuster Load · Real-Time</div>
                         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                           {adjusterLoad.map(a => (
-                            <div key={a.id} style={{ padding: '0.6rem 0.8rem', background: 'rgba(30,45,69,0.4)', border: `1px solid ${a.is_available ? 'rgba(39,174,96,0.25)' : 'rgba(192,57,43,0.25)'}`, minWidth: 120 }}>
-                              <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', color: '#f5f0e8', fontWeight: 600 }}>{a.name}</div>
-                              <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', color: '#8fa3b8' }}>{getIslandFlag(a.island)} {getIslandLabel(a.island)}</div>
+                            <div key={a.id} style={{ padding: '0.6rem 0.8rem', background: 'var(--bg-input)', border: `1px solid ${a.is_available ? 'rgba(39,174,96,0.25)' : 'rgba(192,57,43,0.25)'}`, minWidth: 120 }}>
+                              <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', color: 'var(--text-primary)', fontWeight: 600 }}>{a.name}</div>
+                              <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', color: 'var(--text-mist)' }}>{getIslandFlag(a.island)} {getIslandLabel(a.island)}</div>
                               <div style={{ marginTop: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                                 <span style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700, fontSize: '1.1rem', color: a.activeClaims > 5 ? '#fc8181' : a.activeClaims > 2 ? '#e8b04a' : '#4ade80' }}>{a.activeClaims}</span>
-                                <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', color: '#4a6080' }}>active</span>
+                                <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', color: 'var(--text-dim)' }}>active</span>
                               </div>
                               <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', color: a.is_available ? '#4ade80' : '#fc8181', marginTop: '0.2rem' }}>
                                 {a.is_available ? '● Available' : '● Unavailable'}
@@ -388,7 +388,7 @@ export default function ClaimsPage() {
 
                     {surge.notes && (
                       <div style={{ padding: '0.6rem 1.5rem 1rem', borderTop: '1px solid rgba(201,147,58,0.06)' }}>
-                        <div style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: '#4a6080', fontStyle: 'italic' }}>{surge.notes}</div>
+                        <div style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: 'var(--text-dim)', fontStyle: 'italic' }}>{surge.notes}</div>
                       </div>
                     )}
                   </div>
@@ -402,22 +402,22 @@ export default function ClaimsPage() {
       {/* ── CLAIM DETAIL MODAL ── */}
       {selected && (
         <div className="modal-backdrop" onClick={() => setSelected(null)}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 660, maxHeight: '90vh', overflowY: 'auto' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-card)', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 660, maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)', display: 'flex', justifyContent: 'space-between' }}>
               <div>
                 <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>Claim File</div>
-                <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>{selected.claim_number}</div>
-                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', color: '#8fa3b8', marginTop: '0.2rem' }}>
+                <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>{selected.claim_number}</div>
+                <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', color: 'var(--text-mist)', marginTop: '0.2rem' }}>
                   {selected.clients ? `${selected.clients.first_name} ${selected.clients.last_name}` : ''} · {selected.policies?.policy_number}
                 </div>
               </div>
-              <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: '#8fa3b8', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
+              <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: 'var(--text-mist)', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
             </div>
             <div style={{ padding: '1.5rem' }}>
               {selected.fraud_risk !== 'clear' && (
                 <div style={{ background: 'rgba(192,57,43,0.12)', border: '1px solid rgba(192,57,43,0.3)', padding: '0.8rem 1rem', marginBottom: '1.2rem' }}>
                   <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#fc8181' }}>⚠ Fraud Risk: {formatStatus(selected.fraud_risk)}</div>
-                  {selected.fraud_flags?.length > 0 && <div style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: '#8fa3b8', marginTop: '0.2rem' }}>{selected.fraud_flags.join(' · ')}</div>}
+                  {selected.fraud_flags?.length > 0 && <div style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: 'var(--text-mist)', marginTop: '0.2rem' }}>{selected.fraud_flags.join(' · ')}</div>}
                 </div>
               )}
               <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.2rem' }}>
@@ -436,20 +436,20 @@ export default function ClaimsPage() {
                   ['Policy', selected.policies?.policy_number || '—'],
                 ].map(([label, value], i) => (
                   <div key={i}>
-                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>{label}</div>
-                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.88rem', color: '#f5f0e8' }}>{value as any}</div>
+                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: '0.3rem' }}>{label}</div>
+                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.88rem', color: 'var(--text-primary)' }}>{value as any}</div>
                   </div>
                 ))}
               </div>
               {selected.description && (
                 <div style={{ marginBottom: '1rem' }}>
-                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>Description</div>
-                  <div style={{ fontFamily: 'Barlow', fontSize: '0.85rem', color: '#8fa3b8', lineHeight: 1.65 }}>{selected.description}</div>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: '0.3rem' }}>Description</div>
+                  <div style={{ fontFamily: 'Barlow', fontSize: '0.85rem', color: 'var(--text-mist)', lineHeight: 1.65 }}>{selected.description}</div>
                 </div>
               )}
               {/* Financial amounts editing */}
               {['assessment_complete','approved','partial_approved'].includes(selected.status) && (
-                <div style={{ background: 'rgba(46,64,96,0.2)', border: '1px solid rgba(201,147,58,0.12)', padding: '1rem', marginBottom: '1rem' }}>
+                <div style={{ background: 'rgba(var(--raised-rgb),0.2)', border: '1px solid rgba(201,147,58,0.12)', padding: '1rem', marginBottom: '1rem' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
                     <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.68rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#c9933a' }}>Financial Assessment</div>
                     <button onClick={() => { setEditAmounts(!editAmounts); setAmountForm({ assessed_loss: String(selected.assessed_loss || ''), approved_amount: String(selected.approved_amount || ''), settlement_amount: String(selected.settlement_amount || '') }) }} className="btn-ghost" style={{ fontSize: '0.65rem', padding: '0.3rem 0.6rem' }}>{editAmounts ? 'Cancel' : 'Edit Amounts'}</button>
@@ -465,8 +465,8 @@ export default function ClaimsPage() {
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem' }}>
                       {[['Assessed', selected.assessed_loss], ['Approved', selected.approved_amount], ['Settlement', selected.settlement_amount]].map(([l, v]: any) => (
                         <div key={l} style={{ background: 'rgba(10,15,30,0.4)', padding: '0.5rem 0.7rem' }}>
-                          <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#4a6080' }}>{l}</div>
-                          <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, color: v ? '#4ade80' : '#4a6080', fontSize: '0.85rem' }}>{v ? formatCurrency(v, selected.currency, true) : 'Pending'}</div>
+                          <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-dim)' }}>{l}</div>
+                          <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, color: v ? '#4ade80' : 'var(--text-dim)', fontSize: '0.85rem' }}>{v ? formatCurrency(v, selected.currency, true) : 'Pending'}</div>
                         </div>
                       ))}
                     </div>
@@ -475,7 +475,7 @@ export default function ClaimsPage() {
               )}
 
               {['fnol_received','under_review'].includes(selected.status) && (
-                <div style={{ background: 'rgba(46,64,96,0.3)', border: '1px solid rgba(201,147,58,0.15)', padding: '1rem', marginBottom: '1rem' }}>
+                <div style={{ background: 'var(--bg-raised)', border: '1px solid rgba(201,147,58,0.15)', padding: '1rem', marginBottom: '1rem' }}>
                   <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.68rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#c9933a', marginBottom: '0.6rem' }}>Assign Adjuster</div>
                   <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
                     {adjusters.filter(a => a.is_available).map(a => (
@@ -486,11 +486,11 @@ export default function ClaimsPage() {
                   </div>
                 </div>
               )}
-              <div style={{ background: 'rgba(46,64,96,0.2)', border: '1px solid rgba(201,147,58,0.1)', padding: '1rem' }}>
+              <div style={{ background: 'rgba(var(--raised-rgb),0.2)', border: '1px solid rgba(201,147,58,0.1)', padding: '1rem' }}>
                 <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.68rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#c9933a', marginBottom: '0.6rem' }}>Fraud Intelligence Rating</div>
                 <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                   {['clear','watch','suspicious','flagged','confirmed_fraud'].map(fr => (
-                    <button key={fr} onClick={() => updateFraud(selected.id, fr)} style={{ padding: '0.3rem 0.7rem', fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', background: selected.fraud_risk === fr ? 'rgba(201,147,58,0.2)' : 'transparent', border: '1px solid rgba(201,147,58,0.2)', color: selected.fraud_risk === fr ? '#e8b04a' : '#8fa3b8', cursor: 'pointer' }}>{fr}</button>
+                    <button key={fr} onClick={() => updateFraud(selected.id, fr)} style={{ padding: '0.3rem 0.7rem', fontFamily: 'Barlow Condensed', fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', background: selected.fraud_risk === fr ? 'rgba(201,147,58,0.2)' : 'transparent', border: '1px solid rgba(201,147,58,0.2)', color: selected.fraud_risk === fr ? '#e8b04a' : 'var(--text-mist)', cursor: 'pointer' }}>{fr}</button>
                   ))}
                 </div>
               </div>
@@ -514,10 +514,10 @@ export default function ClaimsPage() {
       {/* ── FNOL FORM ── */}
       {showForm && (
         <div className="modal-backdrop" onClick={() => setShowForm(false)}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 620, maxHeight: '90vh', overflowY: 'auto' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-card)', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 620, maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
               <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>First Notice of Loss</div>
-              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>File New Claim</div>
+              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>File New Claim</div>
             </div>
             <form onSubmit={handleSave} className="two-col-grid" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div style={{ gridColumn: '1 / -1' }}>
@@ -572,11 +572,11 @@ export default function ClaimsPage() {
       {/* ── CAT SURGE ACTIVATION FORM ── */}
       {showSurgeForm && (
         <div className="modal-backdrop" onClick={() => setShowSurgeForm(false)}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(192,57,43,0.4)', width: '100%', maxWidth: 560, maxHeight: '90vh', overflowY: 'auto' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-card)', border: '1px solid rgba(192,57,43,0.4)', width: '100%', maxWidth: 560, maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(192,57,43,0.2)', background: 'rgba(192,57,43,0.06)' }}>
               <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.68rem', letterSpacing: '0.22em', textTransform: 'uppercase', color: '#fc8181', marginBottom: '0.4rem' }}>⚡ Emergency Protocol</div>
-              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>Activate CAT Surge Mode</div>
-              <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: '#8fa3b8', marginTop: '0.2rem' }}>
+              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>Activate CAT Surge Mode</div>
+              <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: 'var(--text-mist)', marginTop: '0.2rem' }}>
                 This will activate all-hands surge protocols and alert the claims team.
               </div>
             </div>
@@ -599,7 +599,7 @@ export default function ClaimsPage() {
                 <label className="crm-label">Affected Islands</label>
                 <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.4rem' }}>
                   {Object.entries(ISLAND_LABELS).map(([k, v]) => (
-                    <button type="button" key={k} onClick={() => setSurgeForm(f => ({ ...f, islands: f.islands.includes(k) ? f.islands.filter(i => i !== k) : [...f.islands, k] }))} style={{ padding: '0.35rem 0.7rem', fontFamily: 'Barlow Condensed', fontSize: '0.7rem', letterSpacing: '0.1em', background: surgeForm.islands.includes(k) ? 'rgba(192,57,43,0.2)' : 'transparent', border: `1px solid ${surgeForm.islands.includes(k) ? 'rgba(192,57,43,0.5)' : 'rgba(201,147,58,0.2)'}`, color: surgeForm.islands.includes(k) ? '#fc8181' : '#8fa3b8', cursor: 'pointer' }}>
+                    <button type="button" key={k} onClick={() => setSurgeForm(f => ({ ...f, islands: f.islands.includes(k) ? f.islands.filter(i => i !== k) : [...f.islands, k] }))} style={{ padding: '0.35rem 0.7rem', fontFamily: 'Barlow Condensed', fontSize: '0.7rem', letterSpacing: '0.1em', background: surgeForm.islands.includes(k) ? 'rgba(192,57,43,0.2)' : 'transparent', border: `1px solid ${surgeForm.islands.includes(k) ? 'rgba(192,57,43,0.5)' : 'rgba(201,147,58,0.2)'}`, color: surgeForm.islands.includes(k) ? '#fc8181' : 'var(--text-mist)', cursor: 'pointer' }}>
                       {getIslandFlag(k as Island)} {v}
                     </button>
                   ))}

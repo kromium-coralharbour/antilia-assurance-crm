@@ -93,13 +93,13 @@ export default function AdjustersPage() {
   const getTotalClaims = (id: string) => claims.filter(c => c.adjuster_id === id).length
 
   return (
-    <div className="page-enter" style={{ padding: '2rem', minHeight: '100vh', background: '#0a0f1e' }}>
+    <div className="page-enter" style={{ padding: '2rem', minHeight: '100vh', background: 'var(--bg-page)' }}>
       {/* Header */}
       <div className="page-header" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
         <div>
           <div className="section-eyebrow" style={{ marginBottom: '0.4rem' }}>Claims Operations</div>
-          <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.8rem', fontWeight: 700, color: '#fff', margin: 0 }}>Adjusters</h1>
-          <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', letterSpacing: '0.12em', color: '#8fa3b8', marginTop: '0.3rem' }}>
+          <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.8rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>Adjusters</h1>
+          <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.75rem', letterSpacing: '0.12em', color: 'var(--text-mist)', marginTop: '0.3rem' }}>
             Field Adjuster Roster · Availability · Workload Management
           </div>
         </div>
@@ -114,8 +114,8 @@ export default function AdjustersPage() {
           { label: 'Unavailable', value: adjusters.filter(a => !a.is_available).length.toString(), color: '#fc8181' },
           { label: 'Active Assignments', value: claims.filter(c => !['settled','rejected'].includes(c.status)).length.toString(), color: '#e8b04a' },
         ].map((k, i) => (
-          <div key={i} style={{ background: '#111827', padding: '1rem 1.2rem' }}>
-            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#8fa3b8' }}>{k.label}</div>
+          <div key={i} style={{ background: 'var(--bg-card)', padding: '1rem 1.2rem' }}>
+            <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-mist)' }}>{k.label}</div>
             <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.6rem', fontWeight: 900, color: k.color || '#c9933a', marginTop: '0.2rem' }}>{k.value}</div>
           </div>
         ))}
@@ -129,9 +129,9 @@ export default function AdjustersPage() {
       {/* Adjuster Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
         {loading ? (
-          <div style={{ color: '#8fa3b8', fontFamily: 'Barlow Condensed' }}>Loading…</div>
+          <div style={{ color: 'var(--text-mist)', fontFamily: 'Barlow Condensed' }}>Loading…</div>
         ) : filtered.length === 0 ? (
-          <div style={{ gridColumn: '1 / -1', padding: '3rem', textAlign: 'center', color: '#4a6080', fontFamily: 'Barlow Condensed', letterSpacing: '0.1em' }}>
+          <div style={{ gridColumn: '1 / -1', padding: '3rem', textAlign: 'center', color: 'var(--text-dim)', fontFamily: 'Barlow Condensed', letterSpacing: '0.1em' }}>
             No adjusters found. Add your first adjuster to start assigning claims.
           </div>
         ) : filtered.map(a => {
@@ -154,28 +154,28 @@ export default function AdjustersPage() {
                   {a.name?.split(' ').map((n: string) => n[0]).join('').slice(0,2).toUpperCase()}
                 </div>
                 <div>
-                  <div style={{ fontFamily: 'Barlow', fontSize: '0.92rem', color: '#f5f0e8', fontWeight: 500 }}>{a.name}</div>
+                  <div style={{ fontFamily: 'Barlow', fontSize: '0.92rem', color: 'var(--text-primary)', fontWeight: 500 }}>{a.name}</div>
                   <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', color: '#c9933a', marginTop: '1px' }}>{SPECIALIZATION_LABELS[a.specialization] || a.specialization}</div>
-                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.68rem', color: '#8fa3b8', marginTop: '1px' }}>{getIslandFlag(a.island)} {getIslandLabel(a.island)}</div>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.68rem', color: 'var(--text-mist)', marginTop: '1px' }}>{getIslandFlag(a.island)} {getIslandLabel(a.island)}</div>
                 </div>
               </div>
 
               {/* Workload bar */}
               <div style={{ marginBottom: '0.8rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.3rem' }}>
-                  <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#4a6080' }}>Current Workload</span>
+                  <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-dim)' }}>Current Workload</span>
                   <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.7rem', color: active > 4 ? '#fc8181' : active > 2 ? '#e8b04a' : '#4ade80', fontWeight: 600 }}>{active} active · {total} total</span>
                 </div>
-                <div style={{ height: 4, background: 'rgba(46,64,96,0.5)', borderRadius: 2 }}>
+                <div style={{ height: 4, background: 'var(--bg-raised)', borderRadius: 2 }}>
                   <div style={{ height: '100%', width: `${load_pct}%`, background: load_pct > 80 ? '#c0392b' : load_pct > 50 ? '#e67e22' : '#27ae60', borderRadius: 2, transition: 'width 0.4s' }} />
                 </div>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.68rem', color: '#4a6080' }}>
+                <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.68rem', color: 'var(--text-dim)' }}>
                   {a.daily_rate ? `${a.currency || 'USD'} ${a.daily_rate}/day` : 'Rate not set'}
                 </span>
-                <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: '#4a6080' }}>#{a.license_number || 'No license'}</span>
+                <span style={{ fontFamily: 'Barlow Condensed', fontSize: '0.65rem', color: 'var(--text-dim)' }}>#{a.license_number || 'No license'}</span>
               </div>
             </div>
           )
@@ -185,23 +185,23 @@ export default function AdjustersPage() {
       {/* Adjuster Detail Modal */}
       {selected && (
         <div className="modal-backdrop" onClick={() => setSelected(null)}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 640, maxHeight: '92vh', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-card)', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 640, maxHeight: '92vh', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
             <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
               <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
                 <div style={{ width: 44, height: 44, background: 'rgba(201,147,58,0.12)', border: '1px solid rgba(201,147,58,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Barlow Condensed', fontSize: '1rem', color: '#c9933a', flexShrink: 0 }}>
                   {selected.name?.split(' ').map((n: string) => n[0]).join('').slice(0,2).toUpperCase()}
                 </div>
                 <div>
-                  <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>{selected.name}</div>
-                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: '#8fa3b8' }}>{SPECIALIZATION_LABELS[selected.specialization]} · {getIslandFlag(selected.island)} {getIslandLabel(selected.island)}</div>
+                  <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>{selected.name}</div>
+                  <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.72rem', color: 'var(--text-mist)' }}>{SPECIALIZATION_LABELS[selected.specialization]} · {getIslandFlag(selected.island)} {getIslandLabel(selected.island)}</div>
                 </div>
               </div>
-              <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: '#8fa3b8', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
+              <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: 'var(--text-mist)', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
             </div>
             {/* Tabs */}
             <div style={{ display: 'flex', borderBottom: '1px solid rgba(201,147,58,0.1)', flexShrink: 0 }}>
               {[['profile','Profile'], ['claims', `Assigned Claims (${adjClaims.length})`]].map(([id, label]) => (
-                <button key={id} onClick={() => setAdjTab(id as any)} style={{ padding: '0.8rem 1.2rem', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Barlow Condensed', fontSize: '0.72rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: adjTab === id ? '#c9933a' : '#4a6080', borderBottom: adjTab === id ? '2px solid #c9933a' : '2px solid transparent', marginBottom: '-1px' }}>{label}</button>
+                <button key={id} onClick={() => setAdjTab(id as any)} style={{ padding: '0.8rem 1.2rem', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Barlow Condensed', fontSize: '0.72rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: adjTab === id ? '#c9933a' : 'var(--text-dim)', borderBottom: adjTab === id ? '2px solid #c9933a' : '2px solid transparent', marginBottom: '-1px' }}>{label}</button>
               ))}
             </div>
             {adjTab === 'profile' && (
@@ -211,10 +211,10 @@ export default function AdjustersPage() {
                   {[
                     { label: 'Active Claims', value: getActiveClaims(selected.id).toString(), color: getActiveClaims(selected.id) > 4 ? '#fc8181' : '#e8b04a' },
                     { label: 'Total Handled', value: getTotalClaims(selected.id).toString(), color: '#c9933a' },
-                    { label: 'Daily Rate', value: selected.daily_rate ? `${selected.currency} ${selected.daily_rate}` : '—', color: '#f5f0e8' },
+                    { label: 'Daily Rate', value: selected.daily_rate ? `${selected.currency} ${selected.daily_rate}` : '—', color: 'var(--text-primary)' },
                   ].map((k, i) => (
-                    <div key={i} style={{ background: '#0d1321', padding: '1rem', textAlign: 'center' }}>
-                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080' }}>{k.label}</div>
+                    <div key={i} style={{ background: 'var(--bg-sidebar)', padding: '1rem', textAlign: 'center' }}>
+                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.6rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)' }}>{k.label}</div>
                       <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.3rem', fontWeight: 900, color: k.color, marginTop: '0.3rem' }}>{k.value}</div>
                     </div>
                   ))}
@@ -229,15 +229,15 @@ export default function AdjustersPage() {
                     ['Availability', selected.is_available ? '✅ Available' : '🔴 Unavailable'],
                   ].map(([l, v], i) => (
                     <div key={i}>
-                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>{l}</div>
-                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.85rem', color: '#f5f0e8' }}>{v}</div>
+                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: '0.3rem' }}>{l}</div>
+                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.85rem', color: 'var(--text-primary)' }}>{v}</div>
                     </div>
                   ))}
                 </div>
                 {selected.notes && (
                   <div style={{ marginBottom: '1rem' }}>
-                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#4a6080', marginBottom: '0.3rem' }}>Notes</div>
-                    <div style={{ fontFamily: 'Barlow', fontSize: '0.85rem', color: '#8fa3b8', lineHeight: 1.6 }}>{selected.notes}</div>
+                    <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: '0.3rem' }}>Notes</div>
+                    <div style={{ fontFamily: 'Barlow', fontSize: '0.85rem', color: 'var(--text-mist)', lineHeight: 1.6 }}>{selected.notes}</div>
                   </div>
                 )}
                 <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap' }}>
@@ -250,14 +250,14 @@ export default function AdjustersPage() {
             )}
             {adjTab === 'claims' && (
               <div style={{ flex: 1 }}>
-                {adjLoading ? <div style={{ padding: '2rem', textAlign: 'center', color: '#8fa3b8' }}>Loading…</div> :
-                adjClaims.length === 0 ? <div style={{ padding: '2rem', textAlign: 'center', color: '#4a6080', fontFamily: 'Barlow Condensed', letterSpacing: '0.1em' }}>No claims assigned to this adjuster</div> :
+                {adjLoading ? <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-mist)' }}>Loading…</div> :
+                adjClaims.length === 0 ? <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-dim)', fontFamily: 'Barlow Condensed', letterSpacing: '0.1em' }}>No claims assigned to this adjuster</div> :
                 adjClaims.map(c => (
                   <div key={c.id} style={{ padding: '1rem 1.5rem', borderBottom: '1px solid rgba(201,147,58,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                     <div>
                       <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.82rem', color: '#c9933a', fontWeight: 600 }}>{c.claim_number}</div>
-                      <div style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: '#f5f0e8', marginTop: '0.15rem' }}>{c.clients ? `${c.clients.first_name} ${c.clients.last_name}${c.clients.company_name ? ` — ${c.clients.company_name}` : ''}` : '—'}</div>
-                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.68rem', color: '#8fa3b8', marginTop: '0.15rem' }}>{getIslandFlag(c.island)} {getIslandLabel(c.island)} · {formatDate(c.incident_date)} · {c.coverage_type}</div>
+                      <div style={{ fontFamily: 'Barlow', fontSize: '0.78rem', color: 'var(--text-primary)', marginTop: '0.15rem' }}>{c.clients ? `${c.clients.first_name} ${c.clients.last_name}${c.clients.company_name ? ` — ${c.clients.company_name}` : ''}` : '—'}</div>
+                      <div style={{ fontFamily: 'Barlow Condensed', fontSize: '0.68rem', color: 'var(--text-mist)', marginTop: '0.15rem' }}>{getIslandFlag(c.island)} {getIslandLabel(c.island)} · {formatDate(c.incident_date)} · {c.coverage_type}</div>
                     </div>
                     <div style={{ textAlign: 'right' }}>
                       <span className={`badge ${CLAIM_STATUS_STYLES[c.status] || ''}`}>{formatStatus(c.status)}</span>
@@ -274,10 +274,10 @@ export default function AdjustersPage() {
       {/* Edit Adjuster Form */}
       {showEditForm && editForm && (
         <div className="modal-backdrop" onClick={() => setShowEditForm(false)}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 580, maxHeight: '90vh', overflowY: 'auto' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-card)', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 580, maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
               <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>Edit Adjuster</div>
-              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>{editForm.name}</div>
+              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>{editForm.name}</div>
             </div>
             <form onSubmit={handleEdit} className="two-col-grid" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div><label className="crm-label">Full Name *</label><input className="crm-input" value={editForm.name} onChange={e => setEditForm((f: any) => ({ ...f, name: e.target.value }))} required /></div>
@@ -313,10 +313,10 @@ export default function AdjustersPage() {
       {/* Add Adjuster Form */}
       {showForm && (
         <div className="modal-backdrop" onClick={() => setShowForm(false)}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#111827', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 580, maxHeight: '90vh', overflowY: 'auto' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-card)', border: '1px solid rgba(201,147,58,0.2)', width: '100%', maxWidth: 580, maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
               <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>Claims Operations</div>
-              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>Add New Adjuster</div>
+              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>Add New Adjuster</div>
             </div>
             <form onSubmit={handleSave} className="two-col-grid" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div style={{ gridColumn: '1 / -1' }}><label className="crm-label">Full Name *</label><input className="crm-input" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required /></div>

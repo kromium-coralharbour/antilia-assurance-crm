@@ -8,7 +8,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     return (
       <div style={{
         minHeight: '100vh',
-        background: '#0a0f1e',
+        background: 'var(--bg-page)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
