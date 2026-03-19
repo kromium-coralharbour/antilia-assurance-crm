@@ -339,6 +339,7 @@ export default function PoliciesPage() {
             })}
           </tbody>
         </table></div>
+      <Pagination total={totalFiltered} page={page} perPage={PER_PAGE} onChange={p => { setPage(p); window.scrollTo({ top: 0, behavior: 'smooth' }) }} />
       </div>
 
       {/* ── POLICY DETAIL PANEL ── */}

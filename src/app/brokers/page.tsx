@@ -175,6 +175,8 @@ export default function BrokersPage() {
         ))}
       </div>
 
+      <Pagination total={totalFiltered} page={page} perPage={PER_PAGE} onChange={p => { setPage(p); window.scrollTo({ top: 0, behavior: 'smooth' }) }} />
+
       {/* Broker Detail Modal */}
       {selected && (
         <div className="modal-backdrop" onClick={() => setSelected(null)}>

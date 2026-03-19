@@ -175,8 +175,8 @@ export default function RiskIntelligencePage() {
 
       {/* ── HEATMAP TAB ── */}
       {activeTab === 'heatmap' && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '1.5rem' }}>
-          {/* Left: Full heatmap */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          {/* Top: Full-width heatmap */}
           <div className="crm-card" style={{ padding: 0, overflow: 'hidden' }}>
             <div style={{ padding: '1.2rem 1.5rem', borderBottom: '1px solid rgba(201,147,58,0.1)' }}>
               <div className="section-eyebrow" style={{ marginBottom: '0.3rem' }}>Portfolio Exposure Heatmap</div>
@@ -222,11 +222,11 @@ export default function RiskIntelligencePage() {
             </div>
           </div>
 
-          {/* Right: Radar + Exposure by Cat */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          {/* Bottom row: Radar + Exposure by Cat */}
+          <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
             <div className="crm-card">
               <div className="section-eyebrow" style={{ marginBottom: '0.8rem' }}>Multi-Peril Radar · By Island</div>
-              <ResponsiveContainer width="100%" height={200}>
+              <ResponsiveContainer width="100%" height={280}>
                 <RadarChart data={RADAR_DATA}>
                   <PolarGrid stroke="rgba(201,147,58,0.15)" />
                   <PolarAngleAxis dataKey="subject" tick={{ fill: 'var(--text-mist)', fontSize: 10, fontFamily: 'Barlow Condensed' }} />
@@ -241,7 +241,7 @@ export default function RiskIntelligencePage() {
 
             <div className="crm-card">
               <div className="section-eyebrow" style={{ marginBottom: '0.8rem' }}>Cat Exposure · Bahamas Portfolio</div>
-              <ResponsiveContainer width="100%" height={150}>
+              <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={EXPOSURE_BY_CAT} margin={{ left: 0 }}>
                   <XAxis dataKey="name" tick={{ fill: 'var(--text-mist)', fontSize: 10, fontFamily: 'Barlow Condensed' }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fill: 'var(--text-mist)', fontSize: 9 }} axisLine={false} tickLine={false} tickFormatter={v => `$${(v / 1000000).toFixed(0)}M`} />

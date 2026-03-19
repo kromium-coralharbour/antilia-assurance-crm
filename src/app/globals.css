@@ -91,29 +91,22 @@
   color: var(--text-primary);
 }
 
-/* ── SIDEBAR — always dark, even in light mode ── */
+/* ── SIDEBAR — light mode: warm ivory ── */
 [data-theme="light"] .crm-sidebar {
-  /* Re-declare dark tokens so all sidebar children use them */
-  --bg-page:      #0d1321;
-  --bg-card:      #111827;
-  --bg-raised:    #1e2d45;
-  --bg-deep:      #0a0f1e;
-  --text-primary: #f5f0e8;
-  --text-mist:    #8fa3b8;
-  --text-dim:     #4a6080;
-  --text-amber:   #e8b04a;
-  --border-gold:  rgba(201,147,58,0.15);
-  --sidebar-bg:   #111827;
-  --sidebar-text: #f5f0e8;
-  --sidebar-mist: #8fa3b8;
-  --sidebar-dim:  #4a6080;
-  background: #111827 !important;
+  --sidebar-bg:    #fffdf8;
+  --sidebar-text:  #1c1408;
+  --sidebar-mist:  #6b5d4a;
+  --sidebar-dim:   #9a8e7c;
+  --bg-raised:     #f2ead8;
+  --bg-deep:       #e8dcc8;
+  background: #fffdf8 !important;
+  border-right: 1px solid rgba(139,94,26,0.15);
 }
 
-/* ── MOBILE TOP BAR — always dark, matches sidebar ── */
+/* ── MOBILE TOP BAR — light mode: warm ivory ── */
 [data-theme="light"] .mobile-top-bar {
-  background: #111827 !important;
-  border-bottom-color: rgba(201,147,58,0.2);
+  background: #fffdf8 !important;
+  border-bottom-color: rgba(139,94,26,0.2);
 }
 
 /* ── CARDS ── */
@@ -588,6 +581,13 @@ html, body {
 /* Sidebar stays dark in light mode */
 
 
+/* ─── LAYOUT WRAPPER (flex container around sidebar+main) ─────────────── */
+[data-theme="light"] > body > div,
+[data-theme="light"] #__next > div,
+[data-theme="light"] div[style*="minHeight: '100vh'"] {
+  background: var(--bg-page) !important;
+}
+
 /* ─── MAIN CONTENT AREA ───────────────────────────────────────────────── */
 .crm-main {
   flex: 1;
@@ -746,8 +746,8 @@ html, body {
   font-size: 1.1rem;
 }
 [data-theme="light"] .mobile-menu-btn {
-  background: #ffffff;
-  border-color: rgba(154,104,24,0.3);
+  background: #fffdf8;
+  border-color: rgba(139,94,26,0.25);
   color: var(--gold);
 }
 
@@ -849,7 +849,7 @@ html, body {
 .mobile-hamburger span {
   display: block;
   height: 1.5px;
-  background: #c9933a;
+  background: var(--gold);
   border-radius: 1px;
   width: 100%;
 }

@@ -4,7 +4,7 @@ import AuthGuard from '@/components/AuthGuard'
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <AuthGuard>
-      <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0f1e' }}>
+      <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg-page)' }}>
         <Sidebar />
         <main className="crm-main">
           {children}

@@ -322,7 +322,8 @@ export default function ClaimsPage() {
         </>
       )}
 
-      {/* ── CAT SURGE MODE TAB ── */}
+      {/* ── CAT SURGE MODE TAB ── */
+              <Pagination total={totalFiltered} page={page} perPage={PER_PAGE} onChange={p => { setPage(p); window.scrollTo({ top: 0, behavior: 'smooth' }) }} />}
       {activeTab === 'surge' && (
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.8rem' }}>

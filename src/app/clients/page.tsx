@@ -239,6 +239,7 @@ export default function ClientsPage() {
             })}
           </tbody>
         </table></div>
+      <Pagination total={totalFiltered} page={page} perPage={PER_PAGE} onChange={p => { setPage(p); window.scrollTo({ top: 0, behavior: 'smooth' }) }} />
       </div>
 
       {/* Client Detail */}
