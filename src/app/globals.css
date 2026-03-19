@@ -91,18 +91,28 @@
   color: var(--text-primary);
 }
 
-/* ── SIDEBAR — changes in light mode ── */
+/* ── SIDEBAR — always dark, even in light mode ── */
 [data-theme="light"] .crm-sidebar {
-  background: var(--sidebar-bg) !important;
-}
-/* Sidebar keeps dark-appropriate child styling */
-[data-theme="light"] .crm-sidebar nav a {
-  /* nav links use sidebar vars - already handled via CSS vars */
+  /* Re-declare dark tokens so all sidebar children use them */
+  --bg-page:      #0d1321;
+  --bg-card:      #111827;
+  --bg-raised:    #1e2d45;
+  --bg-deep:      #0a0f1e;
+  --text-primary: #f5f0e8;
+  --text-mist:    #8fa3b8;
+  --text-dim:     #4a6080;
+  --text-amber:   #e8b04a;
+  --border-gold:  rgba(201,147,58,0.15);
+  --sidebar-bg:   #111827;
+  --sidebar-text: #f5f0e8;
+  --sidebar-mist: #8fa3b8;
+  --sidebar-dim:  #4a6080;
+  background: #111827 !important;
 }
 
-/* ── MOBILE TOP BAR — follows sidebar in light mode ── */
+/* ── MOBILE TOP BAR — always dark, matches sidebar ── */
 [data-theme="light"] .mobile-top-bar {
-  background: var(--sidebar-bg) !important;
+  background: #111827 !important;
   border-bottom-color: rgba(201,147,58,0.2);
 }
 

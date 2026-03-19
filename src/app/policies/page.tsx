@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Toast, useToast } from '@/components/Toast'
+import { Pagination } from '@/components/Pagination'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { formatCurrency, formatDate, formatStatus, getIslandLabel, getIslandFlag, POLICY_STATUS_STYLES, getRiskColor, daysUntil } from '@/lib/utils'
 import { Policy, CoverageType, Island, COVERAGE_LABELS, ISLAND_LABELS } from '@/types'
@@ -73,6 +74,8 @@ export default function PoliciesPage() {
   const [saving, setSaving] = useState(false)
   const { toast, show: showToast, hide: hideToast } = useToast()
   const [confirmDelete, setConfirmDelete] = useState<any>(null)
+  const [page, setPage] = useState(1)
+  const PER_PAGE = 15
   const [selected, setSelected] = useState<any>(null)
   const [selectedTab, setSelectedTab] = useState<'details' | 'endorsements'>('details')
   const [endorsements, setEndorsements] = useState<any[]>([])
@@ -130,6 +133,9 @@ export default function PoliciesPage() {
     if (av > bv) return sortDir === 'asc' ? 1 : -1
     return 0
   })
+
+  const totalFiltered = filtered.length
+  const paged = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE)
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault()
@@ -263,16 +269,16 @@ export default function PoliciesPage() {
 
       {/* Filters */}
       <div className="filter-bar" style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap', marginBottom: '1.2rem' }}>
-        <input className="crm-input" style={{ maxWidth: 260 }} placeholder="Search policy #, client, address…" value={search} onChange={e => setSearch(e.target.value)} />
-        <select className="crm-select" style={{ maxWidth: 160 }} value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
+        <input className="crm-input" style={{ maxWidth: 260 }} placeholder="Search policy #, client, address…" value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} />
+        <select className="crm-select" style={{ maxWidth: 160 }} value={filterStatus} onChange={e => { setFilterStatus(e.target.value); setPage(1) }}>
           <option value="">All Statuses</option>
           {['active','pending','renewal_due','lapsed','cancelled','quoted'].map(s => <option key={s} value={s}>{formatStatus(s)}</option>)}
         </select>
-        <select className="crm-select" style={{ maxWidth: 160 }} value={filterIsland} onChange={e => setFilterIsland(e.target.value)}>
+        <select className="crm-select" style={{ maxWidth: 160 }} value={filterIsland} onChange={e => { setFilterIsland(e.target.value); setPage(1) }}>
           <option value="">All Islands</option>
           {Object.entries(ISLAND_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
         </select>
-        <select className="crm-select" style={{ maxWidth: 200 }} value={filterCoverage} onChange={e => setFilterCoverage(e.target.value)}>
+        <select className="crm-select" style={{ maxWidth: 200 }} value={filterCoverage} onChange={e => { setFilterCoverage(e.target.value); setPage(1) }}>
           <option value="">All Coverage Types</option>
           {Object.entries(COVERAGE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
         </select>
@@ -293,7 +299,7 @@ export default function PoliciesPage() {
               <tr><td colSpan={10} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-mist)' }}>Loading policies…</td></tr>
             ) : filtered.length === 0 ? (
               <tr><td colSpan={10} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-mist)' }}>No policies found</td></tr>
-            ) : filtered.map(p => {
+            ) : paged.map(p => {
               const days = p.renewal_date ? daysUntil(p.renewal_date) : 999
               const renewalUrgent = days <= 30
               const renewalSoon = days <= 60

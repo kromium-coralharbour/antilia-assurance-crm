@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Toast, useToast } from '@/components/Toast'
+import { Pagination } from '@/components/Pagination'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { formatCurrency, formatDate, formatStatus, getIslandLabel, getIslandFlag, CLAIM_STATUS_STYLES } from '@/lib/utils'
 import { Island, ISLAND_LABELS } from '@/types'
@@ -32,6 +33,8 @@ export default function AdjustersPage() {
   const [saving, setSaving] = useState(false)
   const { toast, show: showToast, hide: hideToast } = useToast()
   const [confirmDelete, setConfirmDelete] = useState<any>(null)
+  const [page, setPage] = useState(1)
+  const PER_PAGE = 12
   const [selected, setSelected] = useState<any>(null)
   const [adjTab, setAdjTab] = useState<'profile'|'claims'>('profile')
   const [adjClaims, setAdjClaims] = useState<any[]>([])
@@ -108,6 +111,9 @@ export default function AdjustersPage() {
     setConfirmDelete(null)
   }
 
+  const totalFiltered = filtered.length
+  const paged = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE)
+
   return (
     <div className="page-enter" style={{ padding: '2rem', minHeight: '100vh', background: 'var(--bg-page)' }}>
       {/* Header */}
@@ -139,7 +145,7 @@ export default function AdjustersPage() {
 
       {/* Search */}
       <div style={{ marginBottom: '1.2rem' }}>
-        <input className="crm-input" style={{ maxWidth: 300 }} placeholder="Search adjuster name, email…" value={search} onChange={e => setSearch(e.target.value)} />
+        <input className="crm-input" style={{ maxWidth: 300 }} placeholder="Search adjuster name, email…" value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} />
       </div>
 
       {/* Adjuster Grid */}
@@ -150,7 +156,7 @@ export default function AdjustersPage() {
           <div style={{ gridColumn: '1 / -1', padding: '3rem', textAlign: 'center', color: 'var(--text-dim)', fontFamily: 'Barlow Condensed', letterSpacing: '0.1em' }}>
             No adjusters found. Add your first adjuster to start assigning claims.
           </div>
-        ) : filtered.map(a => {
+        ) : paged.map(a => {
           const active = getActiveClaims(a.id)
           const total = getTotalClaims(a.id)
           const load_pct = Math.min(100, active * 20) // 5 active = 100%
@@ -198,6 +204,7 @@ export default function AdjustersPage() {
           )
         })}
       </div>
+      <Pagination total={totalFiltered} page={page} perPage={PER_PAGE} onChange={p => { setPage(p); window.scrollTo({ top: 0, behavior: 'smooth' }) }} />
 
       {/* Adjuster Detail Modal */}
       {selected && (

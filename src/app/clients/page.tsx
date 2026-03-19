@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Toast, useToast } from '@/components/Toast'
+import { Pagination } from '@/components/Pagination'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { formatCurrency, formatDate, formatStatus, getIslandLabel, getIslandFlag, getRiskColor, getRiskLabel, RISK_BG, POLICY_STATUS_STYLES, CLAIM_STATUS_STYLES, daysUntil } from '@/lib/utils'
 import { Island, ClientSegment, Currency, ISLAND_LABELS } from '@/types'
@@ -34,6 +35,8 @@ export default function ClientsPage() {
   const [saving, setSaving] = useState(false)
   const { toast, show: showToast, hide: hideToast } = useToast()
   const [confirmDelete, setConfirmDelete] = useState<any>(null)
+  const [page, setPage] = useState(1)
+  const PER_PAGE = 15
   const [showEditForm, setShowEditForm] = useState(false)
   const [editForm, setEditForm] = useState<any>(null)
   const [selected, setSelected] = useState<any>(null)
@@ -57,6 +60,9 @@ export default function ClientsPage() {
     const matchSearch = !search || `${c.first_name} ${c.last_name} ${c.company_name || ''} ${c.email}`.toLowerCase().includes(search.toLowerCase())
     return matchSearch && (!filterSegment || c.segment === filterSegment) && (!filterIsland || c.island === filterIsland)
   })
+
+  const totalFiltered = filtered.length
+  const paged = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE)
 
   async function openClient(c: any) {
     setSelected(c)
@@ -145,12 +151,12 @@ export default function ClientsPage() {
 
       {/* Filters */}
       <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap', marginBottom: '1.2rem' }}>
-        <input className="crm-input" style={{ maxWidth: 280 }} placeholder="Search name, company, email…" value={search} onChange={e => setSearch(e.target.value)} />
-        <select className="crm-select" style={{ maxWidth: 180 }} value={filterSegment} onChange={e => setFilterSegment(e.target.value)}>
+        <input className="crm-input" style={{ maxWidth: 280 }} placeholder="Search name, company, email…" value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} />
+        <select className="crm-select" style={{ maxWidth: 180 }} value={filterSegment} onChange={e => { setFilterSegment(e.target.value); setPage(1) }}>
           <option value="">All Segments</option>
           {Object.entries(SEGMENT_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
         </select>
-        <select className="crm-select" style={{ maxWidth: 180 }} value={filterIsland} onChange={e => setFilterIsland(e.target.value)}>
+        <select className="crm-select" style={{ maxWidth: 180 }} value={filterIsland} onChange={e => { setFilterIsland(e.target.value); setPage(1) }}>
           <option value="">All Islands</option>
           {Object.entries(ISLAND_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
         </select>
@@ -174,7 +180,7 @@ export default function ClientsPage() {
           <tbody>
             {loading ? (
               <tr><td colSpan={8} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-mist)' }}>Loading…</td></tr>
-            ) : filtered.map(c => {
+            ) : paged.map(c => {
               const activePolicies = (c.policies || []).filter((p: any) => p.status === 'active')
               const totalPrem = activePolicies.reduce((s: number, p: any) => s + (p.annual_premium || 0), 0)
               const risk = getRiskLabel(c.risk_score || 50)

@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Toast, useToast } from '@/components/Toast'
+import { Pagination } from '@/components/Pagination'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { formatCurrency, formatDate, formatStatus, getIslandLabel, getIslandFlag, CLAIM_STATUS_STYLES, FRAUD_RISK_STYLES } from '@/lib/utils'
 import { Island, CoverageType, CatastropheEvent, COVERAGE_LABELS, ISLAND_LABELS } from '@/types'
@@ -37,6 +38,7 @@ export default function ClaimsPage() {
   const [filterStatus, setFilterStatus] = useState('')
   const [filterIsland, setFilterIsland] = useState('')
   const [filterSurge, setFilterSurge] = useState('')
+
   const [sortBy, setSortBy] = useState<string>('created_at')
   const [sortDir, setSortDir] = useState<'asc'|'desc'>('desc')
   const [activeTab, setActiveTab] = useState<'claims' | 'surge'>('claims')
@@ -47,6 +49,8 @@ export default function ClaimsPage() {
   const [saving, setSaving] = useState(false)
   const { toast, show: showToast, hide: hideToast } = useToast()
   const [confirmDelete, setConfirmDelete] = useState<any>(null)
+  const [page, setPage] = useState(1)
+  const PER_PAGE = 15
   const [surgeSaving, setSurgeSaving] = useState(false)
   const [selected, setSelected] = useState<any>(null)
   const [editAmounts, setEditAmounts] = useState(false)
@@ -169,6 +173,11 @@ export default function ClaimsPage() {
   }
 
   const activeSurge = surgeEvents.filter(s => s.status === 'active')
+  // Reset to page 1 when filters/sort change — handled via useEffect-free approach:
+  // slice filtered for current page
+  const totalFiltered = filtered.length
+  const paged = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE)
+
   const openClaims = filtered.filter(c => !['settled','rejected'].includes(c.status))
   const totalReported = filtered.reduce((s, c) => s + (c.reported_loss || 0), 0)
   const fraudFlags = filtered.filter(c => c.fraud_risk !== 'clear').length
@@ -256,12 +265,12 @@ export default function ClaimsPage() {
       {activeTab === 'claims' && (
         <>
           <div className="filter-bar" style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap', marginBottom: '1.2rem' }}>
-            <input className="crm-input" style={{ maxWidth: 240 }} placeholder="Search claim #, client, storm…" value={search} onChange={e => setSearch(e.target.value)} />
-            <select className="crm-select" style={{ maxWidth: 180 }} value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
+            <input className="crm-input" style={{ maxWidth: 240 }} placeholder="Search claim #, client, storm…" value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} />
+            <select className="crm-select" style={{ maxWidth: 180 }} value={filterStatus} onChange={e => { setFilterStatus(e.target.value); setPage(1) }}>
               <option value="">All Statuses</option>
               {['fnol_received','under_review','adjuster_assigned','inspection_scheduled','assessment_complete','approved','partial_approved','settled','rejected','fraud_investigation'].map(s => <option key={s} value={s}>{formatStatus(s)}</option>)}
             </select>
-            <select className="crm-select" style={{ maxWidth: 150 }} value={filterIsland} onChange={e => setFilterIsland(e.target.value)}>
+            <select className="crm-select" style={{ maxWidth: 150 }} value={filterIsland} onChange={e => { setFilterIsland(e.target.value); setPage(1) }}>
               <option value="">All Islands</option>
               {Object.entries(ISLAND_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
             </select>
@@ -281,7 +290,7 @@ export default function ClaimsPage() {
                   <tr><td colSpan={10} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-mist)' }}>Loading claims…</td></tr>
                 ) : filtered.length === 0 ? (
                   <tr><td colSpan={10} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-mist)' }}>No claims found.</td></tr>
-                ) : filtered.map(c => (
+                ) : paged.map(c => (
                   <tr key={c.id} style={{ cursor: 'pointer' }} onClick={() => setSelected(c)}>
                     <td style={{ fontFamily: 'Barlow Condensed', color: '#c9933a', fontSize: '0.82rem', fontWeight: 600 }}>{c.claim_number}</td>
                     <td>

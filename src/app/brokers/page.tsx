@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Toast, useToast } from '@/components/Toast'
+import { Pagination } from '@/components/Pagination'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { formatCurrency, formatStatus, formatDate, getIslandLabel, getIslandFlag, POLICY_STATUS_STYLES, daysUntil } from '@/lib/utils'
 import { Island, Currency, ISLAND_LABELS } from '@/types'
@@ -21,6 +22,8 @@ export default function BrokersPage() {
   const [saving, setSaving] = useState(false)
   const { toast, show: showToast, hide: hideToast } = useToast()
   const [confirmDelete, setConfirmDelete] = useState<any>(null)
+  const [page, setPage] = useState(1)
+  const PER_PAGE = 12
   const [showEditForm, setShowEditForm] = useState(false)
   const [editForm, setEditForm] = useState<any>(null)
   const [selected, setSelected] = useState<any>(null)
@@ -97,6 +100,9 @@ export default function BrokersPage() {
     setConfirmDelete(null)
   }
 
+  const totalFiltered = filtered.length
+  const paged = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE)
+
   return (
     <div className="page-enter" style={{ padding: '2rem', minHeight: '100vh', background: 'var(--bg-page)' }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '1px solid rgba(201,147,58,0.12)' }}>
@@ -123,14 +129,14 @@ export default function BrokersPage() {
       </div>
 
       <div style={{ marginBottom: '1.2rem' }}>
-        <input className="crm-input" style={{ maxWidth: 300 }} placeholder="Search broker name, company…" value={search} onChange={e => setSearch(e.target.value)} />
+        <input className="crm-input" style={{ maxWidth: 300 }} placeholder="Search broker name, company…" value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} />
       </div>
 
       {/* Broker Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(340px, 100%), 1fr))', gap: '1rem', marginBottom: '2rem' }}>
         {loading ? (
           <div style={{ color: 'var(--text-mist)', fontFamily: 'Barlow Condensed' }}>Loading…</div>
-        ) : filtered.map(b => (
+        ) : paged.map(b => (
           <div key={b.id} className="crm-card" style={{ cursor: 'pointer', transition: 'border-color 0.2s', position: 'relative' }} onClick={() => openBroker(b)}>
             {b.status !== 'active' && (
               <div style={{ position: 'absolute', top: '0.8rem', right: '0.8rem' }}>
